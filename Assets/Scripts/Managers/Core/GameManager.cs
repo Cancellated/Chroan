@@ -46,9 +46,6 @@ namespace MyGame.Managers
             State = GameState.Init;
 
             // 注册事件监听
-            GameEvents.OnGameStart += StartGame;
-            GameEvents.OnGamePause += PauseGame;
-            GameEvents.OnGameResume += ResumeGame;
             GameEvents.OnGameOver += GameOver;
         }
 
@@ -58,34 +55,21 @@ namespace MyGame.Managers
         private void OnDestroy()
         {
             // 注销事件监听，防止内存泄漏
-            GameEvents.OnGameStart -= StartGame;
-            GameEvents.OnGamePause -= PauseGame;
-            GameEvents.OnGameResume -= ResumeGame;
             GameEvents.OnGameOver -= GameOver;
         }
 
         /// <summary>
-        /// 启动时自动进入游戏。
+        /// 启动时自动进入主菜单。
         /// </summary>
         private void Start()
         {
-            StartGame();
+            TryChangeState(GameState.MainMenu);
+            GameEvents.TriggerGameStart();
         }
 
         private void Update()
         {
-            // 检测键盘ESC键和手柄Start键(在Inputsystem中配置的暂停键)
-            if (_inputActions.GamePlay.Pause.triggered)
-            {
-                if (State == GameState.Playing)
-                {
-                    GameEvents.TriggerGamePause();
-                }
-                else if (State == GameState.Paused)
-                {
-                    GameEvents.TriggerGameResume();
-                }
-            }
+
         }
         #endregion
 
@@ -134,16 +118,6 @@ namespace MyGame.Managers
 
         #region 游戏流程控制-注意：其他模块应通过GameEvents触发这些方法，而不是直接调用
 
-        /// <summary>
-        /// 开始游戏，进入Playing状态。
-        /// </summary>
-        public void StartGame()
-        {
-            if (!TryChangeState(GameState.MainMenu))
-                return;
-
-            MainMenuManager.Instance.LoadMainMenu();
-        }
 
         /// <summary>
         /// 暂停游戏，设置Time.timeScale为0。

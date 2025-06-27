@@ -10,27 +10,40 @@ namespace MyGame.Managers
     /// </summary>
     public class SceneSwitcher : Singleton<SceneSwitcher>
     {
+        #region 字段
+        [SerializeField] private string levelSelectScene = "LevelSelect";
+        #endregion
+        #region 生命周期
+        void OnEnable()
+        {
+            GameEvents.OnSceneLoad += LoadSceneAsync;
+        }
+
+        void OnDisable()
+        {
+            GameEvents.OnSceneLoad -= LoadSceneAsync;
+        }
+        #endregion
+
+        
+        #region 方法
         /// <summary>
         /// 异步加载场景
         /// </summary>
         /// <param name="sceneName">场景名称</param>
         /// <param name="unloadCurrent">是否卸载当前场景</param>
-        public void LoadSceneAsync(string sceneName, bool unloadCurrent = true)
+        public void LoadSceneAsync(string sceneName)
         {
-            StartCoroutine(LoadSceneAsyncCoroutine(sceneName, unloadCurrent));
+            StartCoroutine(LoadSceneAsyncCoroutine(sceneName));
         }
 
-        private IEnumerator LoadSceneAsyncCoroutine(string sceneName, bool unloadCurrent)
+        private IEnumerator LoadSceneAsyncCoroutine(string sceneName)
         {
-            // 触发场景加载开始事件
-            GameEvents.TriggerSceneLoad(sceneName);
-
-            if (unloadCurrent)
+            //卸载当前场景
+            if (SceneManager.GetActiveScene().name != levelSelectScene)
             {
-                // 卸载当前场景
-                var currentScene = SceneManager.GetActiveScene();
-                GameEvents.TriggerSceneUnload(currentScene.name);
-                yield return SceneManager.UnloadSceneAsync(currentScene);
+                GameEvents.TriggerSceneUnload(SceneManager.GetActiveScene().name);
+                yield return SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
             }
 
             // 异步加载新场景
@@ -58,5 +71,6 @@ namespace MyGame.Managers
             SceneManager.LoadScene(sceneName);
             GameEvents.TriggerSceneLoadComplete(sceneName);
         }
+        #endregion
     }
 }

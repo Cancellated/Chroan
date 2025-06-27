@@ -19,7 +19,7 @@ namespace MyGame.UI
         {
             base.Awake();
             
-            startButton.onClick.AddListener(() => GameEvents.TriggerGameStart());
+            startButton.onClick.AddListener(() => GameEvents.TriggerChapterSelectMap());
             settingsButton.onClick.AddListener(() => GameEvents.TriggerSettingsShow(true));
             quitButton.onClick.AddListener(() => Application.Quit());
         }

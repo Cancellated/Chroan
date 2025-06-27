@@ -68,7 +68,7 @@ namespace UI.Managers
             GameEvents.OnConsoleShow += ShowConsole;
             GameEvents.OnInventoryShow += ShowInventory;
             // 加载界面显隐处理方法
-            GameEvents.OnSceneLoadStart += ShowLoading;
+            GameEvents.OnSceneLoad += ShowLoading;
             GameEvents.OnSceneLoadComplete += HideLoading;
         }
 
@@ -82,7 +82,7 @@ namespace UI.Managers
             GameEvents.OnHUDShow -= ShowHUD;
             GameEvents.OnConsoleShow -= ShowConsole;
             GameEvents.OnInventoryShow -= ShowInventory;
-            GameEvents.OnSceneLoadStart -= ShowLoading;
+            GameEvents.OnSceneLoad -= ShowLoading;
             GameEvents.OnSceneLoadComplete -= HideLoading;
         }
 

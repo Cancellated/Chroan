@@ -25,14 +25,36 @@ namespace MyGame.System
         }
 
         /// <summary>
+        /// 进入章节选择事件
+        /// </summary>
+        public static event Action OnChapterSelectMap;
+        public static void TriggerChapterSelectMap()
+        {
+            Debug.Log("[GameEvents] 触发进入章节选择事件");
+            OnChapterSelectMap.Invoke();
+
+        }
+
+        /// <summary>
+        /// 选择章节事件
+        /// </summary>
+        public static event Action<ChapterData> OnChapterSelected;
+        public static void TriggerChapterSelected(ChapterData chapter)
+        {
+            Debug.Log($"[GameEvents] 选择章节：{chapter.chapterName}");
+            OnChapterSelected?.Invoke(chapter);
+        }
+
+        /// <summary>
         /// 选择关卡事件
         /// </summary>
-        public static event Action<int> OnLevelSelected;
-        public static void TriggerLevelSelected(int level)
+        public static event Action<LevelData> OnLevelSelected;
+        public static void TriggerLevelSelected(LevelData level)
         {
-            Debug.Log($"[GameEvents] 触发选择关卡事件，选择关卡：{level}");
+            Debug.Log($"[GameEvents] 触发选择关卡事件，选择关卡：{level.levelName}");
             OnLevelSelected?.Invoke(level);
         }
+
 
         /// <summary>
         /// 游戏暂停事件。
@@ -76,37 +98,26 @@ namespace MyGame.System
 
         #endregion
 
+        #region 关卡选择事件
+
+        #endregion
+
         #region 场景管理事件
 
         /// <summary>
         /// 场景加载开始事件
         /// </summary>
-        public static event Action<string> OnSceneLoadStart;
+        public static event Action<string> OnSceneLoad;
+        public static void TriggerSceneLoad(string sceneName)
+        {
+            Debug.Log($"[GameEvents] 开始加载场景: {sceneName}");
+            OnSceneLoad?.Invoke(sceneName);
+        }
         
         /// <summary>
         /// 场景加载完成事件
         /// </summary>
         public static event Action<string> OnSceneLoadComplete;
-        
-        /// <summary>
-        /// 场景卸载事件
-        /// </summary>
-        public static event Action<string> OnSceneUnload;
-        
-        /// <summary>
-        /// 触发场景加载开始事件
-        /// </summary>
-        /// <param name="sceneName">场景名称</param>
-        public static void TriggerSceneLoad(string sceneName)
-        {
-            Debug.Log($"[GameEvents] 开始加载场景: {sceneName}");
-            OnSceneLoadStart?.Invoke(sceneName);
-        }
-        
-        /// <summary>
-        /// 触发场景加载完成事件
-        /// </summary>
-        /// <param name="sceneName">场景名称</param>
         public static void TriggerSceneLoadComplete(string sceneName)
         {
             Debug.Log($"[GameEvents] 场景加载完成: {sceneName}");
@@ -114,9 +125,9 @@ namespace MyGame.System
         }
         
         /// <summary>
-        /// 触发场景卸载事件
+        /// 场景卸载事件
         /// </summary>
-        /// <param name="sceneName">场景名称</param>
+        public static event Action<string> OnSceneUnload;
         public static void TriggerSceneUnload(string sceneName)
         {
             Debug.Log($"[GameEvents] 卸载场景: {sceneName}");
@@ -214,5 +225,6 @@ namespace MyGame.System
 
             #endregion
         #endregion
+
     }
 }
