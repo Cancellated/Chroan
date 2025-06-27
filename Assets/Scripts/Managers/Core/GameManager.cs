@@ -13,6 +13,7 @@ namespace MyGame.Managers
     public enum GameState
     {
         Init,
+        MainMenu,
         Playing,
         Paused,
         GameOver
@@ -117,7 +118,8 @@ namespace MyGame.Managers
             // 定义合法状态转换关系：左边的状态可以转换到右边的状态
             var validTransitions = new Dictionary<GameState, GameState[]>
             {
-                [GameState.Init] = new[] { GameState.Playing },
+                [GameState.Init] = new[] { GameState.MainMenu },
+                [GameState.MainMenu] = new[] { GameState.Playing },
                 [GameState.Playing] = new[] { GameState.Paused, GameState.GameOver },
                 [GameState.Paused] = new[] { GameState.Playing, GameState.GameOver },
                 [GameState.GameOver] = new[] { GameState.Init }
@@ -137,11 +139,10 @@ namespace MyGame.Managers
         /// </summary>
         public void StartGame()
         {
-            if (!TryChangeState(GameState.Playing))
+            if (!TryChangeState(GameState.MainMenu))
                 return;
-            // TODO: 初始化关卡、玩家等
-            Time.timeScale = 1f;
-            Debug.Log("游戏开始");
+
+            MainMenuManager.Instance.LoadMainMenu();
         }
 
         /// <summary>

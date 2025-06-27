@@ -18,30 +18,6 @@ namespace MyGame.System
         /// 游戏开始事件。
         /// </summary>
         public static event Action OnGameStart;
-
-        /// <summary>
-        /// 游戏暂停事件。
-        /// </summary>
-        public static event Action OnGamePause;
-
-        /// <summary>
-        /// 游戏继续事件。
-        /// </summary>
-        public static event Action OnGameResume;
-
-        /// <summary>
-        /// 游戏结束事件，参数为true表示胜利，false表示失败。
-        /// </summary>
-        public static event Action<bool> OnGameOver;
-
-        /// <summary>
-        /// 游戏状态变更事件。
-        /// </summary>
-        public static event Action<GameState, GameState> OnGameStateChanged;
-
-        /// <summary>
-        /// 触发游戏开始事件。
-        /// </summary>
         public static void TriggerGameStart()
         {
             Debug.Log("[GameEvents] 触发游戏开始事件");
@@ -49,8 +25,19 @@ namespace MyGame.System
         }
 
         /// <summary>
-        /// 触发游戏暂停事件。
+        /// 选择关卡事件
         /// </summary>
+        public static event Action<int> OnLevelSelected;
+        public static void TriggerLevelSelected(int level)
+        {
+            Debug.Log($"[GameEvents] 触发选择关卡事件，选择关卡：{level}");
+            OnLevelSelected?.Invoke(level);
+        }
+
+        /// <summary>
+        /// 游戏暂停事件。
+        /// </summary>
+        public static event Action OnGamePause;
         public static void TriggerGamePause()
         {
             Debug.Log("[GameEvents] 触发游戏暂停事件");
@@ -58,8 +45,9 @@ namespace MyGame.System
         }
 
         /// <summary>
-        /// 触发游戏继续事件。
+        /// 游戏继续事件。
         /// </summary>
+        public static event Action OnGameResume;
         public static void TriggerGameResume()
         {
             Debug.Log("[GameEvents] 触发游戏继续事件");
@@ -67,9 +55,9 @@ namespace MyGame.System
         }
 
         /// <summary>
-        /// 触发游戏结束事件。
+        /// 游戏结束事件，参数为true表示胜利，false表示失败。
         /// </summary>
-        /// <param name="isWin">true为胜利，false为失败</param>
+        public static event Action<bool> OnGameOver;
         public static void TriggerGameOver(bool isWin)
         {
             Debug.Log($"[GameEvents] 触发游戏结束事件，胜利：{isWin}");
@@ -77,10 +65,9 @@ namespace MyGame.System
         }
 
         /// <summary>
-        /// 触发游戏状态变更事件。
+        /// 游戏状态变更事件。
         /// </summary>
-        /// <param name="from">原状态</param>
-        /// <param name="to">新状态</param>
+        public static event Action<GameState, GameState> OnGameStateChanged;
         public static void TriggerGameStateChanged(GameState from, GameState to)
         {
             Debug.Log($"[GameEvents] 游戏状态变更：{from} -> {to}");
@@ -110,7 +97,7 @@ namespace MyGame.System
         /// 触发场景加载开始事件
         /// </summary>
         /// <param name="sceneName">场景名称</param>
-        public static void TriggerSceneLoadStart(string sceneName)
+        public static void TriggerSceneLoad(string sceneName)
         {
             Debug.Log($"[GameEvents] 开始加载场景: {sceneName}");
             OnSceneLoadStart?.Invoke(sceneName);
@@ -197,6 +184,16 @@ namespace MyGame.System
         {
             Debug.Log($"[GameEvents] 背包显示：{show}");
             OnInventoryShow?.Invoke(show);
+        }
+
+        /// <summary>
+        /// 显示或隐藏设置
+        /// </summary>
+        public static event Action<bool> OnSettingsShow;
+        public static void TriggerSettingsShow(bool show)
+        {
+            Debug.Log($"[GameEvents] 设置显示：{show}");
+            OnSettingsShow?.Invoke(show);
         }
             #region UI切换事件
 

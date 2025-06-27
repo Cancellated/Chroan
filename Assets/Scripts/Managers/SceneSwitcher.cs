@@ -23,7 +23,7 @@ namespace MyGame.Managers
         private IEnumerator LoadSceneAsyncCoroutine(string sceneName, bool unloadCurrent)
         {
             // 触发场景加载开始事件
-            GameEvents.TriggerSceneLoadStart(sceneName);
+            GameEvents.TriggerSceneLoad(sceneName);
 
             if (unloadCurrent)
             {
@@ -54,7 +54,7 @@ namespace MyGame.Managers
         /// <param name="sceneName">场景名称</param>
         public void LoadScene(string sceneName)
         {
-            GameEvents.TriggerSceneLoadStart(sceneName);
+            GameEvents.TriggerSceneLoad(sceneName);
             SceneManager.LoadScene(sceneName);
             GameEvents.TriggerSceneLoadComplete(sceneName);
         }
