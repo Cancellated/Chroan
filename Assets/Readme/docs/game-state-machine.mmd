@@ -1,0 +1,16 @@
+stateDiagram
+    [*] --> Init
+    Init --> Playing: StartGame
+    
+    Playing --> Paused: PauseGame
+    Playing --> GameOver: GameOver
+    
+    Paused --> Playing: ResumeGame
+    Paused --> GameOver: GameOver
+    
+    GameOver --> Init: Restart
+
+    note right of Playing
+        状态转换通过TryChangeState方法验证
+        使用GameEvents触发状态变更
+    end note

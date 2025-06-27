@@ -1,0 +1,15 @@
+graph LR
+    subgraph 玩家交互
+        A[按键输入] --> B[InventoryController]
+        C[鼠标点击] --> D[InventorySlot]
+    end
+    
+    subgraph 数据层
+        B -->|读取/修改| E[InventoryModel]
+        E -->|通知变更| F[InventoryView]
+    end
+    
+    subgraph 表现层
+        D -->|触发| B
+        F -->|更新显示| G[UI元素]
+    end      

@@ -1,0 +1,63 @@
+classDiagram
+
+    class UIManager {
+        <<Singleton>>
+        +CanvasGroup mainMenu
+        +CanvasGroup pauseMenu
+        +CanvasGroup resultPanel
+        +CanvasGroup hudPanel
+        +CanvasGroup loadingPanel
+        +CanvasGroup consolePanel
+        +CanvasGroup inventoryPanel
+        +Animator inventoryAnimator
+        +float fadeDuration
+        
+        +UIState currentState
+        
+        +Awake()
+        +OnDestroy()
+        +HideAllUI()
+        +SetUIState(UIState, bool)
+        +ShowCanvasGroup(CanvasGroup, bool)
+        +FadeCanvasGroup(CanvasGroup, bool) IEnumerator
+        +SetCanvasGroup(CanvasGroup, bool)
+        +ShowLoading(string)
+        +HideLoading(string)
+        +ShowMainMenu(bool)
+        +ShowPauseMenu(bool)
+        +ShowResultPanel(bool)
+        +ShowHUD(bool)
+        +ShowConsole(bool)
+        +ShowInventory(bool)
+        +OnMenuShow(UIState, bool)
+    }
+    
+    class UIState {
+        <<enumeration>>
+        None
+        MainMenu
+        PauseMenu
+        ResultPanel
+        HUD
+        Loading
+        Console
+        Inventory
+    }
+    
+    class GameEvents {
+        <<static>>
+        +OnMenuShow
+        +OnMainMenuShow
+        +OnPauseMenuShow
+        +OnResultPanelShow
+        +OnHUDShow
+        +OnConsoleShow
+        +OnInventoryShow
+        +OnSceneLoadStart
+        +OnSceneLoadComplete
+    }
+    
+    UIManager --> GameEvents : 订阅/取消订阅
+    UIManager --> UIState : 管理
+    UIManager --> CanvasGroup : 控制
+    UIManager --> Animator : 动画控制
