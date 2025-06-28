@@ -16,6 +16,7 @@ namespace MyGame.Data{
         private string saveFilePath;
         private BinaryFormatter binaryFormatter = new();
         private FileStream fileStream;
+        public GameProgress gameProgress;
         public SaveData saveData;
         protected override void Awake()
         {
@@ -26,7 +27,10 @@ namespace MyGame.Data{
         public void SaveGame()
         {
             // 获取最新数据
-
+            saveData = SaveData.FromProgress(gameProgress);
+            fileStream = new FileStream(saveFilePath, FileMode.Create);
+            binaryFormatter.Serialize(fileStream, saveData);
+            fileStream.Close();
         }
         public void LoadGame()
         {
