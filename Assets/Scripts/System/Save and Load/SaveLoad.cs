@@ -15,7 +15,7 @@ namespace MyGame.System{
         private string saveFilePath;
         private BinaryFormatter binaryFormatter = new();
         private FileStream fileStream;
-        private SaveData saveData;
+        public SaveData saveData;
         protected override void Awake()
         {
             base.Awake();

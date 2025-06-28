@@ -86,6 +86,16 @@ namespace MyGame.System
             OnGameOver?.Invoke(isWin);
         }
 
+        ///<summary>
+        /// 章节完成事件
+        /// </summary>
+        public static event Action<ChapterData> OnChapterComplete;
+        public static void TriggerChapterComplete(ChapterData chapter)
+        {
+            Debug.Log($"[GameEvents] 触发章节完成事件，完成章节：{chapter.chapterName}");
+            OnChapterComplete?.Invoke(chapter);
+        }
+
         /// <summary>
         /// 游戏状态变更事件。
         /// </summary>
@@ -226,5 +236,23 @@ namespace MyGame.System
             #endregion
         #endregion
 
+        #region 音效事件
+        /// <summary>
+        /// 场景音效事件
+        /// </summary>
+        public static event Action<string> OnSceneSoundTriggered;
+        public static void TriggerSceneSound(string soundType)
+        {
+            OnSceneSoundTriggered?.Invoke(soundType);
+        }
+        /// <summary>
+        /// UI交互音效
+        /// </summary>
+        public static event Action<string> OnUIInteraction;
+        public static void TriggerUIInteraction(string soundType)
+        {
+            OnUIInteraction?.Invoke(soundType);
+        }
+        #endregion
     }
 }
