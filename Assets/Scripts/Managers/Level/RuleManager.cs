@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Level.Grid;
+
 
 /// <summary>
 /// 规则管理器，负责游戏规则的检测、激活和应用

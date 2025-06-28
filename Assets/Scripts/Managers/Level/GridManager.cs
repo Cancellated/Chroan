@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-
+namespace Level.Grid
+{
+    
 namespace Level.Grid
 {
     /// <summary>
@@ -160,6 +162,30 @@ namespace Level.Grid
         }
         #endregion
 
+
+    /// <summary>
+    /// 在Scene视图中绘制网格线
+    /// </summary>
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = gridColor;
+
+        // 绘制垂直线
+        for (int x = 0; x <= gridWidth; x++)
+        {
+            Vector3 startPos = new Vector3(originPosition.x + x * cellSize, originPosition.y, 0);
+            Vector3 endPos = new Vector3(originPosition.x + x * cellSize, originPosition.y + gridHeight * cellSize, 0);
+            Gizmos.DrawLine(startPos, endPos);
+        }
+
+        // 绘制水平线
+        for (int y = 0; y <= gridHeight; y++)
+        {
+            Vector3 startPos = new Vector3(originPosition.x, originPosition.y + y * cellSize, 0);
+            Vector3 endPos = new Vector3(originPosition.x + gridWidth * cellSize, originPosition.y + y * cellSize, 0);
+            Gizmos.DrawLine(startPos, endPos);
+        }
+    }
 
         /// <summary>
         /// 检测网格位置是否有效
