@@ -1,5 +1,5 @@
 using System.Collections;
-using MyGame.Events;
+using MyGame.System;
 using UnityEngine;
 
 namespace UI.Managers
