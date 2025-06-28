@@ -22,6 +22,7 @@ namespace Level
         public static void TriggerMoveRequest(ObjectMovedEventData eventData)
         {
             OnMoveRequest?.Invoke(eventData);
+            Debug.Log("触发移动请求");
         }
 
         #region 激活与沉默

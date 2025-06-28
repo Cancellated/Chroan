@@ -89,9 +89,10 @@ public class ConcretePropBehavior : MonoBehaviour, IPropBehavior
             yield return new WaitForSeconds(_config.MoveInterval);
         }
     }
-    private IEnumerator IceGrow()
-    {
-        //playerController.Setputdown(0.5f);
+
+    private IEnumerator IceGrow(){
+        //playerController.SetMoveCoolDown(0.5f);//暂缓玩家输入
+
         yield return new WaitForSeconds(_config._maxGrowTime);
 
     }
