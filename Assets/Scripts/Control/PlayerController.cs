@@ -14,10 +14,12 @@ namespace MyGame.Control
         #region 字段
         private GameControl _inputActions;
 
-        private Vector2Int _currentGridPos;
-        private float _moveCooldown = 0.2f;
+        public Vector2Int CurrentGridPos { get; private set; }
+        private float _moveCooldown = 0.4f;
         private bool _isMoving;
         private LevelManager _levelManager;
+
+
         #endregion
 
         #region 属性
@@ -35,7 +37,16 @@ namespace MyGame.Control
         {
             base.Awake();
             _inputActions = new GameControl();
-            _levelManager = GetComponent<LevelManager>();
+            _levelManager = FindObjectOfType<LevelManager>();
+        }
+
+        private void Start()
+        {
+            if (_levelManager != null && _levelManager.GridManager != null)
+            {
+                CurrentGridPos = _levelManager.GridManager.WorldToGridPosition(transform.position);
+                Debug.Log("玩家初始网格位置: " + CurrentGridPos);
+            }
         }
 
         private void OnEnable()
@@ -59,39 +70,38 @@ namespace MyGame.Control
         private void HandleMovementInput()
         {
             if (_isMoving) return;
-            
+
             Vector2 input = InputActions.GamePlay.Move.ReadValue<Vector2>();
             Vector2Int direction = GetDiscreteDirection(input);
-            
+
             if (direction != Vector2Int.zero)
             {
                 StartCoroutine(MovePlayer(direction));
             }
+            //Debug.Log("玩家移动方向:" + direction);
         }
 
         private IEnumerator MovePlayer(Vector2Int direction)
         {
             _isMoving = true;
-            
-            Vector2Int targetPos = _currentGridPos + direction;
-            
+
+            Vector2Int targetPos = CurrentGridPos + direction;
+
             if (_levelManager.GridManager.CanMoveTo(targetPos))
             {
                 // 触发网格移动
-                _levelManager.GridManager.MoveObject(
-                    GetComponent<GameObjectBase>(), 
-                    targetPos);
-                
+                _levelManager.GridManager.MoveObject(GetComponent<Player>(), targetPos);
+
                 // 更新玩家实际位置（可添加移动动画）
                 transform.position = _levelManager.GridManager.GridToWorldPosition(targetPos);
-                _currentGridPos = targetPos;
+                CurrentGridPos = targetPos;
             }
-            
+
             yield return new WaitForSeconds(_moveCooldown);
             _isMoving = false;
         }
 
-        private Vector2Int GetDiscreteDirection(Vector2 input) 
+        private Vector2Int GetDiscreteDirection(Vector2 input)
         {
             // 设置输入阈值避免误触
             const float deadZone = 0.3f;
@@ -102,11 +112,11 @@ namespace MyGame.Control
             }
 
             // 优先判断水平方向输入
-            if (Mathf.Abs(input.x) > Mathf.Abs(input.y)) 
+            if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
             {
                 return input.x > 0 ? Vector2Int.right : Vector2Int.left;
             }
-            else 
+            else
             {
                 return input.y > 0 ? Vector2Int.up : Vector2Int.down;
             }

@@ -54,6 +54,7 @@ namespace Dialog
 
             GameEvents.OnStoryEnter += HandleStoryEnter;
             GameEvents.OnStoryComplete += HandleStoryComplete;
+
             
         }
 
@@ -203,7 +204,7 @@ namespace Dialog
             
             if(_currentDialogs.Count == 0)
             {
-                
+                GameEvents.TriggerStoryComplete(GameManager.Instance.gameProgress.currentStoryIndex);
             }
         }
 
@@ -288,10 +289,10 @@ namespace Dialog
             _typingCoroutine = StartCoroutine(TypeText(content));
         }
 
-
-        private void HandleChapterComplete(int chapterId)
+        private void HandleStoryComplete()
         {
-            Debug.Log($"收到章节完成事件，chapterId: {chapterId}");
+            HideDialogUI();
+            Debug.Log("处理故事完成事件");
         }
 
     }

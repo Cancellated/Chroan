@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-  
+
+
 namespace Level.Grid
 {
     /// <summary>
@@ -38,7 +39,7 @@ namespace Level.Grid
             // 添加网格初始化
             grid = new GameObjectBase[gridWidth, gridHeight];
             gridObjectMap = new Dictionary<Vector2Int, List<GameObjectBase>>();
-            
+
             LevelManager = this.gameObject.GetComponent<LevelManager>();
         }
 
@@ -71,19 +72,28 @@ namespace Level.Grid
         public void MoveObject(GameObjectBase obj, Vector2Int newGridPos)
         {
             // 先移除旧位置
+            // if (obj.GridPosition == null)
+            // {
+            //     obj.SetGridPosition(WorldToGridPosition(obj.transform.position));
+            // }
             Vector2Int oldGridPos = obj.GridPosition;
-            if (IsValidPosition(oldGridPos))
+            if (oldGridPos != null)
             {
-                grid[oldGridPos.x, oldGridPos.y] = null;
-                if (gridObjectMap.ContainsKey(oldGridPos))
+                if (IsValidPosition(oldGridPos))
                 {
-                    gridObjectMap[oldGridPos].Remove(obj);
-                    if (gridObjectMap[oldGridPos].Count == 0)
+                    grid[oldGridPos.x, oldGridPos.y] = null;
+                    if (gridObjectMap.ContainsKey(oldGridPos))
                     {
-                        gridObjectMap.Remove(oldGridPos);
+                        gridObjectMap[oldGridPos].Remove(obj);
+                        if (gridObjectMap[oldGridPos].Count == 0)
+                        {
+                            gridObjectMap.Remove(oldGridPos);
+                        }
                     }
                 }
             }
+
+
 
             // 注册到新位置
             obj.SetGridPosition(newGridPos);
@@ -160,29 +170,29 @@ namespace Level.Grid
         #endregion
 
 
-    /// <summary>
-    /// 在Scene视图中绘制网格线
-    /// </summary>
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = gridColor;
-
-        // 绘制垂直线
-        for (int x = 0; x <= gridWidth; x++)
+        /// <summary>
+        /// 在Scene视图中绘制网格线
+        /// </summary>
+        private void OnDrawGizmos()
         {
-            Vector3 startPos = new Vector3(originPosition.x + x * cellSize, originPosition.y, 0);
-            Vector3 endPos = new Vector3(originPosition.x + x * cellSize, originPosition.y + gridHeight * cellSize, 0);
-            Gizmos.DrawLine(startPos, endPos);
-        }
+            Gizmos.color = gridColor;
 
-        // 绘制水平线
-        for (int y = 0; y <= gridHeight; y++)
-        {
-            Vector3 startPos = new Vector3(originPosition.x, originPosition.y + y * cellSize, 0);
-            Vector3 endPos = new Vector3(originPosition.x + gridWidth * cellSize, originPosition.y + y * cellSize, 0);
-            Gizmos.DrawLine(startPos, endPos);
+            // 绘制垂直线
+            for (int x = 0; x <= gridWidth; x++)
+            {
+                Vector3 startPos = new Vector3(originPosition.x + x * cellSize, originPosition.y, 0);
+                Vector3 endPos = new Vector3(originPosition.x + x * cellSize, originPosition.y + gridHeight * cellSize, 0);
+                Gizmos.DrawLine(startPos, endPos);
+            }
+
+            // 绘制水平线
+            for (int y = 0; y <= gridHeight; y++)
+            {
+                Vector3 startPos = new Vector3(originPosition.x, originPosition.y + y * cellSize, 0);
+                Vector3 endPos = new Vector3(originPosition.x + gridWidth * cellSize, originPosition.y + y * cellSize, 0);
+                Gizmos.DrawLine(startPos, endPos);
+            }
         }
-    }
 
         /// <summary>
         /// 检测网格位置是否有效
@@ -210,7 +220,7 @@ namespace Level.Grid
         /// 算法：(世界坐标 - 原点偏移) / 单元格尺寸
         /// </summary>
         public Vector2Int WorldToGridPosition(Vector2 worldPos)
-        
+
         {
             // 坐标标准化计算
             int x = Mathf.FloorToInt((worldPos.x - originPosition.x) / cellSize);
@@ -222,7 +232,7 @@ namespace Level.Grid
                 Mathf.Clamp(y, 0, gridHeight - 1)
             );
         }
-        
+
         /// <summary>
         /// 获取游戏对象在网格中的位置
         /// </summary>
@@ -240,19 +250,29 @@ namespace Level.Grid
         /// <returns></returns>
         public bool CanMoveTo(Vector2Int gridPos)
         {
-            if (!IsValidPosition(gridPos)) return false;
+            if (!IsValidPosition(gridPos))
+            {
+                Debug.LogError("网格位置无效：" + gridPos);
+                return false;
+            }
 
             Vector2 worldPos = GridToWorldPosition(gridPos);
 
-            // 区域包含检测（使用多边形碰撞器）
-            if (!IsInWalkableArea(worldPos)) return false;
+            if (!IsInWalkableArea(worldPos))
+            {
+                Debug.LogError("网格位置超出可行走区域：" + gridPos);
+                return false;
+            }
 
+            bool result = !Physics2D.OverlapPoint(worldPos, LayerMask.GetMask("Wall"));
             // 障碍物检测
-            return !Physics2D.OverlapPoint(worldPos, LayerMask.GetMask("Wall"));
+            return result;
+
+            Debug.Log("检测网格位置:" + gridPos + "是否可移动，结果：" + result);
         }
         private bool IsInWalkableArea(Vector2 pos)
         {
-            // 假设场景中有多边形碰撞器标记可行走区域
+            // 使用Collider2D检测
             return Physics2D.OverlapPoint(pos, LayerMask.GetMask("WalkableArea"));
         }
 

@@ -17,7 +17,9 @@ public class PropBehaviorSO : ScriptableObject
     [Header("冰块参数")]
     [SerializeField] public float _growSpeed = 0.2f;
     [SerializeField] public float _maxGrowTime = 2f;
-    
+
+    [Header("邮箱参数")]
+    [SerializeField] public int _storyId;
 
 
     
