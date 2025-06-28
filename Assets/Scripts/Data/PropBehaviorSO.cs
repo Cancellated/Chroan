@@ -9,11 +9,17 @@ using UnityEngine.Events;
 public class PropBehaviorSO : ScriptableObject
 {
     public ObjectType Type;
-    [SerializeField] private GameObject _prefab; // 预制体
-    [SerializeField] private Sprite _displaySprite; // 显示精灵
+    [SerializeField] public GameObject _prefab; // 预制体
+    [SerializeField] public Sprite _displaySprite; // 显示精灵
     [Header("移动设置,针对Rock")]
-    [SerializeField] private float _moveInterval = 0.5f;
-    [SerializeField] private int _safeDistance = 3;
+    [SerializeField] public float _moveInterval = 0.5f;
+    [SerializeField] public int _safeDistance = 3;
+    [Header("冰块参数")]
+    [SerializeField] public float _growSpeed = 0.2f;
+    [SerializeField] public float _maxGrowTime = 2f;
+    
+
+
     
     public float MoveInterval => _moveInterval;
     public int SafeDistance => _safeDistance;

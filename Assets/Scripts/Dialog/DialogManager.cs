@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
-using MyGame.System;
+using MyGame.Events;
 using MyGame.Managers;
 using Dialog.Config;
 using MyGame.Data;

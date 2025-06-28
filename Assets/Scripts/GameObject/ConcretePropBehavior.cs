@@ -79,6 +79,11 @@ public class ConcretePropBehavior : MonoBehaviour, IPropBehavior
             yield return new WaitForSeconds(_config.MoveInterval);
         }
     }
+    private IEnumerator IceGrow(){
+        //playerController.Setputdown(0.5f);
+        yield return new WaitForSeconds(_config._maxGrowTime);
+
+    }
 
     private Vector2Int CalculateFleeDirection(Vector2Int playerPos, Vector2Int currentPos)
     {
@@ -89,4 +94,5 @@ public class ConcretePropBehavior : MonoBehaviour, IPropBehavior
             delta.y != 0 ? Mathf.Clamp(delta.y, -1, 1) : 0
         );
     }
+
 }
