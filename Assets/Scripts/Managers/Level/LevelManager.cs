@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MyGame.System;
+using Level.Grid;
+
+namespace Level
+{
 /// <summary>
 /// 管理每个关卡本身逻辑
 /// </summary>
@@ -97,4 +101,5 @@ public class LevelManager : MonoBehaviour
     {
         GameEvents.TriggerGameOver(true);
     }
+}
 }
