@@ -83,6 +83,8 @@ namespace Level.Grid
             // {
             //     obj.SetGridPosition(WorldToGridPosition(obj.transform.position));
             // }
+            Debug.Log("目标位置正在移动"+newGridPos);
+
             Vector2Int oldGridPos = obj.GridPosition;
             if (oldGridPos != null)
             {
@@ -286,6 +288,7 @@ namespace Level.Grid
         // 新增移动请求处理
         private void OnMoveRequest(ObjectMovedEventData data)
         {
+            
             if (data.Target.TryGetComponent<GameObjectBase>(out var obj))
             {
                 // 检查目标位置是否有物体
@@ -311,6 +314,7 @@ namespace Level.Grid
                 else if (CanMoveTo(data.NewPos))
                 {
                     MoveObject(obj, data.NewPos);
+                    Debug.Log("目标位置可移动");
                 }
                 else{
                     Debug.Log("目标位置不可移动");
