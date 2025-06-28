@@ -13,9 +13,9 @@ namespace MyGame.Control
     {
         #region 字段
         private GameControl _inputActions;
-
+        private Animator _animator;
         public Vector2Int CurrentGridPos { get; private set; }
-        private float _moveCooldown = 0.4f;
+        private float _moveCooldown = 0.2f;
         private bool _isMoving;
         private LevelManager _levelManager;
 
@@ -38,6 +38,7 @@ namespace MyGame.Control
             base.Awake();
             _inputActions = new GameControl();
             _levelManager = FindObjectOfType<LevelManager>();
+            _animator = GetComponent<Animator>();
         }
 
         private void Start()
@@ -115,8 +116,8 @@ namespace MyGame.Control
             // 发送移动请求事件（不再直接调用MoveObject）
             LevelEvent.TriggerMoveRequest(moveData);
             // 更新玩家实际位置（可添加移动动画）
-                transform.position = _levelManager.GridManager.GridToWorldPosition(targetPos);
-                CurrentGridPos = targetPos;
+            transform.position = _levelManager.GridManager.GridToWorldPosition(targetPos);
+            CurrentGridPos = targetPos;
 
             // 等待移动完成（实际移动由GridManager处理）
             yield return new WaitForSeconds(_moveCooldown);
