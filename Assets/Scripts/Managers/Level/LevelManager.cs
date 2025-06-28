@@ -50,11 +50,9 @@ namespace Level
                         {
                             levelDataDict[interactableObject.Type] = new List<GameObjectBase>();
 
-
                         }
                         levelDataDict[interactableObject.Type].Add(interactableObject);
                         interactableObject.SetGridPosition(GridManager.WorldToGridPosition(interactableObject.transform.position));
-                        GridManager.RegisterObject(interactableObject.GridPosition, interactableObject);
                     }
                 }
 
