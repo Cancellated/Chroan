@@ -1,3 +1,5 @@
+using Level;
+
 public abstract class InteractiveObject : GameObjectBase
 {
     // 实现 IObjectBehavior 接口

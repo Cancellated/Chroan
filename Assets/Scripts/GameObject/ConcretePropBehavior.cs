@@ -1,39 +1,92 @@
-public class ConcretePropBehavior : IPropBehavior
-{
-    private readonly PropBehaviorSO _config; // 道具配置（伤害值、特效等）
-    //private Coroutine _activeCoroutine; // 用于管理持续效果的协程
+using System.Collections;
+using Level;
+using Level.Grid;
+using MyGame.Control;
+using MyGame.Managers;
+using UnityEngine;
 
-    // 通过构造函数注入配置
-    public ConcretePropBehavior(PropBehaviorSO config)
+public class ConcretePropBehavior : MonoBehaviour, IPropBehavior
+{
+    private Transform _transform;
+    private PropBehaviorSO _config;
+    private PropObject _propObject;//其父物体
+
+    public Vector2Int GridPosition { get; set; }
+
+    public void Initialize(PropBehaviorSO config)
     {
         _config = config;
+        GetComponent<SpriteRenderer>().sprite = _config.DisplaySprite;
     }
-    public void Execute(ObjectType Type)
+    
+    void Awake()
     {
-        switch (Type)
-        {
-            case ObjectType.PLAYER:
-                // 执行玩家道具效果
-                break;
-            case ObjectType.ROCK:
-                // 执行规则道具效果
-                break;
-                // 扩展其他对象类型
-        }
+        _transform = GetComponent<Transform>();
+        _propObject = GetComponentInParent<PropObject>();
     }
-    public void Cancel(ObjectType Type)
+
+    public void Execute(ObjectType type)
     {
-        switch (Type)
+        switch (type)
         {
-            case ObjectType.PLAYER:
-                // 取消玩家道具效果
-                break;
             case ObjectType.ROCK:
-                // 取消规则道具效果
+                StartCoroutine(FleeFromPlayer());
                 break;
-                // 扩展其他对象类型
         }
     }
 
-    // 实现接口方法...
+    public void Cancel(ObjectType type)
+    {
+        if (type == ObjectType.ROCK)
+        {
+            StopAllCoroutines();
+        }
+    }
+
+    /// <summary>
+    /// 岩石从玩家位置逃跑（3格）
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator FleeFromPlayer()
+    {
+        var levelManager = FindObjectOfType<LevelManager>();
+        var gridManager = levelManager.GridManager;
+        var player = levelManager.PlayerController;
+    
+        while (true)
+        {
+            Vector2Int playerGridPos = gridManager.WorldToGridPosition(player.transform.position);
+            Vector2Int currentGridPos = gridManager.WorldToGridPosition(transform.position);
+    
+            // 计算与玩家的曼哈顿距离
+            int distance = Mathf.Abs(playerGridPos.x - currentGridPos.x) + 
+                          Mathf.Abs(playerGridPos.y - currentGridPos.y);
+    
+            if (distance <= _config.SafeDistance)
+            {
+                Vector2Int direction = CalculateFleeDirection(playerGridPos, currentGridPos);
+                Vector2Int targetPos = currentGridPos + direction;
+    
+                if (gridManager.CanMoveTo(targetPos))
+                {
+                    LevelEvent.TriggerMoveRequest(new ObjectMovedEventData {
+                        Target = _propObject,
+                        OldPos = currentGridPos,
+                        NewPos = targetPos
+                    });
+                }
+            }
+            yield return new WaitForSeconds(_config.MoveInterval);
+        }
+    }
+
+    private Vector2Int CalculateFleeDirection(Vector2Int playerPos, Vector2Int currentPos)
+    {
+        // 优先选择与玩家位置相反的方向
+        Vector2Int delta = currentPos - playerPos;
+        return new Vector2Int(
+            delta.x != 0 ? Mathf.Clamp(delta.x, -1, 1) : 0,
+            delta.y != 0 ? Mathf.Clamp(delta.y, -1, 1) : 0
+        );
+    }
 }

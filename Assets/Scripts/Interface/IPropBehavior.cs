@@ -6,7 +6,17 @@ public interface IPropBehavior
     /// 执行道具激活逻辑
     /// </summary>
     /// <param name="prop">道具实例</param>
-    void Execute(ObjectType Type);
+    void Execute(ObjectType Type)
+    {
+        switch (Type)
+        {
+            case ObjectType.ROCK:
+                //
+                break;
+            default:
+                break;
+        }
+    }
 
     /// <summary>
     /// 取消道具效果（沉默）
