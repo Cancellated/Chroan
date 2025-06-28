@@ -80,7 +80,7 @@ public class ConcretePropBehavior : MonoBehaviour, IPropBehavior
         }
     }
     private IEnumerator IceGrow(){
-        //playerController.Setputdown(0.5f);
+        playerController.SetMoveCoolDown(0.5f);//暂缓玩家输入
         yield return new WaitForSeconds(_config._maxGrowTime);
 
     }
