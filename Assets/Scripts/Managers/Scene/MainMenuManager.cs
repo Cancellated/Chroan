@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using MyGame.Events;
+using MyGame.System;
 
 
 namespace MyGame.Managers

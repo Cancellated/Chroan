@@ -1,7 +1,7 @@
 using UnityEngine;
 using Inventory.data;
 using Inventory.view;
-using MyGame.Events;
+using MyGame.System;
 using System;
 
 namespace Inventory.controller
