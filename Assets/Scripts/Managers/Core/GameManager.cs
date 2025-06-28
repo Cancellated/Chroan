@@ -27,7 +27,7 @@ namespace MyGame.Managers
     public class GameManager : Singleton<GameManager>
     {
         private GameControl _inputActions;
-        public SaveData CurrentSaveData { get; private set; }
+        public GameProgress gameProgress { get; private set; }
 
         #region 字段与属性
 
@@ -47,7 +47,7 @@ namespace MyGame.Managers
         {
             base.Awake();
             State = GameState.Init;
-            CurrentSaveData = new SaveData();
+            gameProgress = new GameProgress();
 
         }
 
@@ -151,9 +151,9 @@ namespace MyGame.Managers
         #endregion
 
         #region 数据管理
-        public void GetSaveData()
+        public GameProgress GetGameProgress()
         {
-            CurrentSaveData = SaveLoad.Instance.saveData;
+            return gameProgress;
         }
         #endregion
     }
@@ -168,5 +168,6 @@ namespace MyGame.Managers
     public int currentDialogIndex;
     public Dictionary<int, bool> levelProgressDict = new(); // 每个关卡的完成状态
     public Dictionary<int, ChapterProgress> chapterProgressDict = new();    // 每个章节的进度
+
     }
 }

@@ -35,11 +35,11 @@ namespace Level.Grid
         private void Awake()
         {
             LevelManager = this.gameObject.GetComponent<LevelManager>();
-        }
-
-        private void Start()
-        {
-
+            // 添加网格初始化
+            grid = new GameObjectBase[gridWidth, gridHeight];
+            gridObjectMap = new Dictionary<Vector2Int, List<GameObjectBase>>();
+            
+            LevelManager = this.gameObject.GetComponent<LevelManager>();
         }
 
         /// <summary>
