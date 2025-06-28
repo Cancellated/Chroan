@@ -20,4 +20,7 @@ public class PropObject : InteractiveObject
 
     public override void Activate() => currentBehavior?.Execute(this.Type);
     public override void Silence() => currentBehavior?.Cancel(this.Type);
+
+    
+    
 }

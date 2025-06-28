@@ -2,6 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MyGame.System;
+using Level.Grid;
+using MyGame.Control;
+
+
+namespace Level
+{
 /// <summary>
 /// 管理每个关卡本身逻辑
 /// </summary>
@@ -10,21 +16,13 @@ public class LevelManager : MonoBehaviour
     Dictionary<ObjectType, List<GameObjectBase>> levelDataDict = new Dictionary<ObjectType, List<GameObjectBase>>();
     public GridManager GridManager { get; private set; }
     public RuleManager RuleManager { get; private set; }
+    public PlayerController PlayerController { get; private set; }
+
     private void Awake()
     {
-        GridManager = this.gameObject.GetComponent<GridManager>();
-        RuleManager = this.gameObject.GetComponent<RuleManager>();
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        GridManager = GetComponent<GridManager>();
+        RuleManager = GetComponent<RuleManager>();
+        PlayerController = FindObjectOfType<PlayerController>();
     }
     void init(int level)
     {
@@ -97,4 +95,5 @@ public class LevelManager : MonoBehaviour
     {
         GameEvents.TriggerGameOver(true);
     }
+}
 }
