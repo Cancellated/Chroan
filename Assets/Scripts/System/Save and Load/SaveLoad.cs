@@ -22,7 +22,7 @@ namespace MyGame.Data{
         {
             base.Awake();
             saveFilePath = Path.Combine(Application.streamingAssetsPath, SAVE_FILE_NAME);
-            GameEvents.OnSaveRequest += SaveGame;
+            
         }
         public void SaveGame()
         {
