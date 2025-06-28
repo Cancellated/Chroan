@@ -18,6 +18,13 @@ namespace Level
             OnObjectMoved?.Invoke(eventData);
         }
 
+        public static event Action<ObjectMovedEventData> OnMoveRequest;
+        public static void TriggerMoveRequest(ObjectMovedEventData eventData)
+        {
+            OnMoveRequest?.Invoke(eventData);
+        }
+
+        #region 激活与沉默
         public static event Action<Rule> OnRuleActivated;
         public static void TriggerRuleDeactivated(Rule rule)
         {
@@ -41,7 +48,16 @@ namespace Level
         {
             OnPropActivated?.Invoke(eventData);
         }
+        #endregion
 
+        #region 道具交互
+        //破碎（比如玻璃）
+        public static event Action<InteractiveObject> OnObjectBroken;
+        public static void TriggerObjectBroken(InteractiveObject obj)
+        {
+            OnObjectBroken?.Invoke(obj);
+        }
+        #endregion
     }
 
     /// <summary>

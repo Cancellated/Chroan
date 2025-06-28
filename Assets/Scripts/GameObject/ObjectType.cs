@@ -4,6 +4,7 @@ public enum ObjectType//可交互对象的具体种类
 {
     PLAYER,//玩家
     ROCK,//岩石
+    GLASS,//玻璃
     GOAL,//通关物品
     NOUN,//名词，用于区别“物品”和“文字”
     IS,

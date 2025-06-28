@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-
-namespace Level.Grid
-{
-    
+  
 namespace Level.Grid
 {
     /// <summary>
@@ -112,7 +109,7 @@ namespace Level.Grid
         }
 
         /// <summary>
-        /// 获取网格位置的所有游戏对象（支持重叠物体）////////////////////////////////////////////////////////////
+        /// 获取网格位置的所有游戏对象（支持重叠物体）
         /// </summary>
         public List<GameObjectBase> GetAllObjectsAtPosition(Vector2Int gridPos)
         {
@@ -213,6 +210,7 @@ namespace Level.Grid
         /// 算法：(世界坐标 - 原点偏移) / 单元格尺寸
         /// </summary>
         public Vector2Int WorldToGridPosition(Vector2 worldPos)
+        
         {
             // 坐标标准化计算
             int x = Mathf.FloorToInt((worldPos.x - originPosition.x) / cellSize);
@@ -223,6 +221,51 @@ namespace Level.Grid
                 Mathf.Clamp(x, 0, gridWidth - 1),
                 Mathf.Clamp(y, 0, gridHeight - 1)
             );
+        }
+        
+        /// <summary>
+        /// 获取游戏对象在网格中的位置
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public Vector2Int GetObjectGridPosition(GameObjectBase obj)
+        {
+            return obj.GridPosition;
+        }
+
+        /// <summary>
+        /// 检测指定网格位置是否可移动
+        /// </summary>
+        /// <param name="gridPos"></param>
+        /// <returns></returns>
+        public bool CanMoveTo(Vector2Int gridPos)
+        {
+            if (!IsValidPosition(gridPos)) return false;
+
+            Vector2 worldPos = GridToWorldPosition(gridPos);
+
+            // 区域包含检测（使用多边形碰撞器）
+            if (!IsInWalkableArea(worldPos)) return false;
+
+            // 障碍物检测
+            return !Physics2D.OverlapPoint(worldPos, LayerMask.GetMask("Wall"));
+        }
+        private bool IsInWalkableArea(Vector2 pos)
+        {
+            // 假设场景中有多边形碰撞器标记可行走区域
+            return Physics2D.OverlapPoint(pos, LayerMask.GetMask("WalkableArea"));
+        }
+
+        // 新增移动请求处理
+        private void OnMoveRequest(ObjectMovedEventData data)
+        {
+            if (data.Target.TryGetComponent<GameObjectBase>(out var obj))
+            {
+                if (CanMoveTo(data.NewPos))
+                {
+                    MoveObject(obj, data.NewPos);
+                }
+            }
         }
     }
 }
