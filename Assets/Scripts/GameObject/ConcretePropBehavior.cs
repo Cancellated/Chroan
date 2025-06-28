@@ -3,13 +3,17 @@ using Level;
 using Level.Grid;
 using MyGame.Control;
 using MyGame.Managers;
+using MyGame.System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class ConcretePropBehavior : MonoBehaviour, IPropBehavior
 {
     private Transform _transform;
     private PropBehaviorSO _config;
     private PropObject _propObject;//其父物体
+
+    private GameControl _inputActions;
 
     public Vector2Int GridPosition { get; set; }
 
@@ -31,6 +35,9 @@ public class ConcretePropBehavior : MonoBehaviour, IPropBehavior
         {
             case ObjectType.ROCK:
                 StartCoroutine(FleeFromPlayer());
+                break;
+            case ObjectType.MAILBOX:
+                WaitForStory();
                 break;
         }
     }
@@ -85,6 +92,10 @@ public class ConcretePropBehavior : MonoBehaviour, IPropBehavior
 
     }
 
+    ///<summary>
+    /// 计算逃跑方向
+    /// <returns>逃跑方向</returns>
+    /// <summary>
     private Vector2Int CalculateFleeDirection(Vector2Int playerPos, Vector2Int currentPos)
     {
         // 优先选择与玩家位置相反的方向
@@ -93,6 +104,28 @@ public class ConcretePropBehavior : MonoBehaviour, IPropBehavior
             delta.x != 0 ? Mathf.Clamp(delta.x, -1, 1) : 0,
             delta.y != 0 ? Mathf.Clamp(delta.y, -1, 1) : 0
         );
+    }
+
+
+    ///<summary>
+    /// 触发对话
+    /// <summary>
+    public void WaitForStory()
+    {
+        if(_inputActions.GamePlay.Interact.IsPressed())
+        {
+            // 获取玩家当前位置
+            var playerPos = FindObjectOfType<LevelManager>().PlayerController.CurrentGridPos;
+            
+            // 计算曼哈顿距离
+            int distance = Mathf.Abs(playerPos.x - GridPosition.x) + 
+                          Mathf.Abs(playerPos.y - GridPosition.y);
+    
+            if (distance == 1) // 相邻网格判断
+            {
+                GameEvents.TriggerStoryEnter(_config._storyId);
+            }
+        }
     }
 
 }

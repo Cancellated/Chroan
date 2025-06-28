@@ -270,17 +270,6 @@ namespace MyGame.System
             OnUIInteraction?.Invoke(soundType);
         }
         #endregion
-        #region 数据共享
-        /// <summary>
-        /// 触发保存请求事件
-        /// </summary>
-        public static event Action OnSaveRequest;
 
-        public static void TriggerSaveRequest()
-        {
-            OnSaveRequest?.Invoke();
-        }
-
-        #endregion
     }
 }

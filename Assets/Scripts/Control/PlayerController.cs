@@ -14,10 +14,12 @@ namespace MyGame.Control
         #region 字段
         private GameControl _inputActions;
 
-        private Vector2Int _currentGridPos;
+        public Vector2Int CurrentGridPos { get; private set; }
         private float _moveCooldown = 0.2f;
         private bool _isMoving;
         private LevelManager _levelManager;
+
+    
         #endregion
 
         #region 属性
@@ -73,7 +75,7 @@ namespace MyGame.Control
         {
             _isMoving = true;
             
-            Vector2Int targetPos = _currentGridPos + direction;
+            Vector2Int targetPos = CurrentGridPos + direction;
             
             if (_levelManager.GridManager.CanMoveTo(targetPos))
             {
@@ -84,7 +86,7 @@ namespace MyGame.Control
                 
                 // 更新玩家实际位置（可添加移动动画）
                 transform.position = _levelManager.GridManager.GridToWorldPosition(targetPos);
-                _currentGridPos = targetPos;
+                CurrentGridPos = targetPos;
             }
             
             yield return new WaitForSeconds(_moveCooldown);

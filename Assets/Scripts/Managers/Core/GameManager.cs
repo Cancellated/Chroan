@@ -165,7 +165,7 @@ namespace MyGame.Managers
     {
     public int currentChapterIndex;
     public int currentLevelIndex;
-    public int currentDialogIndex;
+    public int currentStoryIndex;
     public Dictionary<int, bool> levelProgressDict = new(); // 每个关卡的完成状态
     public Dictionary<int, ChapterProgress> chapterProgressDict = new();    // 每个章节的进度
 
