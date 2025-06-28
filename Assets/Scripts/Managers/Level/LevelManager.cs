@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MyGame.System;
+using Level.Grid;
+
 /// <summary>
 /// 管理每个关卡本身逻辑
 /// </summary>
