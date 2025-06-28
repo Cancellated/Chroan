@@ -1,4 +1,5 @@
 using System.Collections;
+//using System.Diagnostics;
 using Level;
 using Level.Grid;
 using MyGame.Control;
@@ -22,7 +23,7 @@ public class ConcretePropBehavior : MonoBehaviour, IPropBehavior
         _config = config;
         GetComponent<SpriteRenderer>().sprite = _config.DisplaySprite;
     }
-    
+
     void Awake()
     {
         _transform = GetComponent<Transform>();
@@ -35,6 +36,7 @@ public class ConcretePropBehavior : MonoBehaviour, IPropBehavior
         {
             case ObjectType.ROCK:
                 StartCoroutine(FleeFromPlayer());
+                Debug.Log("岩石开始逃跑");
                 break;
             case ObjectType.MAILBOX:
                 WaitForStory();
@@ -59,24 +61,25 @@ public class ConcretePropBehavior : MonoBehaviour, IPropBehavior
         var levelManager = FindObjectOfType<LevelManager>();
         var gridManager = levelManager.GridManager;
         var player = levelManager.PlayerController;
-    
+
         while (true)
         {
             Vector2Int playerGridPos = gridManager.WorldToGridPosition(player.transform.position);
             Vector2Int currentGridPos = gridManager.WorldToGridPosition(transform.position);
-    
+
             // 计算与玩家的曼哈顿距离
-            int distance = Mathf.Abs(playerGridPos.x - currentGridPos.x) + 
+            int distance = Mathf.Abs(playerGridPos.x - currentGridPos.x) +
                           Mathf.Abs(playerGridPos.y - currentGridPos.y);
-    
+
             if (distance <= _config.SafeDistance)
             {
                 Vector2Int direction = CalculateFleeDirection(playerGridPos, currentGridPos);
                 Vector2Int targetPos = currentGridPos + direction;
-    
+
                 if (gridManager.CanMoveTo(targetPos))
                 {
-                    LevelEvent.TriggerMoveRequest(new ObjectMovedEventData {
+                    LevelEvent.TriggerMoveRequest(new ObjectMovedEventData
+                    {
                         Target = _propObject,
                         OldPos = currentGridPos,
                         NewPos = targetPos
@@ -86,7 +89,8 @@ public class ConcretePropBehavior : MonoBehaviour, IPropBehavior
             yield return new WaitForSeconds(_config.MoveInterval);
         }
     }
-    private IEnumerator IceGrow(){
+    private IEnumerator IceGrow()
+    {
         //playerController.Setputdown(0.5f);
         yield return new WaitForSeconds(_config._maxGrowTime);
 
@@ -112,15 +116,15 @@ public class ConcretePropBehavior : MonoBehaviour, IPropBehavior
     /// <summary>
     public void WaitForStory()
     {
-        if(_inputActions.GamePlay.Interact.IsPressed())
+        if (_inputActions.GamePlay.Interact.IsPressed())
         {
             // 获取玩家当前位置
             var playerPos = FindObjectOfType<LevelManager>().PlayerController.CurrentGridPos;
-            
+
             // 计算曼哈顿距离
-            int distance = Mathf.Abs(playerPos.x - GridPosition.x) + 
+            int distance = Mathf.Abs(playerPos.x - GridPosition.x) +
                           Mathf.Abs(playerPos.y - GridPosition.y);
-    
+
             if (distance == 1) // 相邻网格判断
             {
                 GameEvents.TriggerStoryEnter(_config._storyId);

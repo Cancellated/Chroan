@@ -5,11 +5,12 @@ TagManager:
   serializedVersion: 2
   tags:
   - WalkableArea
+  - ObjectsParent
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - WalkableArea
   - Water
   - UI
   - 

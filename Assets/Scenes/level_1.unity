@@ -1058,6 +1058,38 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!1 &494593843
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 494593844}
+  m_Layer: 0
+  m_Name: InteractableObjectsParent
+  m_TagString: ObjectsParent
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &494593844
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 494593843}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1574154127}
+  m_Father: {fileID: 733616555}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &676455479
 GameObject:
   m_ObjectHideFlags: 0
@@ -1335,7 +1367,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1574154127}
+  - {fileID: 494593844}
   m_Father: {fileID: 1714206873}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!483693784 &733616556
@@ -3839,7 +3871,7 @@ GameObject:
   - component: {fileID: 746222719}
   m_Layer: 0
   m_Name: Walkable
-  m_TagString: Untagged
+  m_TagString: WalkableArea
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4992,6 +5024,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1574154127}
   - component: {fileID: 1574154128}
+  - component: {fileID: 1574154129}
   m_Layer: 0
   m_Name: Rock
   m_TagString: Untagged
@@ -5012,7 +5045,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 733616555}
+  m_Father: {fileID: 494593844}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1574154128
 SpriteRenderer:
@@ -5066,6 +5099,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1574154129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1574154126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c48ee1cec997a741929b4c8aca52d15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  behaviorConfig: {fileID: 11400000, guid: 3ab895288d41ac647a2cd3cb00758604, type: 2}
 --- !u!1 &1714206871
 GameObject:
   m_ObjectHideFlags: 0
