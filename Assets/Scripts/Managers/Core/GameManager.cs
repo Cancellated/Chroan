@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using MyGame.Data;
 
 namespace MyGame.Managers
 {
@@ -26,6 +27,8 @@ namespace MyGame.Managers
     public class GameManager : Singleton<GameManager>
     {
         private GameControl _inputActions;
+        public SaveData CurrentSaveData { get; private set; }
+
         #region 字段与属性
 
         /// <summary>
@@ -44,9 +47,8 @@ namespace MyGame.Managers
         {
             base.Awake();
             State = GameState.Init;
+            CurrentSaveData = new SaveData();
 
-            // 注册事件监听
-            GameEvents.OnGameOver += GameOver;
         }
 
         /// <summary>
@@ -54,8 +56,6 @@ namespace MyGame.Managers
         /// </summary>
         private void OnDestroy()
         {
-            // 注销事件监听，防止内存泄漏
-            GameEvents.OnGameOver -= GameOver;
         }
 
         /// <summary>
@@ -65,11 +65,6 @@ namespace MyGame.Managers
         {
             TryChangeState(GameState.MainMenu);
             GameEvents.TriggerGameStart();
-        }
-
-        private void Update()
-        {
-
         }
         #endregion
 
@@ -106,7 +101,7 @@ namespace MyGame.Managers
                 [GameState.MainMenu] = new[] { GameState.Playing },
                 [GameState.Playing] = new[] { GameState.Paused, GameState.GameOver },
                 [GameState.Paused] = new[] { GameState.Playing, GameState.GameOver },
-                [GameState.GameOver] = new[] { GameState.Init }
+                [GameState.GameOver] = new[] { GameState.Playing, GameState.MainMenu }
             };
 
             // 检查当前状态是否有合法的转换到下一个状态
@@ -117,8 +112,6 @@ namespace MyGame.Managers
         #endregion
 
         #region 游戏流程控制-注意：其他模块应通过GameEvents触发这些方法，而不是直接调用
-
-
         /// <summary>
         /// 暂停游戏，设置Time.timeScale为0。
         /// </summary>
@@ -157,20 +150,23 @@ namespace MyGame.Managers
 
         #endregion
 
-        #region 控制台调试方法
-
-        /// <summary>
-        /// 控制台下通过ContextMenu按钮快速切换状态。
-        /// </summary>
-        [ContextMenu("测试/重开游戏")]
-        public void TestRestartGame() => GameEvents.TriggerGameStart();
-
-        [ContextMenu("测试/胜利结束")]
-        public void TestWinGame() => GameEvents.TriggerGameOver(true);
-
-        [ContextMenu("测试/失败结束")]
-        public void TestLoseGame() => GameEvents.TriggerGameOver(false);
-
+        #region 数据管理
+        public void GetSaveData()
+        {
+            CurrentSaveData = SaveLoad.Instance.saveData;
+        }
         #endregion
+    }
+
+    /// <summary>
+    /// 游戏进度类
+    /// </summary>
+    public class GameProgress
+    {
+    public int currentChapterIndex;
+    public int currentLevelIndex;
+    public int currentDialogIndex;
+    public Dictionary<int, bool> levelProgressDict = new(); // 每个关卡的完成状态
+    public Dictionary<int, ChapterProgress> chapterProgressDict = new();    // 每个章节的进度
     }
 }

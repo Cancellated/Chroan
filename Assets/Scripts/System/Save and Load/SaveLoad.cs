@@ -4,11 +4,12 @@ using UnityEngine;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using MyGame.System;
+using MyGame.Managers;
 
 /// <summary>
 /// 保存加载管理器，负责游戏数据的保存和加载
 /// </summary>
-namespace MyGame.System{
+namespace MyGame.Data{
     public class SaveLoad : Singleton<SaveLoad>
     {
         private const string SAVE_FILE_NAME = "gameSaveData.chroan";
@@ -20,17 +21,12 @@ namespace MyGame.System{
         {
             base.Awake();
             saveFilePath = Path.Combine(Application.streamingAssetsPath, SAVE_FILE_NAME);
+            GameEvents.OnSaveRequest += SaveGame;
         }
         public void SaveGame()
         {
-            saveData = new()
-            {
-                currentChapterIndex = 0,
-                currentLevelIndex = 0
-            };
-            fileStream = new FileStream(saveFilePath, FileMode.Create);
-            binaryFormatter.Serialize(fileStream, saveData);
-            fileStream.Close();
+            // 获取最新数据
+
         }
         public void LoadGame()
         {

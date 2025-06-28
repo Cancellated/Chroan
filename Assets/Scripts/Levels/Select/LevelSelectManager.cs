@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using MyGame.System;
+using MyGame.Data;
 
 
 namespace MyGame.Managers

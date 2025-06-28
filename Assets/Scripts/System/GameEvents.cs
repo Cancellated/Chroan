@@ -2,6 +2,7 @@ using MyGame.Managers; // 引入游戏状态枚举
 using System;
 using UI.Managers;
 using UnityEngine;
+using MyGame.Data;
 
 namespace MyGame.System
 {
@@ -107,11 +108,6 @@ namespace MyGame.System
         }
 
         #endregion
-
-        #region 关卡选择事件
-
-        #endregion
-
         #region 场景管理事件
 
         /// <summary>
@@ -145,7 +141,28 @@ namespace MyGame.System
         }
 
         #endregion
-
+        #region 对话管理事件
+        /// <summary>
+        /// 处理故事进入事件, 触发对话系统开始
+        /// </summary>
+        /// <param name="storyId"></param>
+        public static event Action<int> OnStoryEnter;
+        public static void TriggerStoryEnter(int storyId)
+        {
+            Debug.Log($"[GameEvents] 触发故事进入事件,storyId: {storyId}");
+            OnStoryEnter?.Invoke(storyId);
+        }
+        
+        /// <summary>
+        /// 处理对话结束事件, 触发对话系统结束
+        /// </summary>
+        public static event Action<int> OnStoryComplete;
+        public static void TriggerStoryComplete(int storyId)
+        {
+            Debug.Log($"[GameEvents] 触发故事完成事件,storyId: {storyId}");
+            OnStoryComplete?.Invoke(storyId);
+        }
+        #endregion
         #region UI事件
 
         /// <summary>
@@ -235,7 +252,6 @@ namespace MyGame.System
 
             #endregion
         #endregion
-
         #region 音效事件
         /// <summary>
         /// 场景音效事件
@@ -253,6 +269,18 @@ namespace MyGame.System
         {
             OnUIInteraction?.Invoke(soundType);
         }
+        #endregion
+        #region 数据共享
+        /// <summary>
+        /// 触发保存请求事件
+        /// </summary>
+        public static event Action OnSaveRequest;
+
+        public static void TriggerSaveRequest()
+        {
+            OnSaveRequest?.Invoke();
+        }
+
         #endregion
     }
 }
