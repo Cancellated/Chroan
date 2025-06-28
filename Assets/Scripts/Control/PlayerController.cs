@@ -83,22 +83,42 @@ namespace MyGame.Control
 
         private IEnumerator MovePlayer(Vector2Int direction)
         {
+            // _isMoving = true;
+
+            // Vector2Int targetPos = CurrentGridPos + direction;
+
+            // if (_levelManager.GridManager.CanMoveTo(targetPos))
+            // {
+            //     // 触发网格移动
+            //     _levelManager.GridManager.MoveObject(GetComponent<Player>(), targetPos);
+
+            //     // 更新玩家实际位置（可添加移动动画）
+            //     transform.position = _levelManager.GridManager.GridToWorldPosition(targetPos);
+            //     CurrentGridPos = targetPos;
+            // }
+
+            // yield return new WaitForSeconds(_moveCooldown);
+            // _isMoving = false;
             _isMoving = true;
 
             Vector2Int targetPos = CurrentGridPos + direction;
+            Player player = GetComponent<Player>();
 
-            if (_levelManager.GridManager.CanMoveTo(targetPos))
+            // 创建移动请求事件数据
+            ObjectMovedEventData moveData = new ObjectMovedEventData
             {
-                // 触发网格移动
-                _levelManager.GridManager.MoveObject(GetComponent<Player>(), targetPos);
+                Target = player,
+                OldPos = CurrentGridPos,
+                NewPos = targetPos
+            };
 
-                // 更新玩家实际位置（可添加移动动画）
-                transform.position = _levelManager.GridManager.GridToWorldPosition(targetPos);
-                CurrentGridPos = targetPos;
-            }
+            // 发送移动请求事件（不再直接调用MoveObject）
+            LevelEvent.TriggerMoveRequest(moveData);
 
+            // 等待移动完成（实际移动由GridManager处理）
             yield return new WaitForSeconds(_moveCooldown);
             _isMoving = false;
+
         }
 
         private Vector2Int GetDiscreteDirection(Vector2 input)

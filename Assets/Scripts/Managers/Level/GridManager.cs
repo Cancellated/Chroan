@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+//using System.Diagnostics;
 using UnityEngine;
 
 
@@ -41,6 +42,12 @@ namespace Level.Grid
             gridObjectMap = new Dictionary<Vector2Int, List<GameObjectBase>>();
 
             LevelManager = this.gameObject.GetComponent<LevelManager>();
+        }
+        void OnEnable(){
+            LevelEvent.OnMoveRequest += OnMoveRequest;
+        }
+        void OnDisable(){
+            LevelEvent.OnMoveRequest -= OnMoveRequest;
         }
 
         /// <summary>
@@ -281,9 +288,32 @@ namespace Level.Grid
         {
             if (data.Target.TryGetComponent<GameObjectBase>(out var obj))
             {
-                if (CanMoveTo(data.NewPos))
+                // 检查目标位置是否有物体
+                GameObjectBase targetObj = GetObjectAtPosition(data.NewPos);
+                
+                // 如果目标位置有WordObject，尝试推动
+                if (targetObj is WordObject wordObj)
+                {
+                    // 计算推动方向（与角色移动方向相同）
+                    Vector2Int pushDirection = data.NewPos - data.OldPos;
+                    Vector2Int newWordPos = data.NewPos + pushDirection;
+                    
+                    // 检查WordObject是否可以移动到新位置
+                    if (CanMoveTo(newWordPos))
+                    {
+                        // 先移动WordObject
+                        MoveObject(wordObj, newWordPos);
+                        // 再移动角色
+                        MoveObject(obj, data.NewPos);
+                    }
+                }
+                // 如果目标位置为空或有其他不可推动物体
+                else if (CanMoveTo(data.NewPos))
                 {
                     MoveObject(obj, data.NewPos);
+                }
+                else{
+                    Debug.Log("目标位置不可移动");
                 }
             }
         }
