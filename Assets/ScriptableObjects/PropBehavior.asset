@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PropBehavior
   m_EditorClassIdentifier: 
   Type: 0
-  _prefab: {fileID: 9130992897322219334, guid: cf8add57bd2edba4687b447a7c727b3e, type: 3}
+  _prefab: {fileID: 4948877003050792193, guid: 5c65cc97f1dda404fbcb283b3d02e574, type: 3}
   _displaySprite: {fileID: 21300000, guid: 98934075484fe314e851f69c33816320, type: 3}
   _moveInterval: 0.5
   _safeDistance: 3
