@@ -53,6 +53,7 @@ namespace Level
                         }
                         levelDataDict[interactableObject.Type].Add(interactableObject);
                         interactableObject.SetGridPosition(GridManager.WorldToGridPosition(interactableObject.transform.position));
+                        GridManager.RegisterObject(interactableObject.GridPosition, interactableObject);
                     }
                 }
 

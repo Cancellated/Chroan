@@ -302,13 +302,17 @@ namespace Level.Grid
                     Vector2Int pushDirection = data.NewPos - data.OldPos;
                     Vector2Int newWordPos = data.NewPos + pushDirection;
 
-                    // 检查WordObject是否可以移动到新位置
-                    if (CanMoveTo(newWordPos))
+                    // 检查WordObject是否可以移动到新位置（新增：检查目标位置是否有物体）
+                    if (CanMoveTo(newWordPos) && GetObjectAtPosition(newWordPos) == null)
                     {
                         // 先移动WordObject
                         MoveObject(wordObj, newWordPos);
                         // 再移动角色
                         MoveObject(obj, data.NewPos);
+                    }
+                    else
+                    {
+                        Debug.Log("推动失败：目标位置有障碍物或超出网格范围");
                     }
                 }
                 // 如果目标位置为空或有其他不可推动物体
