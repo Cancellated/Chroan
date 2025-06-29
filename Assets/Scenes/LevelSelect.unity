@@ -136,10 +136,7 @@ GameObject:
   - component: {fileID: 9691960}
   - component: {fileID: 9691959}
   - component: {fileID: 9691963}
-<<<<<<< HEAD
   - component: {fileID: 9691964}
-=======
->>>>>>> 5dcfe948b2a9dddc57fa5c90dbb939a54b614f4e
   m_Layer: 0
   m_Name: Player
   m_TagString: Interactable
@@ -260,7 +257,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
-<<<<<<< HEAD
 --- !u!50 &9691963
 Rigidbody2D:
   serializedVersion: 4
@@ -289,9 +285,6 @@ Rigidbody2D:
   m_CollisionDetection: 0
   m_Constraints: 0
 --- !u!61 &9691964
-=======
---- !u!61 &9691963
->>>>>>> 5dcfe948b2a9dddc57fa5c90dbb939a54b614f4e
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -320,11 +313,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-<<<<<<< HEAD
   m_IsTrigger: 1
-=======
-  m_IsTrigger: 0
->>>>>>> 5dcfe948b2a9dddc57fa5c90dbb939a54b614f4e
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0.5, y: 0.5}
@@ -439,7 +428,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _targetLevel: {fileID: 11400000, guid: 8f1eee69f0a6431488249a966744ec78, type: 2}
-<<<<<<< HEAD
 --- !u!61 &12417108
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -485,8 +473,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
-=======
->>>>>>> 5dcfe948b2a9dddc57fa5c90dbb939a54b614f4e
 --- !u!1 &60620058
 GameObject:
   m_ObjectHideFlags: 0
@@ -4560,10 +4546,6 @@ GameObject:
   m_Component:
   - component: {fileID: 281689249}
   - component: {fileID: 281689251}
-<<<<<<< HEAD
-=======
-  - component: {fileID: 281689250}
->>>>>>> 5dcfe948b2a9dddc57fa5c90dbb939a54b614f4e
   - component: {fileID: 281689253}
   - component: {fileID: 281689254}
   m_Layer: 0
@@ -4653,7 +4635,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _targetLevel: {fileID: 11400000, guid: 02b34665cf5a8394aaaf4fbeab54eeca, type: 2}
-<<<<<<< HEAD
 --- !u!61 &281689254
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4699,8 +4680,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
-=======
->>>>>>> 5dcfe948b2a9dddc57fa5c90dbb939a54b614f4e
 --- !u!1 &334978176
 GameObject:
   m_ObjectHideFlags: 0
@@ -4780,6 +4759,7 @@ GameObject:
   - component: {fileID: 419989462}
   - component: {fileID: 419989461}
   - component: {fileID: 419989460}
+  - component: {fileID: 419989464}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -4843,6 +4823,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &419989464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 419989459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 186d4126ddb3b3d42a2497467c3e738c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  levelSelectScene: LevelSelect
 --- !u!1 &583566439
 GameObject:
   m_ObjectHideFlags: 0
@@ -7397,7 +7390,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _targetLevel: {fileID: 11400000, guid: f1eea7ad53c56b54d98e18de4f9d4160, type: 2}
-<<<<<<< HEAD
 --- !u!61 &1204147532
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -7443,8 +7435,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
-=======
->>>>>>> 5dcfe948b2a9dddc57fa5c90dbb939a54b614f4e
 --- !u!1 &1527879990
 GameObject:
   m_ObjectHideFlags: 0
@@ -7544,7 +7534,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _targetLevel: {fileID: 11400000, guid: 54637e5feda16ec4f8c141521bff0ac1, type: 2}
-<<<<<<< HEAD
 --- !u!61 &1527879995
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -7590,8 +7579,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
-=======
->>>>>>> 5dcfe948b2a9dddc57fa5c90dbb939a54b614f4e
 --- !u!1 &1631744714
 GameObject:
   m_ObjectHideFlags: 0
@@ -7847,7 +7834,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _targetLevel: {fileID: 11400000, guid: ef4d76a85af6bcf4aad13c1edf80cf75, type: 2}
-<<<<<<< HEAD
 --- !u!61 &1853855577
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -7893,8 +7879,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
-=======
->>>>>>> 5dcfe948b2a9dddc57fa5c90dbb939a54b614f4e
 --- !u!1 &1908022145
 GameObject:
   m_ObjectHideFlags: 0
