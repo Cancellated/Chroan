@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-
-//using System.Diagnostics;
 using Level;
 using Level.Grid;
 using MyGame.Control;
@@ -41,7 +39,9 @@ public class ConcretePropBehavior : MonoBehaviour, IPropBehavior
         {
             case ObjectType.ROCK:
                 StartCoroutine(FleeFromPlayer());
-                Debug.Log("岩石开始逃跑");
+                break;
+            case ObjectType.ICE:
+                StartCoroutine(IceGrow());
                 break;
             case ObjectType.MAILBOX:
                 WaitForStory();
@@ -102,10 +102,78 @@ public class ConcretePropBehavior : MonoBehaviour, IPropBehavior
             yield return new WaitForSeconds(_config.MoveInterval);
         }
     }
-    private IEnumerator IceGrow()
-    {
-        //playerController.Setputdown(0.5f);
-        yield return new WaitForSeconds(_config._maxGrowTime);
+
+    private IEnumerator IceGrow(){
+        var levelManager = FindObjectOfType<LevelManager>();
+        var gridManager = levelManager.GridManager;
+        var player = levelManager.PlayerController;
+        player.SetMoveCoolDown(0.5f); // 暂缓玩家输入
+
+        // 初始位置和生长参数
+        Vector2Int currentGrowPos = gridManager.WorldToGridPosition(transform.position);
+        List<Vector2Int> iceOccupiedPositions = new List<Vector2Int> { currentGrowPos };
+        float startTime = Time.time;
+        Vector2Int growDirection = Vector2Int.right; // 横向生长方向（向右）
+
+        while (Time.time - startTime < _config._maxGrowTime)
+        {
+            Vector2Int nextPos = currentGrowPos + growDirection;
+
+            // 检查是否超出网格边界
+            if (!gridManager.IsValidPosition(nextPos))
+                break;
+
+            // 获取目标位置的所有物体
+            List<GameObjectBase> objectsAtNextPos = gridManager.GetAllObjectsAtPosition(nextPos);
+            bool canGrow = false;
+
+            if (objectsAtNextPos.Count == 0)
+            {
+                // 无障碍物，直接生长
+                canGrow = true;
+            }
+            else if (objectsAtNextPos.Count == 1)
+            {
+                // 单个障碍物，尝试推走
+                GameObjectBase obstacle = objectsAtNextPos[0];
+                Vector2Int pushTargetPos = nextPos + growDirection;
+
+                // 检查推走目标位置是否有效
+                if (gridManager.IsValidPosition(pushTargetPos) && gridManager.CanMoveTo(pushTargetPos))
+                {
+                    // 推走障碍物
+                    gridManager.MoveObject(obstacle, pushTargetPos);
+                    canGrow = true;
+                }
+            }
+            // else: 多个障碍物，无法生长
+
+            if (canGrow)
+            {
+                // 占领新位置
+                iceOccupiedPositions.Add(nextPos);
+                gridManager.RegisterObject(nextPos, _propObject);
+                currentGrowPos = nextPos;
+
+                // 等待生长间隔
+                yield return new WaitForSeconds(_config._growSpeed);
+            }
+            else
+            {
+                // 无法生长，尝试反向生长（如果是首次受阻）
+                if (growDirection == Vector2Int.right)
+                {
+                    growDirection = Vector2Int.left;
+                    currentGrowPos = iceOccupiedPositions[0]; // 回到初始位置
+                    yield return new WaitForSeconds(_config._growSpeed);
+                }
+                else
+                {
+                    // 双向都受阻，停止生长
+                    break;
+                }
+            }
+        }
 
     }
 

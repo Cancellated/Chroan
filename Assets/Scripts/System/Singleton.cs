@@ -6,7 +6,7 @@ namespace MyGame.System
     /// 通用MonoBehaviour单例基类。
     /// 继承此类可快速实现全局唯一的管理器或工具类。
     /// </summary>
-    /// <typeparam name="T">单例类型，需继承自MonoBehaviour</typeparam>
+    /// <typeparam name="T">单例类型，需继承自MonoBehaviour</typeparam>2vvvf
     public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
     {
         #region 字段
