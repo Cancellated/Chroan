@@ -71,11 +71,6 @@ namespace Level.Grid
         /// </summary>
         public void MoveObject(GameObjectBase obj, Vector2Int newGridPos)
         {
-            // 先移除旧位置
-            // if (obj.GridPosition == null)
-            // {
-            //     obj.SetGridPosition(WorldToGridPosition(obj.transform.position));
-            // }
             Vector2Int oldGridPos = obj.GridPosition;
             if (oldGridPos != null)
             {
@@ -180,16 +175,16 @@ namespace Level.Grid
             // 绘制垂直线
             for (int x = 0; x <= gridWidth; x++)
             {
-                Vector3 startPos = new Vector3(originPosition.x + x * cellSize, originPosition.y, 0);
-                Vector3 endPos = new Vector3(originPosition.x + x * cellSize, originPosition.y + gridHeight * cellSize, 0);
+                Vector3 startPos = new(originPosition.x + x * cellSize, originPosition.y, 0);
+                Vector3 endPos = new(originPosition.x + x * cellSize, originPosition.y + gridHeight * cellSize, 0);
                 Gizmos.DrawLine(startPos, endPos);
             }
 
             // 绘制水平线
             for (int y = 0; y <= gridHeight; y++)
             {
-                Vector3 startPos = new Vector3(originPosition.x, originPosition.y + y * cellSize, 0);
-                Vector3 endPos = new Vector3(originPosition.x + gridWidth * cellSize, originPosition.y + y * cellSize, 0);
+                Vector3 startPos = new(originPosition.x, originPosition.y + y * cellSize, 0);
+                Vector3 endPos = new(originPosition.x + gridWidth * cellSize, originPosition.y + y * cellSize, 0);
                 Gizmos.DrawLine(startPos, endPos);
             }
         }
@@ -264,11 +259,13 @@ namespace Level.Grid
                 return false;
             }
 
+
             bool result = !Physics2D.OverlapPoint(worldPos, LayerMask.GetMask("Wall"));
             // 障碍物检测
+            Debug.Log("检测网格位置:" + gridPos + "是否可移动，结果：" + result);
             return result;
 
-            Debug.Log("检测网格位置:" + gridPos + "是否可移动，结果：" + result);
+            
         }
         private bool IsInWalkableArea(Vector2 pos)
         {

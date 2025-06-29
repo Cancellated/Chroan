@@ -20,11 +20,17 @@ public class PropBehaviorSO : ScriptableObject
 
     [Header("邮箱参数")]
     [SerializeField] public int _storyId;
+    [Header("移动区域限制")]
+    [SerializeField] public MovementRestriction _movementRestriction;
+    
+    [Header("能否粘合")]
+    [SerializeField] public bool _isSticky;
 
 
     
     public float MoveInterval => _moveInterval;
     public int SafeDistance => _safeDistance;
+    public MovementRestriction MovementRestriction => _movementRestriction;
 
     public Sprite DisplaySprite => _displaySprite;
 
@@ -34,4 +40,10 @@ public class PropBehaviorSO : ScriptableObject
         instance.Initialize(this); // 注入配置
         return instance;
     }
+}
+
+[System.Serializable]
+public class MovementRestriction {
+    public bool useAreaRestriction;
+    public List<Vector2Int> allowedPositions;
 }
