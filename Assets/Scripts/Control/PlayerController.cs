@@ -77,6 +77,27 @@ namespace MyGame.Control
 
             if (direction != Vector2Int.zero)
             {
+                // 使用 if-else 替代 switch
+                if (direction == Vector2Int.up)
+                {
+                    _animator.Play("WalkUp");
+                }
+                else if (direction == Vector2Int.down)
+                {
+                    _animator.Play("WalkDown");
+                }
+                else if (direction == Vector2Int.left)
+                {
+                    _animator.Play("WalkLeft");
+                }
+                else if (direction == Vector2Int.right)
+                {
+                    _animator.Play("WalkRight");
+                }
+                else
+                {
+                    _animator.Play("Idle");
+                }
                 StartCoroutine(MovePlayer(direction));
             }
             //Debug.Log("玩家移动方向:" + direction);

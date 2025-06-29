@@ -27,7 +27,7 @@ namespace MyGame.Managers
         /// 加载选择的关卡
         /// </summary>
         /// <param name="level"></param>
-        private void LoadSelectedLevel(LevelData level)
+        public void LoadSelectedLevel(LevelData level)
         {
             GameEvents.TriggerSceneLoad(level.sceneName);
         }
