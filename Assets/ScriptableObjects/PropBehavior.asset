@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b8fdf0dd39165ee48a47b7cba8036f25, type: 3}
-  m_Name: Rock
+  m_Name: PropBehavior
   m_EditorClassIdentifier: 
-  Type: 1
-  _prefab: {fileID: 9130992897322219334, guid: cf8add57bd2edba4687b447a7c727b3e, type: 3}
+  Type: 0
+  _prefab: {fileID: 4948877003050792193, guid: 5c65cc97f1dda404fbcb283b3d02e574, type: 3}
   _displaySprite: {fileID: 21300000, guid: 98934075484fe314e851f69c33816320, type: 3}
   _moveInterval: 0.5
   _safeDistance: 3
@@ -21,6 +21,7 @@ MonoBehaviour:
   _maxGrowTime: 2
   _storyId: 0
   _movementRestriction:
-    useAreaRestriction: 1
+    useAreaRestriction: 0
     allowedPositions: []
   _isSticky: 0
+  _propObject: {fileID: 0}

@@ -13,7 +13,7 @@ public class RuleManager : MonoBehaviour
 {
     //private List<Rule> activeRules = new();//已激活的rule
     //private WordObject[] wordObjects;//当前场景内的所有文字
-    private Dictionary<Rule, List<Vector2Int>> activeRules = new();
+    private Dictionary<WordObject, List<Vector2Int>> activeRules = new();
     private Dictionary<Vector2Int, List<GameObjectBase>> ruleAffectedPositions = new Dictionary<Vector2Int, List<GameObjectBase>>();
     public LevelManager LevelManager { get; private set; }
     private GridManager gridManager;
@@ -41,6 +41,7 @@ public class RuleManager : MonoBehaviour
         if (eventdata.Target is WordObject)
         {
             CheckRulesAroundPosition(eventdata.NewPos);
+            CheckRulesAroundPosition(eventdata.OldPos);
         }
 
         // // 如果对象受规则影响，更新其状态
@@ -95,7 +96,7 @@ public class RuleManager : MonoBehaviour
         }
         else
         {
-            TryDeactivateRule(startPos, direction);
+            TryDeactivateRule();
         }
     }
 
@@ -107,17 +108,19 @@ public class RuleManager : MonoBehaviour
             Rule newRule = new Rule(noun.word, verb.Type, property.Type);
 
             // 如果规则未激活
-            if (!activeRules.ContainsKey(newRule))
+            if (!activeRules.ContainsKey(noun))
             {
                 // 激活规则
-                activeRules[newRule] = new List<Vector2Int>();
+                activeRules[noun] = new List<Vector2Int>();
                 ApplyRule(newRule);
                 LevelEvent.TriggerRuleActivated(newRule);
+                for (int i = -1; i <= 1; i++)
+                {
+                    Vector2Int pos = noun.GridPosition;
+                    activeRules[noun].Add(pos);
+                }
             }
 
-            // 记录规则位置
-            Vector2Int ruleCenter = verb.GridPosition;
-            activeRules[newRule].Add(ruleCenter);
         }
     }
 
@@ -160,27 +163,30 @@ public class RuleManager : MonoBehaviour
         }
     }
 
-    private void TryDeactivateRule(Vector2Int position, Vector2Int direction)
+    private void TryDeactivateRule()
     {
-        // 查找此位置相关的规则
-        var rulesToDeactivate = new List<Rule>();
-
-        foreach (var rule in activeRules)
+        foreach (var noun in activeRules.Keys)
         {
-            if (rule.Value.Contains(position))
+            bool isRuleStillValid = true;
+            foreach (var pos in activeRules[noun])
             {
-                rulesToDeactivate.Add(rule.Key);
+                if (!gridManager.GetObjectAtPosition(pos) is WordObject)
+                {
+                    isRuleStillValid = false;
+                    break;
+                }
+            }
+            if (!isRuleStillValid)
+            {
+                Rule rule = new Rule(noun.word, ObjectType.IS, ObjectType.ALIVE);
+                DeactivateRule(rule, noun);
             }
         }
-
-        // 停用无效规则
-        foreach (var rule in rulesToDeactivate)
-        {
-            DeactivateRule(rule);
-        }
     }
+    
+//销毁规则
+    private void DeactivateRule(Rule rule, WordObject noun)
 
-    private void DeactivateRule(Rule rule)
     {
         if(LevelManager.GetGameObjectsOfType(rule.Noun)!=null){
             foreach (var obj in LevelManager.GetGameObjectsOfType(rule.Noun))
@@ -199,7 +205,8 @@ public class RuleManager : MonoBehaviour
         }
 
         // 清理记录
-        activeRules.Remove(rule);
+        activeRules.Remove(noun);
+
         LevelEvent.TriggerRuleDeactivated(rule);
 
         // 清理受影响的规则位置

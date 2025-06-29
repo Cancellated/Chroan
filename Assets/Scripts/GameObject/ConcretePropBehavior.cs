@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+//using System.Diagnostics;
 using Level;
 using Level.Grid;
 using MyGame.Control;
@@ -12,7 +13,7 @@ public class ConcretePropBehavior : MonoBehaviour, IPropBehavior
 {
     private Transform _transform;
     private PropBehaviorSO _config;
-    private PropObject _propObject;//其父物体
+    
     private List<GameObjectBase> _stickedObjects = new();
     private bool _hasSticked = false;
 
@@ -30,8 +31,9 @@ public class ConcretePropBehavior : MonoBehaviour, IPropBehavior
     void Awake()
     {
         _transform = GetComponent<Transform>();
-        _propObject = GetComponent<PropObject>();
+        //_propObject = GetComponent<PropObject>();
     }
+    
 
     public void Execute(ObjectType type)
     {
@@ -60,6 +62,7 @@ public class ConcretePropBehavior : MonoBehaviour, IPropBehavior
         if (type == ObjectType.ROCK)
         {
             StopAllCoroutines();
+            Debug.Log("结束协程");
         }
     }
 
@@ -69,6 +72,7 @@ public class ConcretePropBehavior : MonoBehaviour, IPropBehavior
     /// <returns></returns>
     private IEnumerator FleeFromPlayer()
     {
+        Debug.Log("岩石协程开始");
         var levelManager = FindObjectOfType<LevelManager>();
         var gridManager = levelManager.GridManager;
         var player = levelManager.PlayerController;
@@ -76,24 +80,30 @@ public class ConcretePropBehavior : MonoBehaviour, IPropBehavior
         while (true)
         {
             Vector2Int playerGridPos = gridManager.WorldToGridPosition(player.transform.position);
-            Vector2Int currentGridPos = gridManager.WorldToGridPosition(transform.position);
+            Vector2Int currentGridPos = gridManager.WorldToGridPosition(_config._propObject.gameObject.transform.position);
 
             // 计算与玩家的曼哈顿距离
             int distance = Mathf.Abs(playerGridPos.x - currentGridPos.x) +
                           Mathf.Abs(playerGridPos.y - currentGridPos.y);
-
+            Debug.Log("与玩家的距离：" + distance);
+            Debug.Log("当前位置"+currentGridPos);
+            
             if (distance <= _config.SafeDistance)
             {
                 Vector2Int direction = CalculateFleeDirection(playerGridPos, currentGridPos);
                 Vector2Int targetPos = currentGridPos + direction;
+                Debug.Log("目标位置"+direction);
 
-                if (gridManager.CanMoveTo(targetPos) && 
-                    (_config.MovementRestriction.useAreaRestriction == false ||
-                     _config.MovementRestriction.allowedPositions.Contains(targetPos)))
+                // if (gridManager.CanMoveTo(targetPos) && 
+                //     (_config.MovementRestriction.useAreaRestriction == false ||
+                //      _config.MovementRestriction.allowedPositions.Contains(targetPos)))
+                if(gridManager.CanMoveTo(targetPos))
                 {
+                    Debug.Log("岩石开始逃跑");
                     LevelEvent.TriggerMoveRequest(new ObjectMovedEventData
                     {
-                        Target = _propObject,
+                        
+                        Target = _config._propObject,
                         OldPos = currentGridPos,
                         NewPos = targetPos
                     });
@@ -152,7 +162,7 @@ public class ConcretePropBehavior : MonoBehaviour, IPropBehavior
             {
                 // 占领新位置
                 iceOccupiedPositions.Add(nextPos);
-                gridManager.RegisterObject(nextPos, _propObject);
+                gridManager.RegisterObject(nextPos, _config._propObject);
                 currentGrowPos = nextPos;
 
                 // 等待生长间隔
@@ -181,37 +191,46 @@ public class ConcretePropBehavior : MonoBehaviour, IPropBehavior
     /// 计算逃跑方向
     /// <returns>逃跑方向</returns>
     /// <summary>
-    private Vector2Int CalculateFleeDirection(Vector2Int playerPos, Vector2Int currentPos)
+    private Vector2Int CalculateFleeDirection(Vector2Int playerGridPos, Vector2Int currentGridPos)
     {
-        var gridManager = FindObjectOfType<LevelManager>().GridManager;
+        Vector2Int delta = currentGridPos - playerGridPos;
         
-        // 生成方向候选列表（包含当前计算方向和其他可能方向）
-        Vector2Int[] directions = {
-            currentPos - playerPos, // 原计算方向
+        // 情况1：距离过近（相邻或重叠）
+        if (Mathf.Abs(delta.x) <= 1 && Mathf.Abs(delta.y) <= 1)
+        {
+            // 优先选择与玩家位置差最大的方向逃离
+            if (Mathf.Abs(delta.x) > Mathf.Abs(delta.y))
+                return new Vector2Int((int)Mathf.Sign(delta.x), 0); // 水平逃离（添加int转换）
+            else if (Mathf.Abs(delta.y) > 0)
+                return new Vector2Int(0, (int)Mathf.Sign(delta.y)); // 垂直逃离（添加int转换）
+            else
+                return GetRandomNonZeroDirection(); // 完全重叠时随机方向
+        }
+        // 情况2：正常距离
+        else
+        {
+            // 基于轴对齐方向逃离（保留原有逻辑但确保非零）
+            if (Mathf.Abs(delta.x) > Mathf.Abs(delta.y))
+                return new Vector2Int((int)Mathf.Sign(delta.x), 0); // 添加int转换
+            else
+                return new Vector2Int(0, (int)Mathf.Sign(delta.y)); // 添加int转换
+        }
+    }
+    
+    // 新增：随机非零方向生成器
+    private Vector2Int GetRandomNonZeroDirection()
+    {
+        // 定义4个可能的逃离方向
+        Vector2Int[] directions = new Vector2Int[]
+        {
             Vector2Int.up,
             Vector2Int.down,
             Vector2Int.left,
             Vector2Int.right
         };
-    
-        // 过滤可移动方向并优先选择安全距离外的位置
-        foreach (var dir in directions)
-        {
-            Vector2Int normalizedDir = new(
-                Mathf.Clamp(dir.x, -1, 1),
-                Mathf.Clamp(dir.y, -1, 1));
-                
-            Vector2Int targetPos = currentPos + normalizedDir;
-            
-            if (gridManager.CanMoveTo(targetPos) && 
-                !IsPlayerTooClose(targetPos, playerPos) &&
-                (!_config.MovementRestriction.useAreaRestriction || 
-                 _config.MovementRestriction.allowedPositions.Contains(targetPos)))
-            {
-                return normalizedDir;
-            }
-        }
-        return Vector2Int.zero; // 没有可行方向时保持原位
+        
+        // 随机选择一个方向
+        return directions[Random.Range(0, directions.Length)];
     }
 
     private bool IsPlayerTooClose(Vector2Int targetPos, Vector2Int playerPos)
@@ -280,7 +299,7 @@ public class ConcretePropBehavior : MonoBehaviour, IPropBehavior
         var gridManager = FindObjectOfType<GridManager>();
         if (gridManager.CanMoveTo(targetPos))
         {
-            gridManager.MoveObject(_propObject, targetPos);
+            gridManager.MoveObject(_config._propObject, targetPos);
             foreach (var obj in _stickedObjects)
             {
                 gridManager.MoveObject(obj, targetPos);
