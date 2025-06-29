@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System;
 using UnityEngine;
+//using System.Diagnostics;
 
 
 namespace Level
@@ -16,13 +17,13 @@ namespace Level
         public static void TriggerObjectMoved(ObjectMovedEventData eventData)
         {
             OnObjectMoved?.Invoke(eventData);
+            Debug.Log("触发移动"+eventData.Target.Type);
         }
 
         public static event Action<ObjectMovedEventData> OnMoveRequest;
         public static void TriggerMoveRequest(ObjectMovedEventData eventData)
         {
             OnMoveRequest?.Invoke(eventData);
-            Debug.Log("触发移动请求");
         }
 
         #region 激活与沉默
@@ -36,6 +37,7 @@ namespace Level
         public static void TriggerRuleActivated(Rule rule)
         {
             OnRuleActivated?.Invoke(rule);
+            Debug.Log("触发规则激活");
         }
 
         public static event Action<PropSilencedEventData> OnPropSilenced;

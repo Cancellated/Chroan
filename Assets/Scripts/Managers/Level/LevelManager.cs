@@ -26,8 +26,13 @@ namespace Level
             PlayerController = FindObjectOfType<PlayerController>();
             currentLevel = GameManager.Instance.GetGameProgress().currentLevelIndex;
             // 添加初始化调用
+            
+        }
+        void Start()
+        {
             init(currentLevel);
         }
+
         void init(int level = 0)
         {
             if (GameObject.FindWithTag("ObjectsParent") == null)
@@ -83,7 +88,15 @@ namespace Level
         //获取指定类型（ObjectType）的所有游戏对象
         public GameObjectBase[] GetGameObjectsOfType(ObjectType type)
         {
-            return levelDataDict[type].ToArray();
+            if (levelDataDict.ContainsKey(type))
+            {
+                return levelDataDict[type].ToArray();
+            }
+            else
+            {
+                Debug.LogError("LevelManager: 未找到指定类型的游戏对象"+type);
+                return null;
+            }
         }
 
         public void LevelComplete()

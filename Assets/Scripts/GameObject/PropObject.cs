@@ -12,8 +12,9 @@ public class PropObject : InteractiveObject
     {
         base.Awake();
         currentBehavior = behaviorConfig.CreateBehavior();
+        init();
     }
-    public void init(ObjectType type)
+    public void init()
     {
         this.Type = behaviorConfig.Type;
     }
