@@ -19,7 +19,8 @@ namespace MyGame.UI
         {
             base.Awake();
             
-            startButton.onClick.AddListener(() => GameEvents.TriggerChapterSelectMap());
+            //startButton.onClick.AddListener(() => GameEvents.TriggerChapterSelectMap());
+            startButton.onClick.AddListener(() => OnStartButtonClick());
             settingsButton.onClick.AddListener(() => GameEvents.TriggerSettingsShow(true));
             quitButton.onClick.AddListener(() => Application.Quit());
         }
@@ -51,6 +52,12 @@ namespace MyGame.UI
         {
             settingsButton.gameObject.SetActive(show);
             quitButton.gameObject.SetActive(show);
+        }
+
+        public void OnStartButtonClick()
+        {
+            ShowMainMenu(false);
+            GameEvents.TriggerSceneLoad("LevelSelect");
         }
         #endregion
     }
