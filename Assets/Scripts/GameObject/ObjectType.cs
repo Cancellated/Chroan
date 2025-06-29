@@ -7,6 +7,7 @@ public enum ObjectType//可交互对象的具体种类
     ICE,//玻璃
     MAILBOX,//邮箱
     GOAL,//通关物品
+    SLIME,//粘液
 
     NOUN,//名词，用于区别“物品”和“文字”
     IS,
