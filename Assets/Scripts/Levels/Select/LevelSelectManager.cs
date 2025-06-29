@@ -29,6 +29,16 @@ namespace MyGame.Managers
         /// <param name="level"></param>
         public void LoadSelectedLevel(LevelData level)
         {
+            var progress = GameManager.Instance.GetGameProgress();
+            
+            // 根据关卡解锁状态加载不同贴图
+            if (progress.levelProgressDict.TryGetValue(level.levelIndex - 1, out bool isCompleted))
+            {
+                level.previewImage = isCompleted ? 
+                    level.completedPreview : 
+                    level.uncompletedPreview;
+            }
+            
             GameEvents.TriggerSceneLoad(level.sceneName);
         }
         #endregion

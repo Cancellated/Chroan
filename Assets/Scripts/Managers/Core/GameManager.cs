@@ -27,7 +27,7 @@ namespace MyGame.Managers
     public class GameManager : Singleton<GameManager>
     {
         private GameControl _inputActions;
-        public GameProgress gameProgress { get; private set; }
+        public GameProgress GameProgress { get; private set; }
 
         #region 字段与属性
 
@@ -47,7 +47,8 @@ namespace MyGame.Managers
         {
             base.Awake();
             State = GameState.Init;
-            gameProgress = new GameProgress();
+            GameProgress = new GameProgress();
+            GameEvents.OnCGComplete += HandleCGComplete;
 
         }
 
@@ -57,8 +58,18 @@ namespace MyGame.Managers
         private void Start()
         {
             TryChangeState(GameState.MainMenu);
-            GameEvents.TriggerGameStart();
+            if (!GameProgress.cGProgressDict[0])
+                {
+                    GameEvents.TriggerCGStart(0);
+                    GameProgress.cGProgressDict[0] = true;
+                    SaveLoad.Instance.SaveGame();
+                }
+                else
+                {
+                    GameEvents.TriggerGameStart();
+                }
         }
+
         #endregion
 
         #region 状态切换校验
@@ -138,15 +149,27 @@ namespace MyGame.Managers
                 return;
             Time.timeScale = 0f;
             Debug.Log($"游戏结束，胜利：{isWin}");
-            // TODO: 显示结算界面等
+            
+            if(isWin)
+            {
+                GameProgress.levelProgressDict[GameProgress.currentLevelIndex] = true;
+
+            }
         }
 
+        public void HandleCGComplete(int cgId)
+        {
+            if (cgId == 0)
+            {
+                GameEvents.TriggerGameStart();
+            }
+        }
         #endregion
 
         #region 数据管理
         public GameProgress GetGameProgress()
         {
-            return gameProgress;
+            return GameProgress;
         }
         #endregion
     }
@@ -156,9 +179,10 @@ namespace MyGame.Managers
     /// </summary>
     public class GameProgress
     {
-    public int currentChapterIndex;
-    public int currentLevelIndex;
-    public int currentStoryIndex;
+    public int currentChapterIndex = 0;
+    public int currentLevelIndex = 0;
+    public int currentStoryIndex = 0;
+    public Dictionary<int, bool> cGProgressDict = new();    //CG完成状态
     public Dictionary<int, bool> levelProgressDict = new(); // 每个关卡的完成状态
     public Dictionary<int, ChapterProgress> chapterProgressDict = new();    // 每个章节的进度
 
