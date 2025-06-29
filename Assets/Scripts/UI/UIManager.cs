@@ -70,6 +70,8 @@ namespace UI.Managers
             // 加载界面显隐处理方法
             GameEvents.OnSceneLoad += ShowLoading;
             GameEvents.OnSceneLoadComplete += HideLoading;
+
+            GameEvents.TriggerMainMenuShow(true);
         }
 
         private void OnDestroy()

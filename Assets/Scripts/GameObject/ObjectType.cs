@@ -15,24 +15,6 @@ public enum ObjectType//可交互对象的具体种类
     PUSH//（拓展）
 }
 
-// 新增运算符扩展方法
-// public static class VerbExtensions
-// {
-//     public static int GetPriority(this Verb verb) => verb switch
-//     {
-//         Verb.IS => 2,
-//         Verb.AND => 1,
-//         Verb.OR => 0,
-//         _ => 0
-//     };
-
-//     public static bool Combine(this Verb verb, bool a, bool b) => verb switch
-//     {
-//         Verb.AND => a && b,
-//         Verb.OR => a || b,
-//         _ => false
-//     };
-// }
 public class Property
 {
     public ObjectType Type { get; }

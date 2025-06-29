@@ -16,12 +16,14 @@ namespace MyGame.Managers
         #region 生命周期
         void OnEnable()
         {
-            GameEvents.OnSceneLoad += LoadSceneAsync;
+            GameEvents.OnSceneLoad += LoadScene;
+            GameEvents.OnSceneLoadComplete += UnloadPreviousScene;
         }
 
         void OnDisable()
         {
-            GameEvents.OnSceneLoad -= LoadSceneAsync;
+            GameEvents.OnSceneLoad -= LoadScene;
+            GameEvents.OnSceneLoadComplete -= UnloadPreviousScene;
         }
         #endregion
 
@@ -39,13 +41,6 @@ namespace MyGame.Managers
 
         private IEnumerator LoadSceneAsyncCoroutine(string sceneName)
         {
-            //卸载当前场景
-            if (SceneManager.GetActiveScene().name != levelSelectScene)
-            {
-                GameEvents.TriggerSceneUnload(SceneManager.GetActiveScene().name);
-                yield return SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
-            }
-
             // 异步加载新场景
             var asyncLoad = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
             while (!asyncLoad.isDone)
@@ -62,14 +57,26 @@ namespace MyGame.Managers
         }
 
         /// <summary>
+        /// 卸载上一个场景
+        /// </summary>
+        /// <param name="sceneName"></param>
+        private void UnloadPreviousScene(string sceneName)
+        {
+            // 检查当前是否有活动场景
+            if (SceneManager.GetActiveScene().name != levelSelectScene)
+            {
+                // 卸载当前活动场景
+                SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
+            }
+        }
+
+        /// <summary>
         /// 直接加载场景（同步）
         /// </summary>
         /// <param name="sceneName">场景名称</param>
         public void LoadScene(string sceneName)
         {
-            GameEvents.TriggerSceneLoad(sceneName);
             SceneManager.LoadScene(sceneName);
-            GameEvents.TriggerSceneLoadComplete(sceneName);
         }
         #endregion
     }

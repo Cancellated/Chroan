@@ -52,13 +52,6 @@ namespace MyGame.Managers
         }
 
         /// <summary>
-        /// 销毁时注销事件监听，防止内存泄漏。
-        /// </summary>
-        private void OnDestroy()
-        {
-        }
-
-        /// <summary>
         /// 启动时自动进入主菜单。
         /// </summary>
         private void Start()
