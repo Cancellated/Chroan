@@ -62,7 +62,6 @@ namespace Level.Grid
             // 检查坐标是否在网格范围内
             if (!IsValidPosition(gridPos))
             {
-                Debug.LogWarning($"坐标 {gridPos} 超出网格范围");
                 return;
             }
 
@@ -82,8 +81,6 @@ namespace Level.Grid
         /// </summary>
         public void MoveObject(GameObjectBase obj, Vector2Int newGridPos)
         {
-            Debug.Log("目标位置正在移动" + newGridPos);
-
             Vector2Int oldGridPos = obj.GridPosition;
             if (oldGridPos != null)
             {
@@ -280,7 +277,7 @@ namespace Level.Grid
 
             bool result = !Physics2D.OverlapPoint(worldPos, LayerMask.GetMask("Wall"));
             // 障碍物检测
-            Debug.Log("检测网格位置:" + gridPos + "是否可移动，结果：" + result);
+            //Debug.Log("检测网格位置:" + gridPos + "是否可移动，结果：" + result);
             return result;
 
             
@@ -324,11 +321,9 @@ namespace Level.Grid
                 else if (CanMoveTo(data.NewPos))
                 {
                     MoveObject(obj, data.NewPos);
-                    Debug.Log("目标位置可移动");
                 }
                 else
                 {
-                    Debug.Log("目标位置不可移动");
                 }
             }
         }

@@ -27,18 +27,22 @@ public class PropBehaviorSO : ScriptableObject
     [SerializeField] public bool _isSticky;
 
 
-    
+    public PropObject _propObject;//其父物体
     public float MoveInterval => _moveInterval;
     public int SafeDistance => _safeDistance;
     public MovementRestriction MovementRestriction => _movementRestriction;
 
     public Sprite DisplaySprite => _displaySprite;
 
-    public IPropBehavior CreateBehavior()
+    public IPropBehavior CreateBehavior(Transform parent)
     {
-        var instance = Instantiate(_prefab).GetComponent<ConcretePropBehavior>();
+        var instance = Instantiate(_prefab, parent).GetComponent<ConcretePropBehavior>();
         instance.Initialize(this); // 注入配置
         return instance;
+    }
+    public void SetParentProp(PropObject propObject)
+    {
+        _propObject = propObject;
     }
 }
 
