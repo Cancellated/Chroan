@@ -109,9 +109,8 @@ namespace Level.Grid
             // 注册到新位置
             obj.SetGridPosition(newGridPos);
             RegisterObject(newGridPos, obj);
-
             obj.gameObject.transform.position = GridToWorldPosition(newGridPos);
-            obj.SetGridPosition(newGridPos);
+            //obj.SetGridPosition(newGridPos);
 
             LevelEvent.TriggerObjectMoved(new ObjectMovedEventData
             {

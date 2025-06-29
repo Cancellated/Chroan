@@ -24,7 +24,7 @@ public abstract class GameObjectBase : MonoBehaviour
     public void SetGridPosition(Vector2Int newPosition)
     {
         GridPosition = newPosition;
-        transform.position = new Vector3(newPosition.x, newPosition.y, 0);
+        //transform.position = new Vector2(newPosition.x, newPosition.y);
     }
 
     // 规则应用时的回调
