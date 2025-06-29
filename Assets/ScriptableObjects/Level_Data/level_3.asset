@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelName: level_3
   sceneName: level_3
-  previewImage: {fileID: 0}
+  previewImage: {fileID: -981970470, guid: c92c1223c2fe405428724a940b45a737, type: 3}
   isUnlocked: 0
   levelIndex: 0
+  uncompletedPreview: {fileID: -981970470, guid: c92c1223c2fe405428724a940b45a737, type: 3}
+  completedPreview: {fileID: 763510536, guid: c92c1223c2fe405428724a940b45a737, type: 3}

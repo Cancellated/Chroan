@@ -138,7 +138,12 @@ namespace MyGame.Managers
                 return;
             Time.timeScale = 0f;
             Debug.Log($"游戏结束，胜利：{isWin}");
-            // TODO: 显示结算界面等
+            
+            if(isWin)
+            {
+                gameProgress.levelProgressDict[gameProgress.currentLevelIndex] = true;
+
+            }
         }
 
         #endregion
@@ -156,9 +161,9 @@ namespace MyGame.Managers
     /// </summary>
     public class GameProgress
     {
-    public int currentChapterIndex;
-    public int currentLevelIndex;
-    public int currentStoryIndex;
+    public int currentChapterIndex = 0;
+    public int currentLevelIndex = 0;
+    public int currentStoryIndex = 0;
     public Dictionary<int, bool> levelProgressDict = new(); // 每个关卡的完成状态
     public Dictionary<int, ChapterProgress> chapterProgressDict = new();    // 每个章节的进度
 

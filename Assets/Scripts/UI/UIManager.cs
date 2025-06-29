@@ -27,6 +27,7 @@ namespace UI.Managers
 
         [Header("动画组件")]
         public Animator inventoryAnimator;  // 背包动画组件
+        public Animator loadingAnimator;  // 加载界面动画组件
 
         #endregion
 
@@ -165,10 +166,10 @@ namespace UI.Managers
                     SetCanvasGroup(consolePanel, show);
                     break;
                 case UIState.Inventory:
-                    ShowCanvasGroup(inventoryPanel, show);
+                    ShowInventory(show);
                     break;
                 case UIState.Loading:
-                    ShowCanvasGroup(loadingPanel, show);
+                    LoadingAnime(show);
                     break;
             }
         }
@@ -283,6 +284,11 @@ namespace UI.Managers
         {
             SetUIState(UIState.Console, show);
         }
+
+        private void OnMenuShow(UIState state, bool show)
+        {
+            SetUIState(state, show);
+        }
         /// <summary>
         /// 使用动画状态机管理背包显隐，制作独特动画
         /// <param name="IsOpen">动画状态机参数</param>
@@ -293,7 +299,7 @@ namespace UI.Managers
             if (inventoryAnimator != null)
             {
                 inventoryAnimator.SetBool("IsOpen", show);
-                SetUIState(UIState.Inventory, show);
+                
             }
             else
             {
@@ -301,12 +307,15 @@ namespace UI.Managers
                 ShowCanvasGroup(inventoryPanel, show);
             }
         }
-        
-        private void OnMenuShow(UIState state, bool show)
-        {
-            SetUIState(state, show);
-        }
 
+
+        /// <summary>
+        /// 加载界面动画
+        /// </summary>
+        private void LoadingAnime(bool show)
+        {
+            ShowCanvasGroup(loadingPanel, show);
+        }
         #endregion
 
         #region 调试方法
