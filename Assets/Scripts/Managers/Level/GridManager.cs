@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using MyGame.Control;
+
 //using System.Diagnostics;
 using UnityEngine;
 
@@ -105,6 +107,9 @@ namespace Level.Grid
             obj.SetGridPosition(newGridPos);
             RegisterObject(newGridPos, obj);
             obj.gameObject.transform.position = GridToWorldPosition(newGridPos);
+            if(obj is Player){
+                PlayerController.Instance.SetCurrentGridPos(newGridPos);
+            }
             //obj.SetGridPosition(newGridPos);
 
             LevelEvent.TriggerObjectMoved(new ObjectMovedEventData

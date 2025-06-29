@@ -118,7 +118,7 @@ namespace MyGame.Control
             // 更新玩家实际位置（可添加移动动画）
 
             //transform.position = _levelManager.GridManager.GridToWorldPosition(targetPos);
-            CurrentGridPos = targetPos;
+            //CurrentGridPos = targetPos;
 
             // 等待移动完成（实际移动由GridManager处理）
             yield return new WaitForSeconds(_moveCooldown);
@@ -192,6 +192,10 @@ namespace MyGame.Control
         public float GetMoveCoolDown()
         {
             return _moveCooldown;
+        }
+        public void SetCurrentGridPos(Vector2Int value)
+        {
+            CurrentGridPos = value;
         }
         #endregion
 
