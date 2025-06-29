@@ -9,13 +9,17 @@ public enum WordType//文字的词性
 }
 public class WordObject : GameObjectBase
 {
-    public WordType WordType { get; private set; } // 文字类型（名词、动词、属性）
+    public WordType WordType ; // 文字类型（名词、动词、属性）
     public string DisplayText { get; private set; } // 代表的文本内容（后期拓展选项）
+
+    [SerializeField]
+    public ObjectType word;
 
 
     protected override void Start()
     {
-        WordType = DetermineWordType(); // 根据Type确定文字类型
+        Type = DetermineWordType(WordType);
+        //WordType = DetermineWordType(); // 根据Type确定文字类型
         SetTag();
     }
 
@@ -42,18 +46,18 @@ public class WordObject : GameObjectBase
 
 
     //通过文字内容确定词性
-    private WordType DetermineWordType()
+    private ObjectType DetermineWordType(WordType wordType)
     {
-        switch (Type)
+        switch (wordType)
         {
-            case ObjectType.NOUN:
-                return WordType.NOUN;
-            case ObjectType.IS:
-                return WordType.VERB;
-            case ObjectType.ALIVE:
-                return WordType.ADJECTIVE;
+            case WordType.NOUN:
+                return ObjectType.NOUN;
+            case WordType.VERB:
+                return ObjectType.IS;
+            case WordType.ADJECTIVE:
+                return ObjectType.ALIVE;
             default:
-                return WordType.NOUN;
+                return ObjectType.NOUN;
         }
     }
 

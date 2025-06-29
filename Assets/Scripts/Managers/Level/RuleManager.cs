@@ -104,7 +104,7 @@ public class RuleManager : MonoBehaviour
         // 验证规则语法：名词+动词+属性
         if (noun.WordType == WordType.NOUN && verb.WordType == WordType.VERB && property.WordType == WordType.ADJECTIVE)
         {
-            Rule newRule = new Rule(noun.Type, verb.Type, property.Type);
+            Rule newRule = new Rule(noun.word, verb.Type, property.Type);
 
             // 如果规则未激活
             if (!activeRules.ContainsKey(newRule))
@@ -128,6 +128,11 @@ public class RuleManager : MonoBehaviour
     {
         // 获取所有目标对象
         var targetObjects = LevelManager.GetGameObjectsOfType(rule.Noun);
+        if (targetObjects == null)
+        {
+            Debug.Log("RuleManager: 未找到指定类型的游戏对象");
+            return;
+        }
 
         foreach (var obj in targetObjects)
         {
@@ -177,8 +182,8 @@ public class RuleManager : MonoBehaviour
 
     private void DeactivateRule(Rule rule)
     {
-        // 撤销规则效果
-        foreach (var obj in LevelManager.GetGameObjectsOfType(rule.Noun))
+        if(LevelManager.GetGameObjectsOfType(rule.Noun)!=null){
+            foreach (var obj in LevelManager.GetGameObjectsOfType(rule.Noun))
         {
             LevelEvent.TriggerRuleDeactivated(rule);
 
@@ -202,6 +207,9 @@ public class RuleManager : MonoBehaviour
         {
             positionList.RemoveAll(obj => obj.Type == rule.Noun);
         }
+        }
+        // 撤销规则效果
+        
     }
 
     private List<WordObject> GetWordObjectsAtPosition(Vector2Int gridPos)

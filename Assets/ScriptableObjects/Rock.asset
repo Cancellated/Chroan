@@ -13,3 +13,14 @@ MonoBehaviour:
   m_Name: Rock
   m_EditorClassIdentifier: 
   Type: 1
+  _prefab: {fileID: 0}
+  _displaySprite: {fileID: 21300000, guid: 98934075484fe314e851f69c33816320, type: 3}
+  _moveInterval: 0.5
+  _safeDistance: 3
+  _growSpeed: 0.2
+  _maxGrowTime: 2
+  _storyId: 0
+  _movementRestriction:
+    useAreaRestriction: 1
+    allowedPositions: []
+  _isSticky: 0

@@ -30,7 +30,7 @@ public class ConcretePropBehavior : MonoBehaviour, IPropBehavior
     void Awake()
     {
         _transform = GetComponent<Transform>();
-        _propObject = GetComponentInParent<PropObject>();
+        _propObject = GetComponent<PropObject>();
     }
 
     public void Execute(ObjectType type)
