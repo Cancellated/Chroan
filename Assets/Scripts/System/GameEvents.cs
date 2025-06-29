@@ -270,6 +270,23 @@ namespace MyGame.System
             OnUIInteraction?.Invoke(soundType);
         }
         #endregion
-
+        #region CG事件
+        /// <summary>
+        /// CG开始事件
+        /// </summary>
+        public static event Action<int> OnCGStart;
+        public static void TriggerCGStart(int cgId)
+        {
+            OnCGStart?.Invoke(cgId);
+        }
+        /// <summary>
+        /// CG结束事件
+        /// </summary>
+        public static event Action<int> OnCGComplete;
+        public static void TriggerCGComplete(int cgId)
+        {
+            OnCGComplete?.Invoke(cgId);
+        }
+        #endregion
     }
 }

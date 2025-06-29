@@ -1429,6 +1429,8 @@ GameObject:
   - component: {fileID: 1819441704}
   - component: {fileID: 1819441707}
   - component: {fileID: 1819441708}
+  - component: {fileID: 1819441710}
+  - component: {fileID: 1819441709}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -1516,6 +1518,57 @@ MonoBehaviour:
   cellSize: 1
   originPosition: {x: 0, y: 0}
   gridColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+--- !u!328 &1819441709
+VideoPlayer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1819441703}
+  m_Enabled: 1
+  m_VideoClip: {fileID: 0}
+  m_TargetCameraAlpha: 1
+  m_TargetCamera3DLayout: 0
+  m_TargetCamera: {fileID: 0}
+  m_TargetTexture: {fileID: 0}
+  m_TimeReference: 0
+  m_TargetMaterialRenderer: {fileID: 0}
+  m_TargetMaterialProperty: <noninit>
+  m_RenderMode: 2
+  m_AspectRatio: 2
+  m_DataSource: 0
+  m_TimeUpdateMode: 2
+  m_PlaybackSpeed: 1
+  m_AudioOutputMode: 2
+  m_TargetAudioSources:
+  - {fileID: 0}
+  m_DirectAudioVolumes:
+  - 1
+  m_Url: 
+  m_EnabledAudioTracks: 01
+  m_DirectAudioMutes: 00
+  m_ControlledAudioTrackCount: 1
+  m_PlayOnAwake: 1
+  m_SkipOnDrop: 1
+  m_Looping: 0
+  m_WaitForFirstFrame: 1
+  m_FrameReadyEventEnabled: 0
+  m_VideoShaders: []
+--- !u!114 &1819441710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1819441703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8447850966182e4a835e3dcfe5b95ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  videoPlayer: {fileID: 1819441709}
+  cgClips:
+  - {fileID: 32900000, guid: 24390c8d3254e7241ab8496b6861fcc3, type: 3}
 --- !u!1 &1872282963
 GameObject:
   m_ObjectHideFlags: 0

@@ -204,7 +204,7 @@ namespace Dialog
             
             if(_currentDialogs.Count == 0)
             {
-                GameEvents.TriggerStoryComplete(GameManager.Instance.gameProgress.currentStoryIndex);
+                GameEvents.TriggerStoryComplete(GameManager.Instance.GameProgress.currentStoryIndex);
             }
         }
 
