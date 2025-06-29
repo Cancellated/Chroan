@@ -17,7 +17,6 @@ namespace Level
         public static void TriggerObjectMoved(ObjectMovedEventData eventData)
         {
             OnObjectMoved?.Invoke(eventData);
-            Debug.Log("触发移动"+eventData.Target.Type);
         }
 
         public static event Action<ObjectMovedEventData> OnMoveRequest;

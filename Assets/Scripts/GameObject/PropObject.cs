@@ -11,7 +11,8 @@ public class PropObject : InteractiveObject
     protected override void Awake()
     {
         base.Awake();
-        currentBehavior = behaviorConfig.CreateBehavior();
+        currentBehavior = behaviorConfig.CreateBehavior(transform);
+        behaviorConfig.SetParentProp(this);
         init();
     }
     public void init()
