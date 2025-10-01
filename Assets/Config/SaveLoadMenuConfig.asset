@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64dbf0cf252445f47bcdffbf99bf9ccf, type: 3}
+  m_Name: SaveLoadMenuConfig
+  m_EditorClassIdentifier: 
+  EnableAutoSave: 1
+  AutoSaveInterval: 300
+  MaxAutoSaveCount: 3
+  MaxManualSaveCount: 10
+  SaveSlotPrefabPath: Prefabs/UI/SaveSlot
+  MenuAnimationDuration: 0.3
+  SlotAnimationDuration: 0.2
+  NewGameConfirmText: "\u786E\u5B9A\u8981\u521B\u5EFA\u65B0\u6E38\u620F\u5417\uFF1F\u8FD9\u5C06\u8986\u76D6\u5F53\u524D\u8FDB\u5EA6\u3002"
+  DeleteSaveConfirmText: "\u786E\u5B9A\u8981\u5220\u9664\u8BE5\u5B58\u6863\u5417\uFF1F\u6B64\u64CD\u4F5C\u4E0D\u53EF\u6062\u590D\u3002"
+  LoadSaveConfirmText: "\u786E\u5B9A\u8981\u52A0\u8F7D\u8BE5\u5B58\u6863\u5417\uFF1F\u8FD9\u5C06\u8986\u76D6\u5F53\u524D\u8FDB\u5EA6\u3002"
+  SelectSlotSound: {fileID: 0}
+  SaveGameSound: {fileID: 0}
+  LoadGameSound: {fileID: 0}
+  DeleteGameSound: {fileID: 0}
+  CreateNewGameSound: {fileID: 0}
+  SelectedSlotColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  AutoSaveSlotColor: {r: 0, g: 0, b: 1, a: 1}
+  ManualSaveSlotColor: {r: 0, g: 1, b: 0, a: 1}
+  EmptySlotColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}

@@ -1,32 +1,56 @@
 using UnityEngine;
 using Inventory.data;
 using Inventory.view;
-using MyGame.System;
+using MyGame.Events;
 using System;
+using MyGame.UI;
 
 namespace Inventory.controller
 {
-    public class InventoryController : Singleton<InventoryController>
+    /// <summary>
+    /// 背包控制器类，负责处理背包的逻辑和数据管理
+    /// 作为MVC架构中的控制器层
+    /// </summary>
+    public class InventoryController : MonoBehaviour
     {    
         #region 字段
+        [Tooltip("背包数据模型")]
         [SerializeField] private InventoryModel model;
+        [Tooltip("背包视图")]
         [SerializeField] private InventoryView view;
+        [Tooltip("物品数据库")]
         [SerializeField] private ItemDatabase itemDatabase;
         private GameControl _inputActions;
         #endregion
+        
         #region 生命周期
-        protected override void Awake()
+        /// <summary>
+        /// 初始化控制器
+        /// </summary>
+        private void Awake()
         {
-            base.Awake();
             _inputActions = new GameControl();
             Initialize();
         }
         
+        /// <summary>
+        /// 初始化模型和视图
+        /// </summary>
         private void Initialize()
         {
-            // 初始化模型和视图
+            // 初始化模型
             model = new InventoryModel();
-            view.Initialize(model.Capacity);
+            
+            // 绑定控制器到视图
+            if (view != null)
+            {
+                view.BindController(this);
+                view.InitializeInventory(model.Capacity);
+            }
+            else
+            {
+                Debug.LogError("InventoryController: 视图未找到");
+            }
             
             // 注册事件
             model.OnInventoryChanged += UpdateInventoryView;
@@ -35,6 +59,25 @@ namespace Inventory.controller
             AddTestItems();
         }
         
+        /// <summary>
+        /// 启用控制器
+        /// </summary>
+        private void OnEnable()
+        {
+            _inputActions.Enable();
+        }
+        
+        /// <summary>
+        /// 禁用控制器
+        /// </summary>
+        private void OnDisable()
+        {
+            _inputActions.Disable();
+        }
+        
+        /// <summary>
+        /// 添加测试物品
+        /// </summary>
         private void AddTestItems()
         {
             // 添加测试物品
@@ -43,12 +86,15 @@ namespace Inventory.controller
             AddItem("gold_coin", 42);
         }
         
+        /// <summary>
+        /// 更新函数，处理输入检测
+        /// </summary>
         private void Update()
         {
             // 使用InputSystem检测快捷键
             if (_inputActions.GamePlay.Inventory.triggered)
             {
-                GameEvents.TriggerInventoryShow(true);
+                GameEvents.TriggerMenuShow(UIType.Inventory, true);
             }
         }
         #endregion
@@ -119,10 +165,22 @@ namespace Inventory.controller
             view.UpdateCapacity(model.Items.Count, model.Capacity);
         }
 
+        /// <summary>
+        /// 使用物品
+        /// </summary>
+        /// <param name="currentItem">要使用的物品数据</param>
         internal void UseItem(ItemData currentItem)
         {
-            throw new NotImplementedException();
-        }
+            if (currentItem != null && currentItem.Type == ItemData.ItemType.Consumable)
+            {
+                // 实际使用逻辑
+                Debug.Log($"使用物品: {currentItem.Name}");
+                
+                // 移除一个物品
+                RemoveItem(currentItem.ID, 1);
+            }
+        
         #endregion
     }
+}
 }

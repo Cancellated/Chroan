@@ -75,8 +75,7 @@ namespace Inventory.view
         {
             if (currentItem != null)
             {
-                // 通过InventoryController单例显示当前物品的详细信息
-                InventoryController.Instance?.UseItem(currentItem);
+                view.UseItem(currentItem);
             }
         }
         

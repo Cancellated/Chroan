@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: UI
+  m_EditorClassIdentifier: 
+  m_GroupName: UI
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 7cc7899dbe730fa46949013946aefbf2
+  m_SerializeEntries:
+  - m_GUID: 258c49c24908a4944ac504017b7ff4d4
+    m_Address: Assets/Art Asset/Animes/Loading/Loading.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Animes
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3c00ccc22a8229d4c9b0e0439b30aa0f
+    m_Address: Assets/Art Asset/Prefabs/UI/Debug/DebugConsole.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Prefabs
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 61cbbcb34fac11a4ba2ff461275b3ba5
+    m_Address: Assets/Art Asset/Prefabs/UI/Loading/LoadingScreen.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Prefabs
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7d7b21654ba635046bff2a6e7eb7def5
+    m_Address: Assets/Art Asset/Animes/Loading/HideLoading.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Animes
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a045f6281080a484f9666ad5d8bd2389
+    m_Address: Assets/Art Asset/Animes/Loading/LoadingScreen.controller
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Animes
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a09f6ea8de86cb64ba63f73cdbd54a0f
+    m_Address: Assets/Art Asset/Prefabs/UI/HUD/HUD.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Prefabs
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 479e68dad06909d48b76cdd2ede0fc0b, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: e4d880ca995aeab41af3cbab490d2d22, type: 2}
+    - {fileID: 11400000, guid: 685667e9e86eeaf4fb1038ebb6933bfd, type: 2}

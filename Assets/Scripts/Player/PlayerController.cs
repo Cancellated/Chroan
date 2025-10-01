@@ -1,0 +1,83 @@
+using UnityEngine;
+using MyGame.Managers;
+
+namespace MyGame.Control
+{
+    /// <summary>
+    /// 玩家控制器，负责处理玩家的游戏玩法输入
+    /// 与UIController分离，专注于玩家控制逻辑
+    /// </summary>
+    public class PlayerController
+    {
+        #region 字段
+        private GameControl _inputActions;
+        #endregion
+
+        #region 属性
+        /// <summary>
+        /// 玩家输入
+        /// </summary>
+        public GameControl InputActions
+        {
+            get { return _inputActions; }
+        }
+        #endregion
+
+        #region 生命周期
+        private void Awake()
+        {
+            // 获取InputManager中的InputActions实例
+            if (InputManager.Instance != null)
+            {
+                _inputActions = InputManager.Instance.InputActions;
+            }
+            else
+            {
+                Debug.LogError("PlayerController: InputManager instance not found!");
+                _inputActions = new GameControl();
+                _inputActions.GamePlay.Enable();
+            }
+        }
+        #endregion
+
+        #region 玩家控制
+        /// <summary>
+        /// 玩家移动
+        /// </summary>
+        public Vector2 PlayerMove()
+        {
+            return _inputActions.GamePlay.Move.ReadValue<Vector2>();
+        }
+        
+        /// <summary>
+        /// 玩家交互
+        /// </summary>
+        /// <returns></returns>
+        public bool PlayerInteract()
+        {
+            return _inputActions.GamePlay.Interact.triggered;
+        }
+        
+        /// <summary>
+        /// 玩家攻击
+        /// </summary>
+        /// <returns></returns>
+        public bool PlayerAttack()
+        {
+            return _inputActions.GamePlay.Attack.triggered;
+        }
+        
+        /// <summary>
+        /// 玩家跳跃
+        /// </summary>
+        /// <returns></returns>
+        public bool PlayerJump()
+        {
+            return _inputActions.GamePlay.Jump.triggered;
+        }
+        
+        //TodoList:根据玩家控制实现移动,交互,攻击,跳跃等功能
+        #endregion
+
+    }
+}

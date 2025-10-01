@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65b9fc9957624ca4c93ff747f233de57, type: 3}
+  m_Name: PanelAddressConfig
+  m_EditorClassIdentifier: 
+  _panelMappings:
+  - panelType: 6
+    addressableAddress: Assets/Art Asset/Prefabs/UI/Loading/LoadingScreen.prefab
+  - panelType: 5
+    addressableAddress: Assets/Art Asset/Prefabs/UI/HUD/HUD.prefab

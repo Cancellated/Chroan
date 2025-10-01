@@ -5,10 +5,10 @@ using Inventory.data;
 
 
 namespace Inventory{
-/// <summary>
-/// 可序列化的背包数据模型，负责管理物品的添加、移除和位置交换
-/// </summary>
-[System.Serializable]
+    /// <summary>
+    /// 可序列化的背包数据模型，负责管理物品的添加、移除和位置交换
+    /// </summary>
+    [Serializable]
     public class InventoryModel
     {
         #region 字段
@@ -20,7 +20,7 @@ namespace Inventory{
         /// <summary>
         /// 当前背包中的物品列表
         /// </summary>
-        private List<InventoryItem> items = new();
+        private readonly List<InventoryItem> items = new();
         
         /// <summary>
         /// 只读的物品列表访问接口
@@ -121,12 +121,9 @@ namespace Inventory{
             if (fromIndex < 0 || fromIndex >= items.Count || 
                 toIndex < 0 || toIndex >= items.Count)
                 return;
-            
+
             // 交换物品位置
-            var temp = items[fromIndex];
-            items[fromIndex] = items[toIndex];
-            items[toIndex] = temp;
-            
+            (items[toIndex], items[fromIndex]) = (items[fromIndex], items[toIndex]);
             OnInventoryChanged?.Invoke();
         }
     }
