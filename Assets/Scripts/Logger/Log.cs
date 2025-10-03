@@ -10,7 +10,7 @@ namespace Logger
         public static LogLevel currentLogLevel = LogLevel.Info;
 
         // 基础日志方法
-        public static void Info(string module, string message, UnityEngine.Object context = null)
+        public static void Info(string module, string message, Object context = null)
         {
             if (currentLogLevel < LogLevel.Info) return;
 
@@ -23,7 +23,7 @@ namespace Logger
         }
 
         // 警告日志
-        public static void Warning(string module, string message, UnityEngine.Object context = null)
+        public static void Warning(string module, string message, Object context = null)
 
         {
             if (currentLogLevel < LogLevel.Warning) return;
@@ -37,7 +37,7 @@ namespace Logger
         }
 
         // 错误日志
-        public static void Error(string module, string message, UnityEngine.Object context = null)
+        public static void Error(string module, string message, Object context = null)
 
         {
             if (currentLogLevel < LogLevel.Error) return;
@@ -51,7 +51,7 @@ namespace Logger
         }
 
         // 带颜色的日志
-        public static void LogColor(string module, string message, Color color, UnityEngine.Object context = null)
+        public static void LogColor(string module, string message, Color color, Object context = null)
 
         {
             if (currentLogLevel < LogLevel.Info) return;
@@ -68,7 +68,7 @@ namespace Logger
         // 调试专用日志（只在开发版本显示）
         [System.Diagnostics.Conditional("UNITY_EDITOR")]
         [System.Diagnostics.Conditional("DEVELOPMENT_BUILD")]
-        public static void DebugLog(string module, string message, UnityEngine.Object context = null)
+        public static void DebugLog(string module, string message, Object context = null)
 
         {
             string formatted = $"[{module}] 🐞 {message}";
