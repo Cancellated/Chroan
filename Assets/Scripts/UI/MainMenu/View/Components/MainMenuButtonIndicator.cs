@@ -3,6 +3,7 @@ using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using UnityEngine;
 using Logger;
+using MyGame.Managers;
 
 namespace MyGame.UI.MainMenu.View.Components
 {
@@ -99,7 +100,13 @@ namespace MyGame.UI.MainMenu.View.Components
         {
             if (MenuButtons.Count == 0 || Time.time - m_lastInputTime < m_inputSensitivity) return;
 
-            float verticalInput = Input.GetAxisRaw("Vertical");
+            // 使用InputSystem获取垂直输入
+            float verticalInput = 0f;
+            if (InputManager.Instance != null && InputManager.Instance.InputActions != null)
+            {
+                // 使用Navigate操作的y分量作为垂直输入
+                verticalInput = InputManager.Instance.InputActions.UI.Navigate.ReadValue<Vector2>().y;
+            }
             
             if (verticalInput > 0f) // W键或上箭头
             {
@@ -114,12 +121,26 @@ namespace MyGame.UI.MainMenu.View.Components
                 m_lastInputTime = Time.time;
             }
 
-            // 处理回车键或空格键确认选择
-            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
+            // 处理确认选择
+            if (InputManager.Instance != null && InputManager.Instance.InputActions != null)
             {
-                if (MenuButtons.Count > 0 && MenuButtons[m_selectedButtonIndex] != null)
+                if (InputManager.Instance.InputActions.UI.Submit.triggered)
                 {
-                    MenuButtons[m_selectedButtonIndex].onClick.Invoke();
+                    if (MenuButtons.Count > 0 && MenuButtons[m_selectedButtonIndex] != null)
+                    {
+                        MenuButtons[m_selectedButtonIndex].onClick.Invoke();
+                    }
+                }
+            }
+            else
+            {
+                // 降级处理：使用旧的输入系统
+                if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
+                {
+                    if (MenuButtons.Count > 0 && MenuButtons[m_selectedButtonIndex] != null)
+                    {
+                        MenuButtons[m_selectedButtonIndex].onClick.Invoke();
+                    }
                 }
             }
         }
