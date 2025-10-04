@@ -1,7 +1,9 @@
-using Logger;
 using MyGame.UI.MainMenu.Controller;
+using MyGame.UI.MainMenu.View.Components;
 using UnityEngine;
 using UnityEngine.UI;
+using Logger;
+using MyGame.Managers;
 
 namespace MyGame.UI.MainMenu.View
 {
@@ -28,6 +30,15 @@ namespace MyGame.UI.MainMenu.View
         [Tooltip("退出游戏按钮")]
         [SerializeField] private Button m_exitGameButton;
 
+        [Header("键盘选择系统")]
+        [Tooltip("是否启用键盘选择")]
+        [SerializeField] private bool m_enableKeyboardSelection = true;
+
+        [Tooltip("选择指示器对象")]
+        [SerializeField] private GameObject m_selectionIndicator;
+
+        private MainMenuButtonIndicator m_buttonSelector;
+
         private const string LOG_MODULE = LogModules.MAINMENU;
 
         #endregion
@@ -45,6 +56,59 @@ namespace MyGame.UI.MainMenu.View
             
             // 绑定按钮事件
             BindButtonEvents();
+            
+            // 初始化键盘选择系统
+            InitializeKeyboardSelection();
+        }
+        
+        /// <summary>
+        /// 初始化键盘选择系统
+        /// </summary>
+        private void InitializeKeyboardSelection()
+        {
+            if (!m_enableKeyboardSelection) return;
+
+            // 切换到UI输入模式，确保在主菜单场景中使用正确的输入处理
+            if (InputManager.Instance != null)
+            {
+                InputManager.Instance.SwitchToUIMode();
+            }
+            else
+            {
+                Log.Warning(LOG_MODULE, "InputManager实例不存在，无法切换到UI输入模式！");
+            }
+
+            // 获取或添加选择器组件
+            m_buttonSelector = gameObject.GetComponent<MainMenuButtonIndicator>();
+            if (m_buttonSelector == null)
+            {
+                m_buttonSelector = gameObject.AddComponent<MainMenuButtonIndicator>();
+            }
+
+            // 设置已存在的选择指示器
+            if (m_selectionIndicator != null)
+            {
+                m_buttonSelector.SelectionIndicator = m_selectionIndicator;
+            }
+            else
+            {
+                Log.Warning(LOG_MODULE, "没有指定选择指示器对象！");
+            }
+
+            // 添加按钮到选择器
+            if (m_buttonSelector != null)
+            {
+                // 清除现有按钮列表
+                m_buttonSelector.MenuButtons.Clear();
+                
+                // 添加所有有效按钮
+                if (m_startGameButton != null)
+                    m_buttonSelector.AddButton(m_startGameButton);
+                if (m_loadGameButton != null)
+                    m_buttonSelector.AddButton(m_loadGameButton);
+                if (m_exitGameButton != null)
+                    m_buttonSelector.AddButton(m_exitGameButton);
+            }
         }
 
         /// <summary>
@@ -84,6 +148,18 @@ namespace MyGame.UI.MainMenu.View
                 m_canvasGroup.blocksRaycasts = true;
             }
             Log.Info(LOG_MODULE, "显示主菜单面板");
+            
+            // 激活键盘选择系统
+            if (m_enableKeyboardSelection && m_buttonSelector != null)
+            {
+                m_buttonSelector.enabled = true;
+                
+                // 确保选择第一个可用按钮
+                if (m_buttonSelector.MenuButtons.Count > 0)
+                {
+                    m_buttonSelector.SelectedButtonIndex = 0;
+                }
+            }
         }
 
         /// <summary>
@@ -97,6 +173,12 @@ namespace MyGame.UI.MainMenu.View
                 m_canvasGroup.alpha = 0f;
                 m_canvasGroup.interactable = false;
                 m_canvasGroup.blocksRaycasts = false;
+            }
+            
+            // 禁用键盘选择系统
+            if (m_enableKeyboardSelection && m_buttonSelector != null)
+            {
+                m_buttonSelector.enabled = false;
             }
         }
 
@@ -116,8 +198,17 @@ namespace MyGame.UI.MainMenu.View
         {
             base.Cleanup();
             
-            // 清理资源
+            // 解绑按钮事件
             UnbindButtonEvents();
+            
+            // 清理选择器组件
+            if (m_buttonSelector != null && 
+            m_buttonSelector.gameObject == gameObject &&
+            m_buttonSelector.GetInstanceID() == GetInstanceIDOfComponent(gameObject.GetComponent<MainMenuButtonIndicator>()))
+            {
+                Destroy(m_buttonSelector);
+                m_buttonSelector = null;
+            }
         }
 
         #endregion
@@ -159,6 +250,16 @@ namespace MyGame.UI.MainMenu.View
             if (m_exitGameButton != null)
                 m_exitGameButton.onClick.RemoveListener(OnExitGameButtonClick);
         }
+        
+        /// <summary>
+        /// 获取组件的InstanceID，如果组件为null则返回-1
+        /// </summary>
+        /// <param name="component">要获取ID的组件</param>
+        /// <returns>组件的InstanceID或-1</returns>
+        private int GetInstanceIDOfComponent(Component component)
+        {
+            return component != null ? component.GetInstanceID() : -1;
+        }
 
         #endregion
 
@@ -169,6 +270,12 @@ namespace MyGame.UI.MainMenu.View
         /// </summary>
         private void OnStartGameButtonClick()
         {
+            // 触发按钮点击动画
+            if (m_startGameButton != null)
+            {
+                m_startGameButton.TriggerClickAnimation();
+            }
+            
             if (m_controller != null)
             {
                 m_controller.OnStartGame();
@@ -180,6 +287,12 @@ namespace MyGame.UI.MainMenu.View
         /// </summary>
         private void OnSettingsButtonClick()
         {
+            // 触发按钮点击动画
+            if (m_settingsButton != null)
+            {
+                m_settingsButton.TriggerClickAnimation();
+            }
+            
             if (m_controller != null)
             {
                 m_controller.OnShowSettings();
@@ -191,6 +304,12 @@ namespace MyGame.UI.MainMenu.View
         /// </summary>
         private void OnAboutButtonClick()
         {
+            // 触发按钮点击动画
+            if (m_aboutButton != null)
+            {
+                m_aboutButton.TriggerClickAnimation();
+            }
+            
             if (m_controller != null)
             {
                 m_controller.OnShowAbout();
@@ -202,6 +321,12 @@ namespace MyGame.UI.MainMenu.View
         /// </summary>
         private void OnExitGameButtonClick()
         {
+            // 触发按钮点击动画
+            if (m_exitGameButton != null)
+            {
+                m_exitGameButton.TriggerClickAnimation();
+            }
+            
             if (m_controller != null)
             {
                 m_controller.OnExitGame();

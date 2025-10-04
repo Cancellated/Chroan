@@ -1331,7 +1331,7 @@ MonoBehaviour:
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 108
+  m_fontSizeMax: 144
   m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
@@ -1387,8 +1387,9 @@ GameObject:
   - component: {fileID: 516504358}
   - component: {fileID: 516504360}
   - component: {fileID: 516504359}
+  - component: {fileID: 516504362}
   m_Layer: 0
-  m_Name: Selector
+  m_Name: Indicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1411,7 +1412,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -500, y: 120}
-  m_SizeDelta: {x: 64, y: 64}
+  m_SizeDelta: {x: 48, y: 48}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &516504359
 MonoBehaviour:
@@ -1451,6 +1452,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 516504357}
   m_CullTransparentMesh: 1
+--- !u!114 &516504362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 516504357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b19b4f74a0a1e614bbea23982b8f71d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_selectionIndicator: {fileID: 516504357}
+  m_inputSensitivity: 0.2
+  m_horizontalOffset: 32
+  m_verticalOffset: -10
 --- !u!1 &516726237
 GameObject:
   m_ObjectHideFlags: 0
@@ -1900,6 +1917,7 @@ GameObject:
   - component: {fileID: 627441766}
   - component: {fileID: 627441765}
   - component: {fileID: 627441768}
+  - component: {fileID: 627441769}
   m_Layer: 0
   m_Name: LoadBtn
   m_TagString: Untagged
@@ -2022,6 +2040,27 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!95 &627441769
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 627441763}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 00b279256dcae664eba23cef26e639a1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!224 &729793137 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4507331629817200524, guid: c63e9921af36e2843a91de8416f83557, type: 3}
@@ -2905,7 +2944,7 @@ MonoBehaviour:
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 108
+  m_fontSizeMax: 144
   m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
@@ -3819,7 +3858,7 @@ MonoBehaviour:
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 108
+  m_fontSizeMax: 144
   m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
@@ -4190,7 +4229,7 @@ MonoBehaviour:
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 108
+  m_fontSizeMax: 144
   m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
@@ -5270,6 +5309,8 @@ GameObject:
   - component: {fileID: 2093567223069031842}
   - component: {fileID: 49030981160032052}
   - component: {fileID: 1976105920821063711}
+  - component: {fileID: 2093567223069031843}
+  - component: {fileID: 2093567223069031844}
   m_Layer: 0
   m_Name: SettingsBtn
   m_TagString: Untagged
@@ -5723,6 +5764,7 @@ GameObject:
   - component: {fileID: 6797016121572050248}
   - component: {fileID: 6225043288533467203}
   - component: {fileID: 8487565055136727077}
+  - component: {fileID: 8487565055136727078}
   m_Layer: 0
   m_Name: ExitBtn
   m_TagString: Untagged
@@ -5782,6 +5824,39 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 16649106037647423}
   m_CullTransparentMesh: 1
+--- !u!95 &2093567223069031843
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 16649106037647423}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 00b279256dcae664eba23cef26e639a1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!225 &2093567223069031844
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 16649106037647423}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!222 &2353485734099417663
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6010,7 +6085,7 @@ MonoBehaviour:
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 108
+  m_fontSizeMax: 144
   m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
@@ -6277,6 +6352,7 @@ GameObject:
   - component: {fileID: 3731806852806636278}
   - component: {fileID: 5210851866665888099}
   - component: {fileID: 5210851866665888100}
+  - component: {fileID: 5210851866665888101}
   m_Layer: 0
   m_Name: StartGameBtn
   m_TagString: Untagged
@@ -6437,6 +6513,27 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!95 &5210851866665888101
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4698781261572444818}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 00b279256dcae664eba23cef26e639a1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!224 &5417669485283872683
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6449,11 +6546,11 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
+  - {fileID: 516504358}
   - {fileID: 1419172781}
   - {fileID: 469412305785158544}
   - {fileID: 5961001309551923207}
   - {fileID: 790850243}
-  - {fileID: 516504358}
   m_Father: {fileID: 3210142754466551425}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -6565,7 +6662,7 @@ MonoBehaviour:
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 108
+  m_fontSizeMax: 144
   m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
@@ -6875,6 +6972,8 @@ MonoBehaviour:
   m_settingsButton: {fileID: 1976105920821063711}
   m_aboutButton: {fileID: 349526873652592939}
   m_exitGameButton: {fileID: 6225043288533467203}
+  m_enableKeyboardSelection: 1
+  m_selectionIndicator: {fileID: 516504357}
 --- !u!114 &7147059253465359644
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7168,6 +7267,8 @@ GameObject:
   - component: {fileID: 2818381347667132401}
   - component: {fileID: 3310022429617331566}
   - component: {fileID: 349526873652592939}
+  - component: {fileID: 8123423119162709660}
+  - component: {fileID: 8123423119162709661}
   m_Layer: 0
   m_Name: AboutBtn
   m_TagString: Untagged
@@ -7175,6 +7276,39 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
+--- !u!95 &8123423119162709660
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8123423119162709659}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 00b279256dcae664eba23cef26e639a1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!225 &8123423119162709661
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8123423119162709659}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!114 &8312484966629396542
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7288,6 +7422,27 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!95 &8487565055136727078
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1955010521740636067}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 00b279256dcae664eba23cef26e639a1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &8496167532632999154
 GameObject:
   m_ObjectHideFlags: 0
