@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: 7cc7899dbe730fa46949013946aefbf2
   m_currentHash:
     serializedVersion: 2
-    Hash: 3cc754054eeccd4bdfe0e3c03435de9f
+    Hash: a67f4f943c9503d6710ba1d7e5199d65
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 0
   m_BundleLocalCatalog: 0
@@ -46,6 +46,7 @@ MonoBehaviour:
   m_GroupAssets:
   - {fileID: 11400000, guid: dd072a6231babc4488b5cf4e9d4a9898, type: 2}
   - {fileID: 11400000, guid: 499e09c053cc28442b8bda0a20709fd6, type: 2}
+  - {fileID: 11400000, guid: 57fa5714801780d4dadfc32390544ec6, type: 2}
   m_BuildSettings:
     m_CompileScriptsInVirtualMode: 0
     m_CleanupStreamingAssetsAfterBuilds: 1
@@ -89,6 +90,7 @@ MonoBehaviour:
     - default
     - Prefabs
     - Animes
+    - Tiles
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 7cd92c22e9e5a7241a8b217ac85d9ae9, type: 2}
