@@ -110,15 +110,15 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 1d9559d7f970a6f4bf1c1febb859bca1_0
+      name: Player_Movedown_1
       rect:
         serializedVersion: 2
         x: 0
         y: 192
         width: 64
         height: 64
-      alignment: 6
-      pivot: {x: 0, y: 0}
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -131,15 +131,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 1d9559d7f970a6f4bf1c1febb859bca1_1
+      name: Player_Movedown_2
       rect:
         serializedVersion: 2
         x: 64
         y: 192
         width: 64
         height: 64
-      alignment: 6
-      pivot: {x: 0, y: 0}
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -152,36 +152,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 1d9559d7f970a6f4bf1c1febb859bca1_2
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 192
-        width: 64
-        height: 64
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 8c919b59c2e7b9d428a7fbac966b8226
-      internalID: 63243607
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 1d9559d7f970a6f4bf1c1febb859bca1_3
+      name: Player_Movedown_3
       rect:
         serializedVersion: 2
         x: 192
         y: 192
         width: 64
         height: 64
-      alignment: 6
-      pivot: {x: 0, y: 0}
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -194,15 +173,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 1d9559d7f970a6f4bf1c1febb859bca1_4
+      name: Player_Moveleft_1
       rect:
         serializedVersion: 2
         x: 0
         y: 128
         width: 64
         height: 64
-      alignment: 6
-      pivot: {x: 0, y: 0}
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -215,15 +194,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 1d9559d7f970a6f4bf1c1febb859bca1_5
+      name: Player_Moveleft_2
       rect:
         serializedVersion: 2
         x: 64
         y: 128
         width: 64
         height: 64
-      alignment: 6
-      pivot: {x: 0, y: 0}
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -236,15 +215,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 1d9559d7f970a6f4bf1c1febb859bca1_6
+      name: Player_Moveleft_3
       rect:
         serializedVersion: 2
         x: 128
         y: 128
         width: 64
         height: 64
-      alignment: 6
-      pivot: {x: 0, y: 0}
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -257,15 +236,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 1d9559d7f970a6f4bf1c1febb859bca1_7
+      name: Player_Moveright_1
       rect:
         serializedVersion: 2
         x: 192
         y: 128
         width: 64
         height: 64
-      alignment: 6
-      pivot: {x: 0, y: 0}
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -278,15 +257,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 1d9559d7f970a6f4bf1c1febb859bca1_8
+      name: Player_Moveright_2
       rect:
         serializedVersion: 2
         x: 0
         y: 64
         width: 64
         height: 64
-      alignment: 6
-      pivot: {x: 0, y: 0}
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -299,15 +278,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 1d9559d7f970a6f4bf1c1febb859bca1_9
+      name: Player_Moveright_3
       rect:
         serializedVersion: 2
         x: 64
         y: 64
         width: 64
         height: 64
-      alignment: 6
-      pivot: {x: 0, y: 0}
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -320,15 +299,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 1d9559d7f970a6f4bf1c1febb859bca1_10
+      name: Player_Moveup_1
       rect:
         serializedVersion: 2
         x: 128
         y: 64
         width: 64
         height: 64
-      alignment: 6
-      pivot: {x: 0, y: 0}
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -341,15 +320,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 1d9559d7f970a6f4bf1c1febb859bca1_11
+      name: Player_Moveup_2
       rect:
         serializedVersion: 2
         x: 192
         y: 64
         width: 64
         height: 64
-      alignment: 6
-      pivot: {x: 0, y: 0}
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -362,15 +341,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 1d9559d7f970a6f4bf1c1febb859bca1_12
+      name: Player_Moveup_3
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 64
         height: 64
-      alignment: 6
-      pivot: {x: 0, y: 0}
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -378,6 +357,27 @@ TextureImporter:
       bones: []
       spriteID: 384cb0d0a9e5b354c81db28f8853352f
       internalID: -1018725479
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Player_Idle
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d203ec9fa0c20834788212615a0a9f0b
+      internalID: 2083052229
       vertices: []
       indices: 
       edges: []
@@ -393,19 +393,19 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      1d9559d7f970a6f4bf1c1febb859bca1_0: -876303831
-      1d9559d7f970a6f4bf1c1febb859bca1_1: -1693497448
-      1d9559d7f970a6f4bf1c1febb859bca1_10: 817770111
-      1d9559d7f970a6f4bf1c1febb859bca1_11: 1894714757
-      1d9559d7f970a6f4bf1c1febb859bca1_12: -1018725479
-      1d9559d7f970a6f4bf1c1febb859bca1_2: 63243607
-      1d9559d7f970a6f4bf1c1febb859bca1_3: 46714524
-      1d9559d7f970a6f4bf1c1febb859bca1_4: -648923419
-      1d9559d7f970a6f4bf1c1febb859bca1_5: -1984165338
-      1d9559d7f970a6f4bf1c1febb859bca1_6: 1987460565
-      1d9559d7f970a6f4bf1c1febb859bca1_7: -1969269905
-      1d9559d7f970a6f4bf1c1febb859bca1_8: 1564319287
-      1d9559d7f970a6f4bf1c1febb859bca1_9: 1745591586
+      Player_Idle: 2083052229
+      Player_Movedown_1: -876303831
+      Player_Movedown_2: -1693497448
+      Player_Movedown_3: 46714524
+      Player_Moveleft_1: -648923419
+      Player_Moveleft_2: -1984165338
+      Player_Moveleft_3: 1987460565
+      Player_Moveright_1: -1969269905
+      Player_Moveright_2: 1564319287
+      Player_Moveright_3: 1745591586
+      Player_Moveup_1: 817770111
+      Player_Moveup_2: 1894714757
+      Player_Moveup_3: -1018725479
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -38,5 +38,8 @@ namespace Logger
         public const string PLAYER = "Player";
         public const string AUDIO = "Audio";
         public const string INVENTORY = "Inventory";
+
+        // 地图模块
+        public const string TILEMAP = "TileMap";
     }
 }

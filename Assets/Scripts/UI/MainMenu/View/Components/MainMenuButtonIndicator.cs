@@ -196,6 +196,27 @@ namespace MyGame.UI.MainMenu.View.Components
             if (button != null && !MenuButtons.Contains(button))
             {
                 MenuButtons.Add(button);
+                // 添加按钮点击事件监听
+                button.onClick.AddListener(() => OnButtonClicked(button));
+            }
+        }
+
+        /// <summary>
+        /// 处理按钮点击事件，更新指示器位置
+        /// </summary>
+        /// <param name="clickedButton">被点击的按钮</param>
+        private void OnButtonClicked(Button clickedButton)
+        {
+            if (MenuButtons.Contains(clickedButton))
+            {
+                // 获取被点击按钮在列表中的索引
+                int clickedButtonIndex = MenuButtons.IndexOf(clickedButton);
+                if (clickedButtonIndex != -1)
+                {
+                    // 更新选中索引并设置位置已初始化标志
+                    m_hasInitializedPosition = true;
+                    SelectedButtonIndex = clickedButtonIndex;
+                }
             }
         }
 
@@ -207,6 +228,8 @@ namespace MyGame.UI.MainMenu.View.Components
         {
             if (button != null && MenuButtons.Contains(button))
             {
+                // 移除按钮点击事件监听
+                button.onClick.RemoveListener(() => OnButtonClicked(button));
                 MenuButtons.Remove(button);
                 // 如果移除的是当前选中的按钮，则重新选择一个
                 if (m_selectedButtonIndex >= MenuButtons.Count && MenuButtons.Count > 0)

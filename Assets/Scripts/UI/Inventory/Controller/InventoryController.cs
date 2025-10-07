@@ -4,6 +4,7 @@ using Inventory.view;
 using MyGame.Events;
 using System;
 using MyGame.UI;
+using Logger;
 
 namespace Inventory.controller
 {
@@ -49,7 +50,7 @@ namespace Inventory.controller
             }
             else
             {
-                Debug.LogError("InventoryController: 视图未找到");
+                Log.Error(LogModules.GAMEMANAGER, "InventoryController: 视图未找到", this);
             }
             
             // 注册事件
@@ -130,7 +131,7 @@ namespace Inventory.controller
             if (item != null && item.Type == ItemData.ItemType.Consumable)
             {
                 // 实际使用逻辑
-                Debug.Log($"使用物品: {item.Name}");
+                Log.Info(LogModules.PLAYER, $"使用物品: {item.Name}", this);
                 
                 // 移除一个物品
                 RemoveItem(item.ID, 1);
@@ -141,7 +142,7 @@ namespace Inventory.controller
         public void ShowItemDetails(ItemData item)
         {
             // 实际项目中这里会显示一个详情面板
-            Debug.Log($"显示物品详情: {item.Name}\n{item.Description}");
+            Log.DebugLog(LogModules.UI, $"显示物品详情: {item.Name}\n{item.Description}", this);
         }
         
         // 更新视图
@@ -174,7 +175,7 @@ namespace Inventory.controller
             if (currentItem != null && currentItem.Type == ItemData.ItemType.Consumable)
             {
                 // 实际使用逻辑
-                Debug.Log($"使用物品: {currentItem.Name}");
+                Log.Info(LogModules.PLAYER, $"使用物品: {currentItem.Name}", this);
                 
                 // 移除一个物品
                 RemoveItem(currentItem.ID, 1);

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using Logger;
 
 namespace MyGame.UI
 {
@@ -48,7 +49,7 @@ namespace MyGame.UI
                 catch (Exception ex)
                 {
                     // 记录初始化失败的异常信息
-                    UnityEngine.Debug.LogError($"Failed to initialize model {GetType().Name}: {ex.Message}");
+                    Log.Error(LogModules.GAMEMANAGER, $"Failed to initialize model {GetType().Name}: {ex.Message}", null);
                     // 保持IsInitialized为false，允许后续重试初始化
                 }
             }

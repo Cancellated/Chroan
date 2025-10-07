@@ -8,6 +8,8 @@ TagManager:
   - ObjectsParent
   - Interactable
   - Word
+  - Title
+  - Obstacle
   layers:
   - Default
   - TransparentFX
@@ -15,8 +17,8 @@ TagManager:
   - WalkableArea
   - Water
   - UI
-  - 
-  - 
+  - Wall
+  - Ground
   - 
   - 
   - 
@@ -53,6 +55,9 @@ TagManager:
     locked: 0
   - name: Ground
     uniqueID: 2227187777
+    locked: 0
+  - name: Player
+    uniqueID: 405377233
     locked: 0
   - name: Wall
     uniqueID: 3276699985

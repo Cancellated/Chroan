@@ -29,6 +29,9 @@ namespace MyGame.UI.MainMenu.View
         
         [Tooltip("退出游戏按钮")]
         [SerializeField] private Button m_exitGameButton;
+        
+        [Tooltip("测试场景按钮")]
+        [SerializeField] private Button m_testSceneButton;
 
         [Header("键盘选择系统")]
         [Tooltip("是否启用键盘选择")]
@@ -106,6 +109,8 @@ namespace MyGame.UI.MainMenu.View
                     m_buttonSelector.AddButton(m_startGameButton);
                 if (m_loadGameButton != null)
                     m_buttonSelector.AddButton(m_loadGameButton);
+                if (m_testSceneButton != null)
+                    m_buttonSelector.AddButton(m_testSceneButton);
                 if (m_exitGameButton != null)
                     m_buttonSelector.AddButton(m_exitGameButton);
             }
@@ -231,6 +236,9 @@ namespace MyGame.UI.MainMenu.View
             
             if (m_exitGameButton != null)
                 m_exitGameButton.onClick.AddListener(OnExitGameButtonClick);
+            
+            if (m_testSceneButton != null)
+                m_testSceneButton.onClick.AddListener(OnTestSceneButtonClick);
         }
 
         /// <summary>
@@ -249,6 +257,9 @@ namespace MyGame.UI.MainMenu.View
             
             if (m_exitGameButton != null)
                 m_exitGameButton.onClick.RemoveListener(OnExitGameButtonClick);
+            
+            if (m_testSceneButton != null)
+                m_testSceneButton.onClick.RemoveListener(OnTestSceneButtonClick);
         }
         
         /// <summary>
@@ -330,6 +341,23 @@ namespace MyGame.UI.MainMenu.View
             if (m_controller != null)
             {
                 m_controller.OnExitGame();
+            }
+        }
+        
+        /// <summary>
+        /// 测试场景按钮点击事件
+        /// </summary>
+        private void OnTestSceneButtonClick()
+        {
+            // 触发按钮点击动画
+            if (m_testSceneButton != null)
+            {
+                m_testSceneButton.TriggerClickAnimation();
+            }
+            
+            if (m_controller != null)
+            {
+                m_controller.OnLoadTestScene();
             }
         }
 

@@ -3,6 +3,7 @@ using MyGame.Managers;
 using MyGame.UI.MainMenu.Model;
 using MyGame.UI.MainMenu.View;
 using UnityEngine;
+using Logger;
 
 namespace MyGame.UI.MainMenu.Controller
 {
@@ -100,7 +101,7 @@ namespace MyGame.UI.MainMenu.Controller
                 m_view = gameObject.GetComponentInChildren<MainMenuView>(true);
                 if (m_view == null)
                 {
-                    Debug.LogWarning("MainMenuController: MainMenuView not found, attempting to create.");
+                    Log.Warning(LogModules.MAINMENU, "MainMenuController: MainMenuView not found, attempting to create.", this);
                     
                     // 创建视图对象
                     GameObject viewObject = new("MainMenuView");
@@ -229,6 +230,15 @@ namespace MyGame.UI.MainMenu.Controller
 #else
             Application.Quit();
 #endif
+        }
+        
+        /// <summary>
+        /// 加载测试场景
+        /// </summary>
+        public void OnLoadTestScene()
+        {
+            // 直接请求加载测试场景
+            SceneSwitcher.RequestLoadScene("Move Test");
         }
 
         /// <summary>

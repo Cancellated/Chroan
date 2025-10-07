@@ -14,6 +14,19 @@ public class SharedRuleTile : RuleTile<SharedRuleTile.Neighbor> {
     /// </summary>
     [Tooltip("可识别的兼容Rule Tile列表")]
     public List<RuleTile> compatibleTiles = new();
+    
+    /// <summary>
+    /// 此瓦片使用的物理材质
+    /// 当WallColliderManager启用时会被应用到对应碰撞体
+    /// </summary>
+    [Tooltip("此瓦片使用的物理材质")]
+    public PhysicsMaterial2D physicsMaterial;
+    
+    /// <summary>
+    /// 是否使用瓦片自身的物理材质覆盖瓦片地图的物理材质
+    /// </summary>
+    [Tooltip("是否使用瓦片自身的物理材质覆盖瓦片地图的物理材质")]
+    public bool overrideMapPhysicsMaterial = false;
 
     /// <summary>
     /// 自定义邻居类型枚举

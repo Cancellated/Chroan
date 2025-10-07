@@ -7,6 +7,7 @@ using MyGame.Data;
 using MyGame.UI.SaveLoad.Events;
 using MyGame.UI.SaveLoad.Controller;
 using MyGame.UI;
+using Logger;
 
 namespace MyGame.UI.SaveLoad.View
 {
@@ -267,7 +268,7 @@ namespace MyGame.UI.SaveLoad.View
             
             if (config == null)
             {
-                Debug.LogError("SaveLoadMenuConfig is not set in controller");
+                Log.Error(LogModules.SAVE, "SaveLoadMenuConfig is not set in controller", this);
                 return;
             }
             
@@ -303,12 +304,12 @@ namespace MyGame.UI.SaveLoad.View
                 }
                 else
                 {
-                    Debug.LogError("Failed to load save slot prefab with Addressable: " + config.SaveSlotPrefabAddress);
+                    Log.Error(LogModules.SAVE, "Failed to load save slot prefab with Addressable: " + config.SaveSlotPrefabAddress, this);
                 }
             }
             catch (System.Exception e)
             {
-                Debug.LogError("Error loading save slot prefab: " + e.Message);
+                Log.Error(LogModules.SAVE, "Error loading save slot prefab: " + e.Message, this);
             }
         }
         
