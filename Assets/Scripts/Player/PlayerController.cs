@@ -32,8 +32,11 @@ namespace MyGame.Control
         
         [Tooltip("网格单元格大小")]
         private Vector2 _cellSize = new(1f, 1f); // 默认1x1单位
+        
+        [Tooltip("角色最后的朝向")]
+        private Vector2 _lastFacingDirection = Vector2.down; // 默认朝下
 
-        private static string LOG_MODULE = LogModules.PLAYER;
+        private static readonly string LOG_MODULE = LogModules.PLAYER;
         #endregion
 
         #region 属性
@@ -146,7 +149,7 @@ namespace MyGame.Control
                 // 尝试手动创建InputManager实例
                 try
                 {
-                    GameObject inputManagerObj = new GameObject("InputManager");
+                    GameObject inputManagerObj = new("InputManager");
                     InputManager inputManager = inputManagerObj.AddComponent<InputManager>();
                     
                     // 检查InputManager.Instance是否已初始化
@@ -305,7 +308,7 @@ namespace MyGame.Control
                 return;
             }
             
-            // 确保角色朝向正确
+            // 确保角色朝向正确并更新动画参数
             UpdateCharacterFacing(moveDirection);
             
             // 计算目标位置
@@ -321,8 +324,6 @@ namespace MyGame.Control
             {
                 // 开始移动协程
                 StartCoroutine(MoveToGridPosition(targetGridPos));
-                // 播放移动动画
-                PlayMoveAnimation();
             }
         }
         
@@ -339,6 +340,13 @@ namespace MyGame.Control
             float journeyLength = Vector3.Distance(startPos, targetPos);
             float startTime = Time.time;
             
+            // 计算移动方向并设置动画参数
+            Vector3 direction = (targetPos - startPos).normalized;
+            Vector2 moveDirection = (Vector2)direction;
+            
+            // 设置移动状态的动画参数
+            UpdateAnimationParameters(moveDirection);
+            
             while (Vector3.Distance(transform.position, targetPos) > 0.01f)
             {
                 float distCovered = (Time.time - startTime) * _moveSpeed;
@@ -351,8 +359,8 @@ namespace MyGame.Control
             transform.position = targetPos;
             _isMoving = false;
             
-            // 播放idle动画
-            PlayIdleAnimation();
+            // 设置待机状态的动画参数，保持最后朝向
+            UpdateAnimationParameters(Vector2.zero);
         }
         
         /// <summary>
@@ -426,37 +434,35 @@ namespace MyGame.Control
         /// <param name="moveDirection">移动方向</param>
         private void UpdateCharacterFacing(Vector2 moveDirection)
         {
-            if (_spriteRenderer == null)
+            // 更新动画参数并存储最后朝向
+            UpdateAnimationParameters(moveDirection);
+        }
+        
+        /// <summary>
+        /// 更新动画参数，控制混合树
+        /// </summary>
+        /// <param name="movementInput">移动输入向量</param>
+        private void UpdateAnimationParameters(Vector2 movementInput)
+        {
+            if (_animator == null)
                 return;
             
-            // 根据移动方向设置角色朝向
-            if (Mathf.Abs(moveDirection.x) > Mathf.Abs(moveDirection.y))
+            // 如果有移动输入
+            if (movementInput.magnitude > 0.1f)
             {
-                // 水平方向移动
-                _spriteRenderer.flipX = moveDirection.x < 0;
+                // 更新移动参数和最后朝向
+                _animator.SetFloat("MoveX", movementInput.x);
+                _animator.SetFloat("MoveY", movementInput.y);
+                _animator.SetBool("IsMoving", true);
+                _lastFacingDirection = movementInput.normalized;
             }
-        }
-        
-        /// <summary>
-        /// 播放移动动画
-        /// </summary>
-        private void PlayMoveAnimation()
-        {
-            if (_animator == null)
-                return;
-            
-            _animator.SetBool("IsMoving", true);
-        }
-        
-        /// <summary>
-        /// 播放待机动画
-        /// </summary>
-        private void PlayIdleAnimation()
-        {
-            if (_animator == null)
-                return;
-            
-            _animator.SetBool("IsMoving", false);
+            else
+            {
+                // 停止移动时，保持最后朝向
+                _animator.SetFloat("MoveX", _lastFacingDirection.x);
+                _animator.SetFloat("MoveY", _lastFacingDirection.y);
+                _animator.SetBool("IsMoving", false);
+            }
         }
         #endregion
 
@@ -469,8 +475,23 @@ namespace MyGame.Control
         /// <param name="context">输入上下文</param>
         private void OnInteractPerformed(InputAction.CallbackContext context)
         {
+            // 播放交互动画
+            PlayInteractAnimation();
             // 实现交互逻辑
-            Log.DebugLog(LogModules.PLAYER, "Interact performed", this);
+            Log.DebugLog(LOG_MODULE, "Interact performed", this);
+        }
+        
+        /// <summary>
+        /// 播放交互动画
+        /// </summary>
+        private void PlayInteractAnimation()
+        {
+            if (_animator == null)
+                return;
+            
+            // 使用触发器触发交互动画
+            _animator.SetTrigger("Interact");
+            Log.Info(LOG_MODULE, "Playing interact animation", this);
         }
         #endregion
 
