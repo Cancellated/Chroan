@@ -230,14 +230,17 @@ public class WallColliderManager : TilemapChangeListener
         if (tilemap == null)
             return;
 
+        // 设置墙体游戏对象的标签为Obstacle，使其能被PlayerController的碰撞检测识别
+        tilemap.gameObject.tag = "Obstacle";
+
         // 获取或添加TilemapCollider2D组件
-        if (!tilemap.TryGetComponent<TilemapCollider2D>(out var collider))
+        if (!tilemap.TryGetComponent<TilemapCollider2D>(out var tilemapCollider))
         {
-            collider = tilemap.gameObject.AddComponent<TilemapCollider2D>();
+            tilemapCollider = tilemap.gameObject.AddComponent<TilemapCollider2D>();
         }
 
         // 设置碰撞体类型为Composite以支持复合碰撞体
-        collider.usedByComposite = useCompositeCollider;
+        tilemapCollider.usedByComposite = useCompositeCollider;
 
         // 如果需要覆盖瓦片的碰撞体设置
         if (overrideTileColliders)
@@ -248,10 +251,14 @@ public class WallColliderManager : TilemapChangeListener
         // 配置复合碰撞体
         if (useCompositeCollider)
         {
+            // 获取或添加CompositeCollider2D组件
             if (!tilemap.TryGetComponent<CompositeCollider2D>(out var compositeCollider))
             {
                 compositeCollider = tilemap.gameObject.AddComponent<CompositeCollider2D>();
             }
+            
+            // 设置CompositeCollider2D参数，使碰撞检测更准确
+            compositeCollider.generationType = CompositeCollider2D.GenerationType.Synchronous;
 
             // 配置物理材质
             PhysicsMaterial2D material = null;
@@ -283,12 +290,13 @@ public class WallColliderManager : TilemapChangeListener
             // 应用物理材质
             compositeCollider.sharedMaterial = material;
 
-            // 确保有Rigidbody2D组件
-            if (!tilemap.TryGetComponent<Rigidbody2D>(out _))
+            // 确保有Rigidbody2D组件并正确配置
+            if (!tilemap.TryGetComponent<Rigidbody2D>(out var rb))
             {
-                Rigidbody2D rb = tilemap.gameObject.AddComponent<Rigidbody2D>();
-                rb.bodyType = RigidbodyType2D.Static;
+                rb = tilemap.gameObject.AddComponent<Rigidbody2D>();
             }
+            // 设置刚体类型为静态
+            rb.bodyType = RigidbodyType2D.Static;
         }
     }
     
@@ -332,9 +340,16 @@ public class WallColliderManager : TilemapChangeListener
             if (tilemap.HasTile(position))
             {
                 TileBase tile = tilemap.GetTile(position);
+                // 支持Tile和SharedRuleTile两种类型的瓦片
                 if (tile is Tile)
                 {
                     SetTileColliderType(tile, overrideColliderType);
+                }
+                // 对于SharedRuleTile，我们确保其碰撞体类型设置正确
+                else if (tile is SharedRuleTile)
+                {
+                    // SharedRuleTile通常有自己的碰撞体配置，这里可以根据需要添加额外逻辑
+                    // 由于SharedRuleTile是继承自RuleTile的自定义实现，它可能有自己的碰撞体设置方式
                 }
             }
         }

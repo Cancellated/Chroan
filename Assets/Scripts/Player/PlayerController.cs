@@ -25,7 +25,8 @@ namespace MyGame.Control
         [SerializeField] private float _moveSpeed = 5f;
         
         [Tooltip("Tilemap引用")]
-        [SerializeField] private Tilemap _tilemap;
+        [SerializeField] private Tilemap _tilemap; // 地板瓦片地图
+        [SerializeField] private Tilemap _wallTilemap; // 墙体瓦片地图
         
         [Tooltip("角色是否正在移动")]
         private bool _isMoving = false;
@@ -245,18 +246,25 @@ namespace MyGame.Control
         #region 玩家控制
         /// <summary>
         /// 处理玩家输入
+        /// 增加对移动动画状态的持续管理
         /// </summary>
         private void HandlePlayerInput()
         {
+            // 获取当前移动输入
+            Vector2 moveInput = PlayerMove();
+            
             // 处理移动输入
             if (!_isMoving)
             {
-                Vector2 moveInput = PlayerMove();
                 if (moveInput != Vector2.zero)
                 {
                     MoveCharacter(moveInput);
                 }
             }
+            
+            // 持续更新动画状态，确保只要有移动输入就播放移动动画
+            // 即使移动被阻碍或角色已经在移动中
+            UpdateAnimationParameters(moveInput);
             
             // 处理交互输入
             if (PlayerInteract())
@@ -268,6 +276,7 @@ namespace MyGame.Control
         /// <summary>
         /// 玩家移动输入
         /// 添加空值检查以防止空引用异常
+        /// 实现四方向控制，将斜向输入转换为单一方向
         /// </summary>
         public Vector2 PlayerMove()
         {
@@ -275,7 +284,33 @@ namespace MyGame.Control
             {
                 return Vector2.zero;
             }
-            return _inputActions.GamePlay.Move.ReadValue<Vector2>();
+            
+            // 获取原始输入
+            Vector2 rawInput = _inputActions.GamePlay.Move.ReadValue<Vector2>();
+            
+            // 转换为四方向输入（忽略斜向移动）
+            // 通过比较X和Y轴输入的绝对值，只保留输入较大的方向
+            float absX = Mathf.Abs(rawInput.x);
+            float absY = Mathf.Abs(rawInput.y);
+            
+            Vector2 cardinalInput = Vector2.zero;
+            
+            if (absX > absY)
+            {
+                // 水平方向输入更强烈，只保留X轴方向
+                cardinalInput.x = Mathf.Sign(rawInput.x);
+            }
+            else if (absY > absX)
+            {
+                // 垂直方向输入更强烈，只保留Y轴方向
+                cardinalInput.y = Mathf.Sign(rawInput.y);
+            }
+            else if (absX > 0.1f) // 当X和Y输入强度相当时，优先处理水平方向
+            {
+                cardinalInput.x = Mathf.Sign(rawInput.x);
+            }
+            
+            return cardinalInput;
         }
         
         /// <summary>
@@ -298,6 +333,7 @@ namespace MyGame.Control
         /// <summary>
         /// 移动角色
         /// 添加更完善的空值检查和边界条件处理
+        /// 确保玩家按住移动键时即使被阻碍也播放移动动画
         /// </summary>
         /// <param name="moveDirection">移动方向</param>
         private void MoveCharacter(Vector2 moveDirection)
@@ -309,6 +345,7 @@ namespace MyGame.Control
             }
             
             // 确保角色朝向正确并更新动画参数
+            // 注意：无论是否能移动，只要有输入就更新动画参数（设置IsMoving为true）
             UpdateCharacterFacing(moveDirection);
             
             // 计算目标位置
@@ -325,6 +362,8 @@ namespace MyGame.Control
                 // 开始移动协程
                 StartCoroutine(MoveToGridPosition(targetGridPos));
             }
+            // 注意：即使移动被阻碍，也不再立即重置动画状态
+            // 动画状态将在Update方法中通过HandlePlayerInput根据当前输入来管理
         }
         
         /// <summary>
@@ -359,8 +398,9 @@ namespace MyGame.Control
             transform.position = targetPos;
             _isMoving = false;
             
-            // 设置待机状态的动画参数，保持最后朝向
-            UpdateAnimationParameters(Vector2.zero);
+            // 注意：不再在这里重置动画状态为待机
+            // 动画状态现在由HandlePlayerInput方法根据玩家当前输入持续管理
+            // 这样当玩家按住移动键时，即使移动完成也会继续播放移动动画
         }
         
         /// <summary>
@@ -399,16 +439,19 @@ namespace MyGame.Control
         /// <returns>如果可通行则返回true，否则返回false</returns>
         private bool IsCellWalkable(Vector3Int gridPosition)
         {
-            if (_tilemap == null)
-                return true;
-            
-            // 1. 检查是否在Tilemap边界内
-            if (!_tilemap.HasTile(gridPosition))
+            // 1. 检查地板是否存在（必须有地板才能通行）
+            if (_tilemap == null || !_tilemap.HasTile(gridPosition))
             {
                 return false;
             }
             
-            // 2. 使用Physics2D进行精确碰撞检测
+            // 2. 检查是否有墙体（如果有墙体则不可通行）
+            if (_wallTilemap != null && _wallTilemap.HasTile(gridPosition))
+            {
+                return false;
+            }
+            
+            // 3. 使用Physics2D进行精确碰撞检测
             Vector3 worldPosition = GridToWorldPosition(gridPosition);
             Collider2D[] colliders = Physics2D.OverlapBoxAll(worldPosition, 
                                                             new Vector2(_cellSize.x - 0.1f, _cellSize.y - 0.1f), 
