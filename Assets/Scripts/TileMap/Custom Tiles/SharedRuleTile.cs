@@ -53,13 +53,13 @@ public class SharedRuleTile : RuleTile<SharedRuleTile.Neighbor> {
         }
         
         // 1. 处理This规则：判断有此类型或者兼容类型的tile
-        if (neighbor == RuleTile.TilingRule.Neighbor.This) {
+        if (neighbor == Neighbor.This) {
             // 当规则要求This时，接受自身或兼容的tile
             return isCompatible;
         }
         
         // 2. 处理NotThis规则：判断不存在此类型或者兼容类型的tile
-        if (neighbor == RuleTile.TilingRule.Neighbor.NotThis) {
+        if (neighbor == Neighbor.NotThis) {
             // 当规则要求NotThis时，拒绝自身或兼容的tile（接受空或非兼容的tile）
             return !isCompatible;
         }
@@ -79,12 +79,21 @@ public class SharedRuleTile : RuleTile<SharedRuleTile.Neighbor> {
         
         // 4. 处理基础规则：
         // neighbor=0 表示不关心该方向的tile，始终返回true
-        // neighbor=1 表示该方向必须有匹配的tile（这里将兼容tile视为匹配）
-        if (neighbor == 0 || (neighbor == 1 && isCompatible)) {
-            return true;
+        // neighbor=1 表示该方向必须有匹配的tile（必须是自身或兼容tile）
+        // neighbor=2 表示该方向必须不是自身或兼容tile
+        switch (neighbor) {
+            case 0:
+                // Don't Care - 不关心该方向的tile
+                return true;
+            case 1:
+                // This - 该方向必须是自身或兼容tile
+                return isCompatible;
+            case 2:
+                // Not This - 该方向必须不是自身或兼容tile
+                return !isCompatible;
+            default:
+                // 如果遇到未处理的neighbor值，调用基类方法
+                return base.RuleMatch(neighbor, tile);
         }
-        
-        // 5. 如果上述规则都不匹配，则调用基类方法作为最后的检查
-        return base.RuleMatch(neighbor, tile);
     }
 }

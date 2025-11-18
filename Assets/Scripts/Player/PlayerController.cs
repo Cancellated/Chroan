@@ -305,7 +305,7 @@ namespace MyGame.Control
                 // 垂直方向输入更强烈，只保留Y轴方向
                 cardinalInput.y = Mathf.Sign(rawInput.y);
             }
-            else if (absX > 0.1f) // 当X和Y输入强度相当时，优先处理水平方向
+            else if (absX > 0.1f) // 当X和Y输入强度相同时，优先处理水平方向
             {
                 cardinalInput.x = Mathf.Sign(rawInput.x);
             }
@@ -332,8 +332,7 @@ namespace MyGame.Control
         #region 移动实现
         /// <summary>
         /// 移动角色
-        /// 添加更完善的空值检查和边界条件处理
-        /// 确保玩家按住移动键时即使被阻碍也播放移动动画
+        /// 添加详细日志输出用于调试推动问题，修复TryPush参数问题
         /// </summary>
         /// <param name="moveDirection">移动方向</param>
         private void MoveCharacter(Vector2 moveDirection)
@@ -344,8 +343,9 @@ namespace MyGame.Control
                 return;
             }
             
+            Log.DebugLog(LOG_MODULE, $"[推动调试] 玩家尝试移动: {moveDirection}", gameObject);
+            
             // 确保角色朝向正确并更新动画参数
-            // 注意：无论是否能移动，只要有输入就更新动画参数（设置IsMoving为true）
             UpdateCharacterFacing(moveDirection);
             
             // 计算目标位置
@@ -356,14 +356,44 @@ namespace MyGame.Control
                 0
             );
             
-            // 检查目标位置是否可通行
-            if (IsCellWalkable(targetGridPos))
+            Log.DebugLog(LOG_MODULE, $"[推动调试] 当前位置: {currentGridPos}, 目标位置: {targetGridPos}", gameObject);
+            
+            // 关键逻辑：先检查目标位置是否有可推物体
+            IPushable pushable = CheckForPushableObject(targetGridPos);
+            if (pushable != null)
             {
-                // 开始移动协程
-                StartCoroutine(MoveToGridPosition(targetGridPos));
+                Log.DebugLog(LOG_MODULE, $"[推动调试] 发现可推物体: {pushable.GetType().Name}", gameObject);
+                
+                // 尝试推动物体 - 修复：使用接口定义的正确参数
+                if (pushable.TryPush(moveDirection, 1f))
+                {
+                    Log.Info(LOG_MODULE, $"[推动成功] 玩家推动物体成功，移动到: {targetGridPos}", gameObject);
+                    // 推动成功，玩家也移动到该位置
+                    StartCoroutine(MoveToGridPosition(targetGridPos));
+                }
+                else
+                {
+                    Log.Warning(LOG_MODULE, $"[推动失败] 玩家推动物体失败，无法移动到: {targetGridPos}", gameObject);
+                    // 如果推动失败，什么都不做（位置不可通行）
+                }
             }
-            // 注意：即使移动被阻碍，也不再立即重置动画状态
-            // 动画状态将在Update方法中通过HandlePlayerInput根据当前输入来管理
+            else
+            {
+                Log.DebugLog(LOG_MODULE, $"[推动调试] 目标位置没有可推物体", gameObject);
+                
+                // 没有可推物体，检查位置是否可通行
+                if (IsCellWalkable(targetGridPos))
+                {
+                    Log.DebugLog(LOG_MODULE, $"[推动调试] 目标位置可通行，开始移动", gameObject);
+                    // 开始移动协程
+                    StartCoroutine(MoveToGridPosition(targetGridPos));
+                }
+                else
+                {
+                    Log.DebugLog(LOG_MODULE, $"[推动调试] 目标位置不可通行，阻止移动", gameObject);
+                }
+                // 如果不可通行，什么都不做
+            }
         }
         
         /// <summary>
@@ -398,9 +428,6 @@ namespace MyGame.Control
             transform.position = targetPos;
             _isMoving = false;
             
-            // 注意：不再在这里重置动画状态为待机
-            // 动画状态现在由HandlePlayerInput方法根据玩家当前输入持续管理
-            // 这样当玩家按住移动键时，即使移动完成也会继续播放移动动画
         }
         
         /// <summary>
@@ -434,22 +461,31 @@ namespace MyGame.Control
         
         /// <summary>
         /// 检查网格位置是否可通行
+        /// 添加详细日志输出用于调试通行性检查
         /// </summary>
         /// <param name="gridPosition">要检查的网格位置</param>
         /// <returns>如果可通行则返回true，否则返回false</returns>
         private bool IsCellWalkable(Vector3Int gridPosition)
         {
+            Log.DebugLog(LOG_MODULE, $"[通行性检查] 检查位置: {gridPosition}", gameObject);
+            
             // 1. 检查地板是否存在（必须有地板才能通行）
             if (_tilemap == null || !_tilemap.HasTile(gridPosition))
             {
+                Log.DebugLog(LOG_MODULE, $"[通行性检查] 位置 {gridPosition} 不可通行: 缺少地板", gameObject);
                 return false;
             }
+            
+            Log.DebugLog(LOG_MODULE, $"[通行性检查] 位置 {gridPosition} 有地板", gameObject);
             
             // 2. 检查是否有墙体（如果有墙体则不可通行）
             if (_wallTilemap != null && _wallTilemap.HasTile(gridPosition))
             {
+                Log.DebugLog(LOG_MODULE, $"[通行性检查] 位置 {gridPosition} 不可通行: 有墙体", gameObject);
                 return false;
             }
+            
+            Log.DebugLog(LOG_MODULE, $"[通行性检查] 位置 {gridPosition} 没有墙体", gameObject);
             
             // 3. 使用Physics2D进行精确碰撞检测
             Vector3 worldPosition = GridToWorldPosition(gridPosition);
@@ -457,16 +493,59 @@ namespace MyGame.Control
                                                             new Vector2(_cellSize.x - 0.1f, _cellSize.y - 0.1f), 
                                                             0f);
             
+            Log.DebugLog(LOG_MODULE, $"[通行性检查] 位置 {gridPosition} (世界坐标: {worldPosition}) 有 {colliders.Length} 个碰撞体", gameObject);
+            
             foreach (Collider2D collider in colliders)
             {
-                // 检查是否有不可通行的碰撞体
+                Log.DebugLog(LOG_MODULE, $"[通行性检查] 检查碰撞体: {collider.name} (类型: {collider.GetType().Name}, 标签: {collider.tag})", gameObject);
+                
+                // 检查是否有不可通行的碰撞体（Obstacle标签）
                 if (collider.CompareTag("Obstacle"))
                 {
+                    Log.DebugLog(LOG_MODULE, $"[通行性检查] 位置 {gridPosition} 不可通行: 有Obstacle标签碰撞体", gameObject);
                     return false;
+                }
+                
+                // 注意：不在这里检查IPushable组件，让MoveCharacter方法处理推动逻辑
+                // 修复：移除对可推物体的直接false返回
+            }
+            
+            // 位置可通行
+            Log.DebugLog(LOG_MODULE, $"[通行性检查] 位置 {gridPosition} 可通行", gameObject);
+            return true;
+        }
+        
+        /// <summary>
+        /// 检查指定网格位置是否有可推物体
+        /// 添加日志输出用于调试
+        /// </summary>
+        /// <param name="gridPosition">网格位置</param>
+        /// <returns>返回可推物体接口，如果无则返回null</returns>
+        private IPushable CheckForPushableObject(Vector3Int gridPosition)
+        {
+            Log.DebugLog(LOG_MODULE, $"[推动调试] 检查位置: {gridPosition} (世界坐标: {GridToWorldPosition(gridPosition)})", gameObject);
+            
+            Vector3 worldPosition = GridToWorldPosition(gridPosition);
+            Collider2D[] colliders = Physics2D.OverlapBoxAll(worldPosition, 
+                                                            new Vector2(_cellSize.x - 0.1f, _cellSize.y - 0.1f), 
+                                                            0f);
+            
+            Log.DebugLog(LOG_MODULE, $"[推动调试] 位置 {gridPosition} 找到 {colliders.Length} 个碰撞体", gameObject);
+            
+            foreach (Collider2D collider in colliders)
+            {
+                Log.DebugLog(LOG_MODULE, $"[推动调试] 检查碰撞体: {collider.name} (类型: {collider.GetType().Name}, 标签: {collider.tag})", gameObject);
+                
+                // 检查是否有IPushable组件
+                if (collider.TryGetComponent<IPushable>(out IPushable pushable))
+                {
+                    Log.DebugLog(LOG_MODULE, $"[推动调试] 找到可推物体: {collider.name}", gameObject);
+                    return pushable;
                 }
             }
             
-            return true;
+            Log.DebugLog(LOG_MODULE, $"[推动调试] 位置 {gridPosition} 没有找到可推物体", gameObject);
+            return null;
         }
         #endregion
 

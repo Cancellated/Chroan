@@ -41,5 +41,8 @@ namespace Logger
 
         // 地图模块
         public const string TILEMAP = "TileMap";
+
+        // 箱子模块
+        public const string BOX = "Box";
     }
 }
