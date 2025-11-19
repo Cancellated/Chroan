@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e8fd1025594f8444b3d2b4f3cecdff3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _pushSpeed: 3
+  _pushSpeed: 4.5
   _colliderTag: Obstacle
   _enableChainPush: 0
   _autoFindTilemaps: 1

@@ -814,52 +814,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7440231573253294347, guid: c630ea9db53b6054fb35e5cccaebafe6, type: 3}
   m_PrefabInstance: {fileID: 1264969891}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &228396381
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 228396383}
-  - component: {fileID: 228396382}
-  m_Layer: 0
-  m_Name: CameraFrustumCullingSystem
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &228396382
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 228396381}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3482a64f934a8b4899199d57f35ecd3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetCamera: {fileID: 337110776}
-  frustumBuffer: 3
---- !u!4 &228396383
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 228396381}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &255957351
 GameObject:
   m_ObjectHideFlags: 0
@@ -1111,6 +1065,9 @@ GameObject:
   - component: {fileID: 337110777}
   - component: {fileID: 337110776}
   - component: {fileID: 337110775}
+  - component: {fileID: 337110781}
+  - component: {fileID: 337110778}
+  - component: {fileID: 337110779}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1192,6 +1149,96 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &337110778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 337110774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3482a64f934a8b4899199d57f35ecd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetCamera: {fileID: 337110776}
+  frustumBuffer: 5
+  horizontalDeadZone: 4
+  verticalDeadZone: 2
+  enableDeadZone: 1
+  cameraSmoothTime: 5
+--- !u!114 &337110779
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 337110774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a532e41ea89b3c4c9359604b18ce9cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 278896885}
+  followSpeed: 6
+  horizontalDeadZoneTiles: 4
+  verticalDeadZoneTiles: 2
+  enableDeadZone: 1
+  worldBoundsMin: {x: -50, y: -50}
+  worldBoundsMax: {x: 50, y: 50}
+  allowZoom: 0
+  zoomSpeed: 2
+  minZoom: 3
+  maxZoom: 10
+  enableLookAhead: 1
+  lookAheadRatio: 1.5
+  maxLookAheadOffset: 3
+  lookAheadResponseSpeed: 5
+  verticalLookAheadMultiplier: 1.5
+--- !u!114 &337110781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 337110774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_Version: 2
+  m_TaaSettings:
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
 --- !u!1 &420414216
 GameObject:
   m_ObjectHideFlags: 0
@@ -1233,7 +1280,7 @@ MonoBehaviour:
   refreshCooldown: 5
   smallMapOptimization: 1
   spatialPartitionSystem: {fileID: 574634857}
-  cameraFrustumCullingSystem: {fileID: 228396382}
+  cameraFrustumCullingSystem: {fileID: 337110778}
 --- !u!4 &420414218
 Transform:
   m_ObjectHideFlags: 0
@@ -4477,6 +4524,5 @@ SceneRoots:
   - {fileID: 278896885}
   - {fileID: 420414218}
   - {fileID: 574634858}
-  - {fileID: 228396383}
   - {fileID: 913038608}
   - {fileID: 255957353}

@@ -67,64 +67,49 @@ public class PushableBox : MonoBehaviour, IPushable
     #region 自动查找Tilemap
     /// <summary>
     /// 自动查找Tilemap方法
-    /// 修复：优化Tilemap识别逻辑，精确匹配Ground和Walls
     /// </summary>
     private void AutoFindTilemaps()
     {
-        Log.Info(TILEMAP, $"[自动查找] 开始自动查找Tilemap", gameObject);
-        
         // 获取当前Tilemap（如果当前对象在Tilemap上）
         Tilemap currentTilemap = GetComponentInParent<Tilemap>();
         if (currentTilemap != null)
         {
             string tilemapName = currentTilemap.name.ToLower();
-            Log.Info(TILEMAP, $"[自动查找] 找到当前Tilemap: {tilemapName}", gameObject);
             
             // 精确匹配Ground和Walls
             if (tilemapName == "ground")
             {
                 _groundTilemap = currentTilemap;
-                Log.Info(TILEMAP, $"[自动查找] 当前Tilemap识别为地板: {currentTilemap.name}", gameObject);
             }
             else if (tilemapName == "walls")
             {
                 _wallTilemap = currentTilemap;
-                Log.Info(TILEMAP, $"[自动查找] 当前Tilemap识别为墙体: {currentTilemap.name}", gameObject);
             }
         }
         
         // 查找所有Tilemap
         Tilemap[] allTilemaps = FindObjectsOfType<Tilemap>();
-        Log.Info(TILEMAP, $"[自动查找] 场景中共有 {allTilemaps.Length} 个Tilemap", gameObject);
         
         foreach (var tilemap in allTilemaps)
         {
             if (tilemap == currentTilemap) continue; // 跳过当前Tilemap（已经处理过了）
             
             string tilemapName = tilemap.name.ToLower();
-            Log.DebugLog(BOX, $"[自动查找] 检查Tilemap: {tilemap.name}", gameObject);
             
             // 精确匹配Ground和Walls
             if (_groundTilemap == null && tilemapName == "ground")
             {
                 _groundTilemap = tilemap;
-                Log.Info(TILEMAP, $"[自动查找] 识别为地板Tilemap: {tilemap.name}", gameObject);
             }
             
             if (_wallTilemap == null && tilemapName == "walls")
             {
                 _wallTilemap = tilemap;
-                Log.Info(TILEMAP, $"[自动查找] 识别为墙体Tilemap: {tilemap.name}", gameObject);
             }
         }
         
-        // 如果自动查找失败，输出警告
-        if (_groundTilemap == null)
-        {
-            Log.Warning(TILEMAP, $"[自动查找] 警告: 未找到地板Tilemap（Ground）！请手动设置 _groundTilemap", gameObject);
-        }
-        
-        if (_wallTilemap == null)
+        // 如果自动查找失败，输出一个警告
+        if (_groundTilemap == null || _wallTilemap == null)
         {
             Log.Warning(TILEMAP, $"[自动查找] 警告: 未找到墙体Tilemap（Walls）！请手动设置 _wallTilemap", gameObject);
         }
@@ -249,7 +234,6 @@ public class PushableBox : MonoBehaviour, IPushable
     #region 推动物体
     /// <summary>
     /// 尝试推动可推物体
-    /// 添加日志输出用于调试
     /// </summary>
     /// <param name="pushDirection">推动方向</param>
     /// <param name="pushDistance">推动距离（默认为1个网格）</param>
@@ -258,11 +242,8 @@ public class PushableBox : MonoBehaviour, IPushable
     {
         if (_isMoving)
         {
-            Log.DebugLog("箱子", $"[箱子推动] 物体正在移动中，无法推动", gameObject);
             return false;
         }
-        
-        Log.DebugLog("箱子", $"[箱子推动] 尝试推动: 方向={pushDirection}, 距离={pushDistance}", gameObject);
         
         // 计算目标网格位置
         Vector3Int currentGridPosition = GetGridPosition();
@@ -274,25 +255,20 @@ public class PushableBox : MonoBehaviour, IPushable
             currentGridPosition.z
         );
         
-        Log.DebugLog("箱子", $"[箱子推动] 当前位置: {currentGridPosition}, 目标位置: {targetGridPosition}", gameObject);
-        
         // 检查是否可以推动到目标位置
         if (CanBePushedTo(targetGridPosition))
         {
-            Log.DebugLog("箱子", $"[箱子推动] 检查通过，开始移动到 {targetGridPosition}", gameObject);
             StartCoroutine(MoveToGridPosition(targetGridPosition));
             return true;
         }
         else
         {
-            Log.DebugLog("箱子", $"[箱子推动] 检查失败，无法推动到 {targetGridPosition}", gameObject);
             return false;
         }
     }
     
     /// <summary>
     /// 检查物体是否可以被推动到目标位置
-    /// 简化：仅保留必要日志
     /// </summary>
     /// <param name="targetGridPosition">目标网格位置</param>
     /// <returns>如果目标位置可推送到返回true，否则返回false</returns>
@@ -301,14 +277,12 @@ public class PushableBox : MonoBehaviour, IPushable
         // 1. 检查地板是否存在（必须有地板才能推送）
         if (_groundTilemap == null || !_groundTilemap.HasTile(targetGridPosition))
         {
-            Log.Warning(TILEMAP, $"箱子 {gameObject.name} 推动失败: 目标位置没有地板", gameObject);
             return false;
         }
         
         // 2. 检查是否有墙体（如果有墙体则不可推送）
         if (_wallTilemap != null && _wallTilemap.HasTile(targetGridPosition))
         {
-            Log.Warning(TILEMAP, $"箱子 {gameObject.name} 推动失败: 目标位置有墙体", gameObject);
             return false;
         }
         
@@ -333,7 +307,6 @@ public class PushableBox : MonoBehaviour, IPushable
             if (collider.CompareTag(_colliderTag))
             {
                 // 检查是否是另一个可推物体
-                
                 if (collider.TryGetComponent<IPushable>(out var otherPushable))
                 {
                     // 如果是可推物体且启用了连锁推动功能
@@ -346,21 +319,18 @@ public class PushableBox : MonoBehaviour, IPushable
                         // 检查另一个可推物体是否可以被推动
                         if (!otherPushable.CanBePushedTo(otherTargetPos))
                         {
-                            Log.Warning(TILEMAP, $"箱子 {gameObject.name} 连锁推动失败: {collider.gameObject.name} 无法推动到 {otherTargetPos}", gameObject);
                             return false;
                         }
                     }
                     else
                     {
                         // 如果是不可推的障碍物，或者禁用了连锁推动但遇到了可推物体，返回false
-                        Log.Warning(TILEMAP, $"箱子 {gameObject.name} 推动失败: 遇到可推物体但连锁推动已禁用", gameObject);
                         return false;
                     }
                 }
                 else
                 {
                     // 不可推的障碍物
-                    Log.Warning(TILEMAP, $"箱子 {gameObject.name} 推动失败: 遇到不可推障碍物 {collider.gameObject.name}", gameObject);
                     return false;
                 }
             }
@@ -421,7 +391,6 @@ public class PushableBox : MonoBehaviour, IPushable
     
     /// <summary>
     /// 平滑移动到目标网格位置
-    /// 简化：移除冗余日志输出
     /// </summary>
     /// <param name="targetGridPos">目标网格位置</param>
     private System.Collections.IEnumerator MoveToGridPosition(Vector3Int targetGridPos)
@@ -438,11 +407,8 @@ public class PushableBox : MonoBehaviour, IPushable
             _animator.SetBool("IsMoving", true);
         }
         
-        int loopCount = 0;
-        
         while (Vector3.Distance(transform.position, targetPos) > 0.01f)
         {
-            loopCount++;
             float distCovered = (Time.time - startTime) * _pushSpeed;
             float fractionOfJourney = distCovered / journeyLength;
             

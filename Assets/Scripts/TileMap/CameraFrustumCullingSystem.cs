@@ -5,15 +5,34 @@ using System.Collections.Generic;
 /// <summary>
 /// 摄像机视野剔除系统
 /// 负责管理摄像机视野内外的瓦片碰撞体刷新，优化性能
+/// 支持死区设置，提升玩家体验
 /// </summary>
 public class CameraFrustumCullingSystem : MonoBehaviour
 {
+    [Header("摄像机配置")]
     [Tooltip("目标摄像机，如果未指定则使用主摄像机")]
     public Camera targetCamera;
     
-    [Tooltip("视野外缓冲区域大小（单位：瓦片）")]
+    [Header("死区设置")]
+    [Tooltip("视野外缓冲区域大小（单位：瓦片）- 标准死区配置")]
     [Range(0, 20)]
     public int frustumBuffer = 5;
+    
+    [Tooltip("水平死区大小(tile)")]
+    [Range(0, 10)]
+    public int horizontalDeadZone = 4;
+    
+    [Tooltip("垂直死区大小(tile)")]
+    [Range(0, 6)]
+    public int verticalDeadZone = 2;
+    
+    [Header("高级设置")]
+    [Tooltip("是否启用死区功能")]
+    public bool enableDeadZone = true;
+    
+    [Tooltip("摄像机移动平滑度（数值越大移动越快）")]
+    [Range(0.1f, 10f)]
+    public float cameraSmoothTime = 5f;
     
     // 上一帧视野内的瓦片位置范围
     private BoundsInt lastVisibleBounds;
@@ -21,12 +40,79 @@ public class CameraFrustumCullingSystem : MonoBehaviour
     // 表示上一帧是否有有效的视野数据
     private bool hasLastVisibleBounds = false;
     
+    // 死区相关的内部状态
+    private Vector3 lastCameraTargetPosition;
+    private Vector3 cameraVelocity = Vector3.zero;
+    private bool hasLastTargetPosition = false;
+    
     void Start()
     {
         if (targetCamera == null)
         {
             targetCamera = Camera.main;
         }
+        
+        // 初始化目标位置
+        if (targetCamera != null)
+        {
+            lastCameraTargetPosition = targetCamera.transform.position;
+            hasLastTargetPosition = true;
+        }
+    }
+    
+    void LateUpdate()
+    {
+        if (enableDeadZone && targetCamera != null)
+        {
+            UpdateCameraWithDeadZone();
+        }
+    }
+    
+    /// <summary>
+    /// 使用死区机制更新摄像机位置
+    /// </summary>
+    private void UpdateCameraWithDeadZone()
+    {
+        // 这里需要与玩家位置系统集成
+        // 暂时保持当前摄像机位置，等待集成玩家跟随系统
+        Vector3 currentCameraPos = targetCamera.transform.position;
+        
+        if (hasLastTargetPosition)
+        {
+            Vector3 deadZoneCenter = lastCameraTargetPosition;
+            Vector3 deadZoneSize = new(
+                horizontalDeadZone * targetCamera.orthographicSize * 2f * ((float)Screen.width / Screen.height) / 18f,
+                verticalDeadZone * 2f * targetCamera.orthographicSize / 10f,
+                0
+            );
+            
+            Vector3 deadZoneMin = deadZoneCenter - deadZoneSize * 0.5f;
+            Vector3 deadZoneMax = deadZoneCenter + deadZoneSize * 0.5f;
+            
+            // 检查玩家是否超出死区范围
+            if (IsPlayerOutsideDeadZone(currentCameraPos, deadZoneMin, deadZoneMax))
+            {
+                // 更新摄像机目标位置
+                lastCameraTargetPosition = currentCameraPos;
+                hasLastTargetPosition = true;
+            }
+        }
+        else
+        {
+            lastCameraTargetPosition = currentCameraPos;
+            hasLastTargetPosition = true;
+        }
+    }
+    
+    /// <summary>
+    /// 检查玩家是否在死区外（需要集成实际玩家位置）
+    /// </summary>
+    private bool IsPlayerOutsideDeadZone(Vector3 playerPosition, Vector3 deadZoneMin, Vector3 deadZoneMax)
+    {
+        // TODO: 这里需要传入实际玩家位置
+        // 目前使用摄像机位置作为占位符
+        return playerPosition.x < deadZoneMin.x || playerPosition.x > deadZoneMax.x ||
+               playerPosition.y < deadZoneMin.y || playerPosition.y > deadZoneMax.y;
     }
     
     /// <summary>
@@ -47,7 +133,7 @@ public class CameraFrustumCullingSystem : MonoBehaviour
         float cameraWidth = cameraHeight * screenAspect;
         
         Vector3 cameraPosition = targetCamera.transform.position;
-        Vector3 frustumCenter = new Vector3(
+        Vector3 frustumCenter = new(
             cameraPosition.x, 
             cameraPosition.y, 
             0
@@ -57,12 +143,12 @@ public class CameraFrustumCullingSystem : MonoBehaviour
         float extendedWidth = cameraWidth / 2 + frustumBuffer * tilemap.cellSize.x;
         float extendedHeight = cameraHeight / 2 + frustumBuffer * tilemap.cellSize.y;
         
-        Vector3 frustumMin = new Vector3(
+        Vector3 frustumMin = new(
             frustumCenter.x - extendedWidth, 
             frustumCenter.y - extendedHeight, 
             0
         );
-        Vector3 frustumMax = new Vector3(
+        Vector3 frustumMax = new(
             frustumCenter.x + extendedWidth, 
             frustumCenter.y + extendedHeight, 
             0
@@ -73,11 +159,15 @@ public class CameraFrustumCullingSystem : MonoBehaviour
         Vector3Int maxTile = tilemap.WorldToCell(frustumMax);
         
         // 确保最小坐标小于最大坐标
-        if (minTile.x > maxTile.x) { int temp = minTile.x; minTile.x = maxTile.x; maxTile.x = temp; }
-        if (minTile.y > maxTile.y) { int temp = minTile.y; minTile.y = maxTile.y; maxTile.y = temp; }
+        if (minTile.x > maxTile.x) {
+            (maxTile.x, minTile.x) = (minTile.x, maxTile.x);
+        }
+        if (minTile.y > maxTile.y) {
+            (maxTile.y, minTile.y) = (minTile.y, maxTile.y);
+        }
         
         // 创建并返回边界
-        BoundsInt visibleBounds = new BoundsInt(minTile, maxTile - minTile + Vector3Int.one);
+        BoundsInt visibleBounds = new(minTile, maxTile - minTile + Vector3Int.one);
         
         // 保存当前边界用于下次比较
         lastVisibleBounds = visibleBounds;
@@ -116,7 +206,7 @@ public class CameraFrustumCullingSystem : MonoBehaviour
     /// <returns>视野内的瓦片位置列表</returns>
     public List<Vector3Int> GetVisibleTilePositions(Tilemap tilemap)
     {
-        List<Vector3Int> positions = new List<Vector3Int>();
+        List<Vector3Int> positions = new();
         
         BoundsInt visibleBounds = GetVisibleTileBounds(tilemap);
         
@@ -151,7 +241,7 @@ public class CameraFrustumCullingSystem : MonoBehaviour
         {
             for (int y = visibleBounds.yMin; y <= visibleBounds.yMax; y++)
             {
-                Vector3Int position = new Vector3Int(x, y, 0);
+                Vector3Int position = new(x, y, 0);
                 
                 // 检查瓦片是否存在
                 if (tilemap.HasTile(position))

@@ -4,6 +4,7 @@ using MyGame.Managers;
 using System.Collections;
 using UnityEngine.InputSystem;
 using Logger;
+using System;
 
 namespace MyGame.Control
 {
@@ -37,7 +38,7 @@ namespace MyGame.Control
         [Tooltip("角色最后的朝向")]
         private Vector2 _lastFacingDirection = Vector2.down; // 默认朝下
 
-        private static readonly string LOG_MODULE = LogModules.PLAYER;
+        // private static readonly string LOG_MODULE = LogModules.PLAYER;
         #endregion
 
         #region 属性
@@ -93,31 +94,26 @@ namespace MyGame.Control
             if (_rb == null)
             {
                 _rb = gameObject.AddComponent<Rigidbody2D>();
-                Log.Warning(LOG_MODULE, "Rigidbody2D组件缺失，已自动添加", this);
             }
             
             if (_collider == null)
             {
                 _collider = gameObject.AddComponent<BoxCollider2D>();
-                Log.Warning(LOG_MODULE, "BoxCollider2D组件缺失，已自动添加", this);
             }
             
             if (_spriteRenderer == null)
             {
                 _spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-                Log.Warning(LOG_MODULE, "SpriteRenderer组件缺失，已自动添加", this);
             }
             
             if (_animator == null)
             {
                 _animator = gameObject.AddComponent<Animator>();
-                Log.Warning(LOG_MODULE, "Animator组件缺失，已自动添加", this);
             }
         }
         
         /// <summary>
         /// 初始化输入系统
-        /// 处理从主菜单进入和直接运行测试场景的不同情况
         /// </summary>
         private void InitializeInputSystem()
         {
@@ -132,12 +128,9 @@ namespace MyGame.Control
                     {
                         _inputActions.GamePlay.Enable();
                     }
-                    // 使用Info级别日志，因为DebugLog可能在某些构建中不可用
-                    Log.Info(LOG_MODULE, "成功从InputManager获取InputActions实例", this);
                 }
                 else
                 {
-                    Log.Error(LOG_MODULE, "InputManager存在但InputActions为null！创建本地GameControl实例", this);
                     _inputActions = new GameControl();
                     _inputActions.GamePlay.Enable();
                 }
@@ -145,9 +138,6 @@ namespace MyGame.Control
             else
             {
                 // 如果InputManager不存在，创建新实例
-                Log.Error(LOG_MODULE, "InputManager不存在，即将创建新实例", this);
-                
-                // 尝试手动创建InputManager实例
                 try
                 {
                     GameObject inputManagerObj = new("InputManager");
@@ -157,22 +147,19 @@ namespace MyGame.Control
                     if (InputManager.Instance != null && InputManager.Instance.InputActions != null)
                     {
                         _inputActions = InputManager.Instance.InputActions;
-                        Log.Info(LOG_MODULE, "成功创建InputManager实例并获取InputActions", this);
                     }
                     else
                     {
                         // 如果手动创建后Instance仍为null，直接创建本地GameControl实例
                         _inputActions = new GameControl();
                         _inputActions.GamePlay.Enable();
-                        Log.Warning(LOG_MODULE, "使用本地GameControl实例代替InputManager", this);
                     }
                 }
-                catch (System.Exception e)
+                catch (Exception)
                 {
                     // 捕获任何可能的异常
                     _inputActions = new GameControl();
                     _inputActions.GamePlay.Enable();
-                    Log.Error(LOG_MODULE, $"创建InputManager实例时出错: {e.Message}", this);
                 }
             }
         }
@@ -186,21 +173,13 @@ namespace MyGame.Control
             if (_tilemap == null)
             {
                 _tilemap = FindObjectOfType<Tilemap>();
-                if (_tilemap == null)
-                {
-                    Log.Warning(LOG_MODULE, "未找到Tilemap组件，请确保场景中存在Tilemap", this);
-                }
-                else
-                {
-                    // 获取Tilemap单元格大小
-                    _cellSize = _tilemap.cellSize;
-                }
+
+
             }
-            else
-            {
-                // 获取Tilemap单元格大小
-                _cellSize = _tilemap.cellSize;
-            }
+
+            // 获取Tilemap单元格大小
+            _cellSize = _tilemap.cellSize;
+            
         }
         
         private void Update()
@@ -332,7 +311,6 @@ namespace MyGame.Control
         #region 移动实现
         /// <summary>
         /// 移动角色
-        /// 添加详细日志输出用于调试推动问题，修复TryPush参数问题
         /// </summary>
         /// <param name="moveDirection">移动方向</param>
         private void MoveCharacter(Vector2 moveDirection)
@@ -342,8 +320,6 @@ namespace MyGame.Control
             {
                 return;
             }
-            
-            Log.DebugLog(LOG_MODULE, $"[推动调试] 玩家尝试移动: {moveDirection}", gameObject);
             
             // 确保角色朝向正确并更新动画参数
             UpdateCharacterFacing(moveDirection);
@@ -356,41 +332,25 @@ namespace MyGame.Control
                 0
             );
             
-            Log.DebugLog(LOG_MODULE, $"[推动调试] 当前位置: {currentGridPos}, 目标位置: {targetGridPos}", gameObject);
-            
             // 关键逻辑：先检查目标位置是否有可推物体
             IPushable pushable = CheckForPushableObject(targetGridPos);
             if (pushable != null)
             {
-                Log.DebugLog(LOG_MODULE, $"[推动调试] 发现可推物体: {pushable.GetType().Name}", gameObject);
-                
                 // 尝试推动物体 - 修复：使用接口定义的正确参数
                 if (pushable.TryPush(moveDirection, 1f))
                 {
-                    Log.Info(LOG_MODULE, $"[推动成功] 玩家推动物体成功，移动到: {targetGridPos}", gameObject);
                     // 推动成功，玩家也移动到该位置
                     StartCoroutine(MoveToGridPosition(targetGridPos));
                 }
-                else
-                {
-                    Log.Warning(LOG_MODULE, $"[推动失败] 玩家推动物体失败，无法移动到: {targetGridPos}", gameObject);
-                    // 如果推动失败，什么都不做（位置不可通行）
-                }
+                // 如果推动失败，什么都不做（位置不可通行）
             }
             else
             {
-                Log.DebugLog(LOG_MODULE, $"[推动调试] 目标位置没有可推物体", gameObject);
-                
                 // 没有可推物体，检查位置是否可通行
                 if (IsCellWalkable(targetGridPos))
                 {
-                    Log.DebugLog(LOG_MODULE, $"[推动调试] 目标位置可通行，开始移动", gameObject);
                     // 开始移动协程
                     StartCoroutine(MoveToGridPosition(targetGridPos));
-                }
-                else
-                {
-                    Log.DebugLog(LOG_MODULE, $"[推动调试] 目标位置不可通行，阻止移动", gameObject);
                 }
                 // 如果不可通行，什么都不做
             }
@@ -461,31 +421,22 @@ namespace MyGame.Control
         
         /// <summary>
         /// 检查网格位置是否可通行
-        /// 添加详细日志输出用于调试通行性检查
         /// </summary>
         /// <param name="gridPosition">要检查的网格位置</param>
         /// <returns>如果可通行则返回true，否则返回false</returns>
         private bool IsCellWalkable(Vector3Int gridPosition)
         {
-            Log.DebugLog(LOG_MODULE, $"[通行性检查] 检查位置: {gridPosition}", gameObject);
-            
             // 1. 检查地板是否存在（必须有地板才能通行）
             if (_tilemap == null || !_tilemap.HasTile(gridPosition))
             {
-                Log.DebugLog(LOG_MODULE, $"[通行性检查] 位置 {gridPosition} 不可通行: 缺少地板", gameObject);
                 return false;
             }
-            
-            Log.DebugLog(LOG_MODULE, $"[通行性检查] 位置 {gridPosition} 有地板", gameObject);
             
             // 2. 检查是否有墙体（如果有墙体则不可通行）
             if (_wallTilemap != null && _wallTilemap.HasTile(gridPosition))
             {
-                Log.DebugLog(LOG_MODULE, $"[通行性检查] 位置 {gridPosition} 不可通行: 有墙体", gameObject);
                 return false;
             }
-            
-            Log.DebugLog(LOG_MODULE, $"[通行性检查] 位置 {gridPosition} 没有墙体", gameObject);
             
             // 3. 使用Physics2D进行精确碰撞检测
             Vector3 worldPosition = GridToWorldPosition(gridPosition);
@@ -493,16 +444,11 @@ namespace MyGame.Control
                                                             new Vector2(_cellSize.x - 0.1f, _cellSize.y - 0.1f), 
                                                             0f);
             
-            Log.DebugLog(LOG_MODULE, $"[通行性检查] 位置 {gridPosition} (世界坐标: {worldPosition}) 有 {colliders.Length} 个碰撞体", gameObject);
-            
             foreach (Collider2D collider in colliders)
             {
-                Log.DebugLog(LOG_MODULE, $"[通行性检查] 检查碰撞体: {collider.name} (类型: {collider.GetType().Name}, 标签: {collider.tag})", gameObject);
-                
                 // 检查是否有不可通行的碰撞体（Obstacle标签）
                 if (collider.CompareTag("Obstacle"))
                 {
-                    Log.DebugLog(LOG_MODULE, $"[通行性检查] 位置 {gridPosition} 不可通行: 有Obstacle标签碰撞体", gameObject);
                     return false;
                 }
                 
@@ -511,45 +457,35 @@ namespace MyGame.Control
             }
             
             // 位置可通行
-            Log.DebugLog(LOG_MODULE, $"[通行性检查] 位置 {gridPosition} 可通行", gameObject);
             return true;
         }
         
         /// <summary>
         /// 检查指定网格位置是否有可推物体
-        /// 添加日志输出用于调试
         /// </summary>
         /// <param name="gridPosition">网格位置</param>
         /// <returns>返回可推物体接口，如果无则返回null</returns>
         private IPushable CheckForPushableObject(Vector3Int gridPosition)
         {
-            Log.DebugLog(LOG_MODULE, $"[推动调试] 检查位置: {gridPosition} (世界坐标: {GridToWorldPosition(gridPosition)})", gameObject);
-            
             Vector3 worldPosition = GridToWorldPosition(gridPosition);
             Collider2D[] colliders = Physics2D.OverlapBoxAll(worldPosition, 
                                                             new Vector2(_cellSize.x - 0.1f, _cellSize.y - 0.1f), 
                                                             0f);
             
-            Log.DebugLog(LOG_MODULE, $"[推动调试] 位置 {gridPosition} 找到 {colliders.Length} 个碰撞体", gameObject);
-            
             foreach (Collider2D collider in colliders)
             {
-                Log.DebugLog(LOG_MODULE, $"[推动调试] 检查碰撞体: {collider.name} (类型: {collider.GetType().Name}, 标签: {collider.tag})", gameObject);
-                
                 // 检查是否有IPushable组件
                 if (collider.TryGetComponent<IPushable>(out IPushable pushable))
                 {
-                    Log.DebugLog(LOG_MODULE, $"[推动调试] 找到可推物体: {collider.name}", gameObject);
                     return pushable;
                 }
             }
             
-            Log.DebugLog(LOG_MODULE, $"[推动调试] 位置 {gridPosition} 没有找到可推物体", gameObject);
             return null;
         }
         #endregion
 
-        #region 动画控制
+        #region 动画控制 - 尚未实装动画
         /// <summary>
         /// 更新角色朝向
         /// </summary>
@@ -599,8 +535,6 @@ namespace MyGame.Control
         {
             // 播放交互动画
             PlayInteractAnimation();
-            // 实现交互逻辑
-            Log.DebugLog(LOG_MODULE, "Interact performed", this);
         }
         
         /// <summary>
@@ -613,7 +547,6 @@ namespace MyGame.Control
             
             // 使用触发器触发交互动画
             _animator.SetTrigger("Interact");
-            Log.Info(LOG_MODULE, "Playing interact animation", this);
         }
         #endregion
 
