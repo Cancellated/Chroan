@@ -44,5 +44,9 @@ namespace Logger
 
         // 箱子模块
         public const string BOX = "Box";
+
+        // 智能体模块
+        public const string AI = "AI";
+        public const string CREATURE = "Creature";
     }
 }

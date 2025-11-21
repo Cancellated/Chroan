@@ -1,4 +1,5 @@
 using UnityEngine;
+using Logger;
 
 /// <summary>
 /// 玩家跟随摄像机脚本 - 方案一（18x10瓦片显示）
@@ -28,10 +29,10 @@ public class PlayerFollowCamera : MonoBehaviour
     
     [Header("边界限制")]
     [Tooltip("世界边界最小值")]
-    public Vector2 worldBoundsMin = new Vector2(-50f, -50f);
+    public Vector2 worldBoundsMin = new(-50f, -50f);
     
     [Tooltip("世界边界最大值")]
-    public Vector2 worldBoundsMax = new Vector2(50f, 50f);
+    public Vector2 worldBoundsMax = new(50f, 50f);
     
     [Header("缩放控制")]
     [Tooltip("是否允许鼠标滚轮缩放")]
@@ -83,7 +84,7 @@ public class PlayerFollowCamera : MonoBehaviour
         cam = GetComponent<Camera>();
         if (cam == null)
         {
-            Debug.LogError("PlayerFollowCamera 需要在Camera对象上使用");
+            Log.Error("PlayerFollowCamera", "需要在Camera对象上使用");
             enabled = false;
             return;
         }
@@ -210,7 +211,7 @@ public class PlayerFollowCamera : MonoBehaviour
         {
             // 计算前瞻目标位置
             Vector3 normalizedVelocity = playerVelocity.normalized;
-            Vector3 lookAheadOffset = normalizedVelocity * playerVelocity.magnitude * lookAheadRatio * 0.1f; // 缩放因子
+            Vector3 lookAheadOffset = 0.1f * lookAheadRatio * playerVelocity.magnitude * normalizedVelocity; // 缩放因子
             
             // 垂直方向增强
             lookAheadOffset.y *= verticalLookAheadMultiplier;
@@ -298,8 +299,7 @@ public class PlayerFollowCamera : MonoBehaviour
     {
         if (!Application.isEditor || target == null) return;
         
-        Camera editorCam = GetComponent<Camera>();
-        if (editorCam == null) return;
+        if (!TryGetComponent<Camera>(out var editorCam)) return;
         
         // 计算当前死区大小
         float aspect = (float)Screen.width / Screen.height;
@@ -309,7 +309,7 @@ public class PlayerFollowCamera : MonoBehaviour
         float tileSizeX = cameraWidth / 18f;
         float tileSizeY = cameraHeight / 10f;
         
-        Vector3 currentDeadZoneSize = new Vector3(
+        Vector3 currentDeadZoneSize = new(
             horizontalDeadZoneTiles * tileSizeX,
             verticalDeadZoneTiles * tileSizeY,
             0
