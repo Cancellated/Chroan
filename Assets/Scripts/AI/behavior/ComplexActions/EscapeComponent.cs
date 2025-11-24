@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using Logger;
 using UnityEngine.Tilemaps;
+using System.Collections;
 
 namespace AI.Behavior
 {
@@ -51,8 +52,9 @@ namespace AI.Behavior
         /// </summary>
         [SerializeField] private float _escapeTriggerDistance = 1.5f;
         [SerializeField] private float _decisionInterval = 0.5f; // 移动决策间隔时间（秒）
-        private float _decisionTimer = 0f; // 决策计时器
-        private float _logCooldown = 0f; // 日志输出冷却时间
+        private bool _canMakeDecision = true; // 是否可以进行决策
+        private bool _decisionCooldownRunning = false; // 决策冷却是否正在运行
+        private bool _canLog = true; // 是否可以输出日志
         private const float LogCooldownDuration = 1.0f; // 日志冷却持续时间（秒）
         
         /// <summary>
@@ -505,34 +507,53 @@ namespace AI.Behavior
         /// 确保在感知范围内持续感知并根据威胁情况动态调整行动
         /// 配合BehaviorComponentManager的串行执行流程
         /// </summary>
+        /// <summary>
+        /// 协程方法：控制日志输出冷却
+        /// </summary>
+        private IEnumerator LogCooldownCoroutine()
+        {
+            _canLog = false;
+            yield return new WaitForSeconds(LogCooldownDuration);
+            _canLog = true;
+        }
+        
+        /// <summary>
+        /// 协程方法：控制决策冷却
+        /// </summary>
+        private IEnumerator DecisionCooldownCoroutine()
+        {
+            if (_decisionCooldownRunning)
+                yield break; // 避免重复启动协程
+                
+            _decisionCooldownRunning = true;
+            _canMakeDecision = false;
+            yield return new WaitForSeconds(_decisionInterval);
+            _canMakeDecision = true;
+            _decisionCooldownRunning = false;
+        }
+        
+        /// <summary>
+        /// 输出日志并启动冷却协程
+        /// </summary>
+        private void LogWithCooldown(string method, string message, Object context = null)
+        {
+            if (_canLog)
+            {
+                switch (method)
+                {
+                    case "DebugLog":
+                        Log.DebugLog(LogModules.AI, message, context);
+                        break;
+                    case "Info":
+                        Log.Info(LogModules.AI, message, context);
+                        break;
+                }
+                StartCoroutine(LogCooldownCoroutine());
+            }
+        }
+        
         public void Update()
         {
-            // 更新决策计时器
-            _decisionTimer += Time.deltaTime;
-            // 更新日志冷却计时器
-            _logCooldown += Time.deltaTime;
-            
-            // 辅助方法：检查日志是否可以输出
-            bool CanLog() { return _logCooldown >= LogCooldownDuration; }
-            
-            // 辅助方法：输出日志并重置冷却
-            void LogWithCooldown(string method, string message, Object context = null)
-            {
-                if (CanLog())
-                {
-                    switch (method)
-                    {
-                        case "DebugLog":
-                            Log.DebugLog(LogModules.AI, message, context);
-                            break;
-                        case "Info":
-                            Log.Info(LogModules.AI, message, context);
-                            break;
-                    }
-                    _logCooldown = 0f;
-                }
-            }
-            
             // 主动更新威胁源信息，确保在决策前有最新的威胁数据
             UpdateThreatSource();
             
@@ -551,7 +572,7 @@ namespace AI.Behavior
                 
                 // 计算威胁方向
                 Vector2 threatDirection = (_threatSource.position - transform.position).normalized;
-                              
+                               
                 // 只要在感知范围内，就考虑是否需要逃离或更新逃离方向
                 if (distanceToThreat <= perceptionRadius)
                 {
@@ -567,27 +588,27 @@ namespace AI.Behavior
                         }
                         else
                         {
-                            // 威胁仍然太近，但只有在不在移动中且到达决策间隔时才更新逃离方向和目标
-                            if (!_isMovingToTarget && _decisionTimer >= _decisionInterval)
+                            // 威胁仍然太近，但只有在不在移动中且可以进行决策时才更新逃离方向和目标
+                            if (!_isMovingToTarget && _canMakeDecision)
                             {
                                 LogWithCooldown("DebugLog", $"{ComponentName}: 威胁仍在安全距离内且不在移动中，执行逃离", this);
                                 // 添加更多的决策上下文信息
                                 LogWithCooldown("Info", $"{ComponentName}: 准备执行逃离 - 威胁方向: {GetDirectionName(threatDirection)}", this);
                                 Execute();
-                                _decisionTimer = 0f; // 重置决策计时器
+                                StartCoroutine(DecisionCooldownCoroutine()); // 启动决策冷却协程
                             }
                         }
                     }
                     else
                     {
-                        // 不在逃离状态但威胁在触发距离内且到达决策间隔时，开始逃离
-                        if (distanceToThreat <= _escapeTriggerDistance && _decisionTimer >= _decisionInterval)
+                        // 不在逃离状态但威胁在触发距离内且可以进行决策时，开始逃离
+                        if (distanceToThreat <= _escapeTriggerDistance && _canMakeDecision)
                         {
                             LogWithCooldown("DebugLog", $"{ComponentName}: 威胁在触发距离内，开始逃离", this);
-                            _decisionTimer = 0f; // 重置决策计时器
                             // 添加更多的决策上下文信息
                             LogWithCooldown("Info", $"{ComponentName}: 开始逃离 - 威胁方向: {GetDirectionName(threatDirection)}", this);
                             Execute();
+                            StartCoroutine(DecisionCooldownCoroutine()); // 启动决策冷却协程
                         }
                         else
                         {
@@ -614,10 +635,10 @@ namespace AI.Behavior
             else if (_threatSource == null)
             {
                 // 只有在没有威胁源时才输出，避免频繁输出
-                if (CanLog())
+                if (_canLog)
                 {
                     Log.DebugLog(LogModules.AI, $"{ComponentName}: 无威胁源", this);
-                    _logCooldown = 0f;
+                    StartCoroutine(LogCooldownCoroutine());
                 }
             }
             else if (_perceptionComponent == null)
