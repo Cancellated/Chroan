@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Logger;
 
 namespace AI.Behavior.Movement
 {
@@ -36,7 +37,7 @@ namespace AI.Behavior.Movement
         /// <summary>
         /// 障碍物层级遮罩
         /// </summary>
-        [SerializeField] private LayerMask _obstacleLayerMask = 1 << 8; // 默认使用第8层作为障碍物层
+        [SerializeField] private LayerMask _obstacleLayerMask = 1 << 6; // 默认使用第6层作为障碍物层(Wall)
         public LayerMask ObstacleLayerMask
         {
             get => _obstacleLayerMask;
@@ -57,7 +58,7 @@ namespace AI.Behavior.Movement
             _collider = gameObject.GetComponent<Collider2D>();
             if (_collider == null)
             {
-                Debug.LogWarning("障碍物检测组件需要游戏对象上有Collider2D组件");
+                Log.Warning(LogModules.AI, "障碍物检测组件需要游戏对象上有Collider2D组件");
             }
         }
 
@@ -154,7 +155,7 @@ namespace AI.Behavior.Movement
                 _detectionRadius, 
                 _obstacleLayerMask);
 
-            List<Collider2D> obstacles = new List<Collider2D>();
+            List<Collider2D> obstacles = new();
             foreach (var collider in colliders)
             {
                 // 排除自己

@@ -144,14 +144,76 @@ public class BehaviorComponentManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 更新所有已注册的组件
+    /// 更新所有组件
+    /// 实现串行执行流程：感知->决策->移动
     /// </summary>
     public void UpdateAllComponents()
     {
+        // 第一阶段：更新感知组件
         foreach (var component in _prioritizedComponents)
         {
-            component.Update();
+            if (IsPerceptionComponent(component))
+            {
+                component.Update();
+            }
         }
+        
+        // 第二阶段：执行行为树（决策）
+        // 行为树的执行由外部的BehaviorTreeExecutor处理
+        // 这里只更新行为组件中的决策逻辑
+        foreach (var component in _prioritizedComponents)
+        {
+            if (IsDecisionComponent(component) && !(component is PerceptionComponent) && !(component is MovementComponent))
+            {
+                component.Update();
+            }
+        }
+        
+        // 第三阶段：执行移动组件
+        foreach (var component in _prioritizedComponents)
+        {
+            if (IsMovementComponent(component))
+            {
+                component.Update();
+            }
+        }
+    }
+    
+    /// <summary>
+    /// 判断组件是否为感知组件
+    /// </summary>
+    /// <param name="component">要判断的组件</param>
+    /// <returns>如果是感知组件则返回true</returns>
+    private bool IsPerceptionComponent(IActionComponent component)
+    {
+        return component is PerceptionComponent || 
+               component.ComponentName.Contains("Perception");
+    }
+    
+    /// <summary>
+    /// 判断组件是否为决策组件
+    /// </summary>
+    /// <param name="component">要判断的组件</param>
+    /// <returns>如果是决策组件则返回true</returns>
+    private bool IsDecisionComponent(IActionComponent component)
+    {
+        return component.ComponentName.Contains("Decision") || 
+               component.ComponentName.Contains("Escape") || 
+               component.ComponentName.Contains("Behavior");
+    }
+    
+    /// <summary>
+    /// 判断组件是否为移动组件
+    /// </summary>
+    /// <param name="component">要判断的组件</param>
+    /// <returns>如果是移动组件则返回true</returns>
+    private bool IsMovementComponent(IActionComponent component)
+    {
+        return component is MovementComponent || 
+               component.ComponentName.Contains("Movement") || 
+               component.ComponentName.Contains("PositionControl") || 
+               component.ComponentName.Contains("SpeedControl") || 
+               component.ComponentName.Contains("ObstacleDetection");
     }
 
     /// <summary>

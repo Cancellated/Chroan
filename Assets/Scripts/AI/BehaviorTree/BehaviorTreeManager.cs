@@ -227,7 +227,7 @@ namespace AI.BehaviorTree
                 executor.Stop();
             }
             behaviorTrees.Clear();
-            Log.Info("所有行为树已清理", LogModules.AI);
+            Log.Info( LogModules.AI, "所有行为树已清理");
         }
 
         /// <summary>

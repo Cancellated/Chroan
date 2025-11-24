@@ -25,12 +25,16 @@ public class RockBehaviorTree : MonoBehaviour
     [Tooltip("岩石游戏对象的引用")]
     private Rock _rockComponent;
     
+    // 行为组件引用
+    private PerceptionComponent _perceptionComponent;
+    private MovementComponent _movementComponent;
+    private EscapeComponent _escapeComponent;
+    
     // 移动相关变量
     private Vector3 _moveTarget;
     private bool _isMoving = false;
     private float _lastMovementTime = -Mathf.Infinity;
     private int _escapeAttemptCount = 0;
-    private PerceptionComponent _perceptionComponent;
     
     // 行为树相关
     private BehaviorTreeExecutor _behaviorTreeExecutor;
@@ -42,20 +46,20 @@ public class RockBehaviorTree : MonoBehaviour
         // 获取Rock组件引用
         _rockComponent = GetComponent<Rock>();
         
-        // 获取或添加感知组件
-        _perceptionComponent = GetComponent<PerceptionComponent>();
-        if (_perceptionComponent == null)
-        {
-            _perceptionComponent = gameObject.AddComponent<PerceptionComponent>();
-            Log.Info(LogModules.AI, $"RockBehaviorTree: 添加了PerceptionComponent", this);
-        }
-        _perceptionComponent.Initialize(gameObject);
+        // 初始化行为组件
+        InitializeBehaviorComponents();
     }
     
     private void OnEnable()
     {
         // 查找玩家
         FindPlayer();
+        
+        // 初始化行为组件（确保在行为树启动前初始化）
+        if (_perceptionComponent == null)
+        {
+            InitializeBehaviorComponents();
+        }
         
         // 创建并启动行为树
         SetupBehaviorTree();
@@ -76,10 +80,19 @@ public class RockBehaviorTree : MonoBehaviour
         // 确保玩家引用
         FindPlayer();
         
-        // 如果正在移动，执行移动
-        if (_isMoving && _moveTarget != Vector3.zero)
+        // 更新所有行为组件
+        UpdateBehaviorComponents();
+        
+        // 同步移动状态
+        if (_movementComponent != null)
         {
-            MoveTowardsTarget();
+            // 确保移动状态同步
+            if (!_movementComponent.HasTarget && _isMoving)
+            {
+                _isMoving = false;
+                _moveTarget = Vector3.zero;
+                Log.Info(LOG_MODULE, "岩石到达目标位置", gameObject);
+            }
         }
     }
     
@@ -203,16 +216,34 @@ public class RockBehaviorTree : MonoBehaviour
     private bool IsPlayerInPerceptionRangeButSafe()
     {
         if (_perceptionComponent == null)
+        {
+            Log.DebugLog(LogModules.AI, "RockBehaviorTree: 感知组件不可用", this);
             return false;
+        }
             
         GameObject nearestThreat = _perceptionComponent.GetNearestThreat();
-        if (nearestThreat != null && nearestThreat.CompareTag("Player"))
+        if (nearestThreat == null)
         {
-            float distance = Vector3.Distance(transform.position, nearestThreat.transform.position);
-            // 在感知范围内但超过安全距离
-            return distance >= _safeDistance && distance <= _perceptionComponent.GetPerceptionRadius();
+            Log.DebugLog(LogModules.AI, "RockBehaviorTree: 没有检测到任何威胁", this);
+            return false;
         }
-        return false;
+        
+        // 确保检测到的是带有Player标签的物体
+        bool isPlayer = nearestThreat.CompareTag("Player");
+        float distance = Vector3.Distance(transform.position, nearestThreat.transform.position);
+        float perceptionRadius = _perceptionComponent.GetPerceptionRadius();
+        bool isInRange = distance <= perceptionRadius;
+        bool isSafe = distance >= _safeDistance;
+        bool result = isPlayer && isInRange && isSafe;
+        
+        Log.DebugLog(LogModules.AI, $"RockBehaviorTree: 检测到物体 {nearestThreat.name}，标签: {nearestThreat.tag}，层: {LayerMask.LayerToName(nearestThreat.layer)}，距离: {distance:F2}，感知半径: {perceptionRadius}，安全距离: {_safeDistance}，是否为玩家: {isPlayer}，是否在范围内: {isInRange}，是否安全: {isSafe}，最终结果: {result}", this);
+        
+        if (isPlayer && isInRange)
+        {
+            _player = nearestThreat;
+        }
+        
+        return result;
     }
     
     /// <summary>
@@ -234,11 +265,28 @@ public class RockBehaviorTree : MonoBehaviour
         if (_perceptionComponent != null)
         {
             GameObject nearestThreat = _perceptionComponent.GetNearestThreat();
-            if (nearestThreat != null && nearestThreat.CompareTag("Player"))
+            if (nearestThreat != null)
             {
-                _player = nearestThreat;
-                float playerDistance = Vector3.Distance(transform.position, nearestThreat.transform.position);
-                return playerDistance < _safeDistance;
+                // 确保检测到的是带有Player标签的物体
+                bool isPlayer = nearestThreat.CompareTag("Player");
+                float distance = Vector3.Distance(transform.position, nearestThreat.transform.position);
+                bool isTooClose = isPlayer && distance < _safeDistance;
+                
+                Log.DebugLog(LogModules.AI, $"RockBehaviorTree: 检测到物体 {nearestThreat.name}，标签: {nearestThreat.tag}，层: {LayerMask.LayerToName(nearestThreat.layer)}，距离: {distance:F2}，是否为玩家: {isPlayer}，是否太近: {isTooClose}", this);
+                
+                if (isPlayer)
+                {
+                    _player = nearestThreat;
+                    return isTooClose;
+                }
+                else
+                {
+                    Log.DebugLog(LogModules.AI, $"RockBehaviorTree: 检测到威胁但不是玩家", this);
+                }
+            }
+            else
+            {
+                Log.DebugLog(LogModules.AI, $"RockBehaviorTree: 没有检测到任何威胁", this);
             }
         }
         
@@ -249,8 +297,10 @@ public class RockBehaviorTree : MonoBehaviour
             if (_player == null) return false;
         }
         
-        float distance = Vector3.Distance(transform.position, _player.transform.position);
-        return distance < _safeDistance;
+        float backupDistance = Vector3.Distance(transform.position, _player.transform.position);
+        bool backupIsTooClose = backupDistance < _safeDistance;
+        Log.DebugLog(LogModules.AI, $"RockBehaviorTree: 使用备用检测，距离: {backupDistance:F2}，安全距离: {_safeDistance}，是否太近: {backupIsTooClose}", this);
+        return backupIsTooClose;
     }
     
     /// <summary>
@@ -260,6 +310,70 @@ public class RockBehaviorTree : MonoBehaviour
     private bool CheckMovementCooldown()
     {
         return Time.time >= _lastMovementTime + _movementCooldown;
+    }
+    
+    /// <summary>
+    /// 初始化所有行为组件
+    /// </summary>
+    private void InitializeBehaviorComponents()
+    {
+        // 获取或添加感知组件
+        _perceptionComponent = GetComponent<PerceptionComponent>();
+        if (_perceptionComponent == null)
+        {
+            _perceptionComponent = gameObject.AddComponent<PerceptionComponent>();
+            Log.Info(LogModules.AI, $"RockBehaviorTree: 添加了PerceptionComponent", this);
+        }
+        _perceptionComponent.Initialize(gameObject);
+        
+        // 设置感知层级为Default层，确保能够感知到玩家
+        // 因为player的layer为default且tag为Player
+        LayerMask playerLayer = LayerMask.GetMask("Default");
+        _perceptionComponent.SetPerceptionLayers(playerLayer);
+        Log.Info(LogModules.AI, $"RockBehaviorTree: 设置感知层级为Default层，确保能够感知到玩家", this);
+        
+        // 获取或添加移动组件
+        _movementComponent = GetComponent<MovementComponent>();
+        if (_movementComponent == null)
+        {
+            _movementComponent = gameObject.AddComponent<MovementComponent>();
+            Log.Info(LogModules.AI, $"RockBehaviorTree: 添加了MovementComponent", this);
+        }
+        _movementComponent.Initialize(gameObject);
+        _movementComponent.DefaultSpeed = _movementSpeed;
+        
+        // 获取或添加逃离组件
+        _escapeComponent = GetComponent<EscapeComponent>();
+        if (_escapeComponent == null)
+        {
+            _escapeComponent = gameObject.AddComponent<EscapeComponent>();
+            Log.Info(LogModules.AI, $"RockBehaviorTree: 添加了EscapeComponent", this);
+        }
+        _escapeComponent.Initialize(gameObject);
+    }
+    
+    /// <summary>
+    /// 更新所有行为组件
+    /// </summary>
+    private void UpdateBehaviorComponents()
+    {
+        // 更新感知组件
+        if (_perceptionComponent != null)
+        {
+            _perceptionComponent.Update();
+        }
+        
+        // 更新移动组件
+        if (_movementComponent != null)
+        {
+            _movementComponent.Update();
+        }
+        
+        // 更新逃离组件
+        if (_escapeComponent != null)
+        {
+            _escapeComponent.Update();
+        }
     }
     
     /// <summary>
@@ -273,17 +387,41 @@ public class RockBehaviorTree : MonoBehaviour
             return false;
         }
         
-        // 计算远离玩家的方向
-        Vector3 awayDirection = (transform.position - _player.transform.position).normalized;
-        
-        // 计算逃离目标位置
-        Vector3 targetPosition = FindSafeEscapePosition(awayDirection);
-        
-        if (targetPosition != Vector3.zero)
+        // 使用EscapeComponent执行逃离行为
+        if (_escapeComponent != null)
         {
-            SetMoveTarget(targetPosition);
-            Log.Info(LOG_MODULE, $"岩石开始远离玩家: {targetPosition}", gameObject);
-            return true;
+            // 设置威胁源为玩家
+            _escapeComponent.SetThreatSource(_player.transform);
+            
+            // 执行逃离
+            bool escapeSuccess = _escapeComponent.Execute();
+            
+            if (escapeSuccess)
+            {
+                _lastMovementTime = Time.time;
+                _escapeAttemptCount++;
+                Log.Info(LOG_MODULE, "岩石开始远离玩家", gameObject);
+            }
+            
+            return escapeSuccess;
+        }
+        else
+        {
+            // 备用方案：使用传统方式逃离
+            Log.Warning(LOG_MODULE, "EscapeComponent不可用，使用备用逃离方案", gameObject);
+            
+            // 计算远离玩家的方向
+            Vector3 awayDirection = (transform.position - _player.transform.position).normalized;
+            
+            // 计算逃离目标位置
+            Vector3 targetPosition = FindSafeEscapePosition(awayDirection);
+            
+            if (targetPosition != Vector3.zero)
+            {
+                SetMoveTarget(targetPosition);
+                Log.Info(LOG_MODULE, $"岩石开始远离玩家（备用方案）: {targetPosition}", gameObject);
+                return true;
+            }
         }
         
         Log.Warning(LOG_MODULE, "无法找到安全的逃离路径", gameObject);
@@ -300,6 +438,12 @@ public class RockBehaviorTree : MonoBehaviour
         _isMoving = true;
         _lastMovementTime = Time.time;
         _escapeAttemptCount++;
+        
+        // 使用MovementComponent设置目标
+        if (_movementComponent != null)
+        {
+            _movementComponent.SetTarget(target);
+        }
     }
     
     /// <summary>
@@ -336,29 +480,30 @@ public class RockBehaviorTree : MonoBehaviour
     }
     
     /// <summary>
-    /// 向目标位置移动
+    /// 观察玩家行为
+    /// 当玩家在安全范围内但仍在感知范围内时执行
     /// </summary>
-    private void MoveTowardsTarget()
+    private void ObservePlayer()
     {
-        if (_moveTarget != Vector3.zero)
+        // 确保停止移动
+        if (_isMoving)
         {
-            // 计算方向和距离
-            Vector3 direction = (_moveTarget - transform.position).normalized;
-            float distance = Vector3.Distance(transform.position, _moveTarget);
+            _isMoving = false;
+            _moveTarget = Vector3.zero;
             
-            // 如果接近目标，停止移动
-            if (distance < 0.1f)
+            // 使用移动组件停止移动
+            if (_movementComponent != null)
             {
-                transform.position = _moveTarget;
-                _isMoving = false;
-                _moveTarget = Vector3.zero;
-                Log.Info(LOG_MODULE, "岩石到达目标位置", gameObject);
+                _movementComponent.StopMovement();
             }
-            else
-            {
-                // 移动向目标
-                transform.position += _movementSpeed * Time.deltaTime * direction;
-            }
+        }
+        
+        // 持续通过感知组件监控玩家
+        if (_perceptionComponent != null)
+        {
+            _perceptionComponent.Execute(); // 强制更新感知
+            
+            Log.DebugLog(LogModules.AI, "RockBehaviorTree: 正在观察玩家", this);
         }
     }
     
@@ -372,30 +517,14 @@ public class RockBehaviorTree : MonoBehaviour
         {
             _isMoving = false;
             _moveTarget = Vector3.zero;
+            
+            // 使用移动组件停止移动
+            if (_movementComponent != null)
+            {
+                _movementComponent.StopMovement();
+            }
         }
         // 待机状态
-    }
-    
-    /// <summary>
-    /// 观察玩家行为
-    /// 当玩家在安全范围内但仍在感知范围内时执行
-    /// </summary>
-    private void ObservePlayer()
-    {
-        // 确保停止移动
-        if (_isMoving)
-        {
-            _isMoving = false;
-            _moveTarget = Vector3.zero;
-        }
-        
-        // 持续通过感知组件监控玩家
-        if (_perceptionComponent != null)
-        {
-            _perceptionComponent.Execute(); // 强制更新感知
-            
-            Log.DebugLog(LogModules.AI, "RockBehaviorTree: 正在观察玩家", this);
-        }
     }
     
     /// <summary>

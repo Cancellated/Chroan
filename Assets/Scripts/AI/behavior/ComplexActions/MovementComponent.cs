@@ -19,8 +19,12 @@ namespace AI.Behavior
         private PositionControlComponent _positionControl;
         private ObstacleDetectionComponent _obstacleDetection;
         
-        private float _defaultSpeed = 3f;
-        private float _arrivalThreshold = 0.1f;
+        private float _defaultSpeed = 4f;
+        // 降低到达阈值以确保能精确到达网格位置
+        private float _arrivalThreshold = 0.05f;
+        
+        // 决策标志 - 用于串行执行流程，确保只在收到决策组件命令后执行移动
+        private bool _hasDecisionCommand = false;
 
         /// <summary>
         /// 组件名称
@@ -199,12 +203,15 @@ namespace AI.Behavior
                 _rigidbody.velocity = Vector2.zero;
                 _positionControl.ClearTarget();
                 _speedControl.StopImmediately();
-                Log.DebugLog(LogModules.AI, $"到达目标位置: {TargetPosition}", this);
+                // 到达目标后清除决策命令标志
+                _hasDecisionCommand = false;
+                Log.DebugLog(LogModules.AI, $"到达目标位置: {TargetPosition}，已清除决策命令标志", this);
                 return true;
             }
 
-            // 使用SpeedControlComponent根据距离调整速度
-            _speedControl.AdjustSpeedByDistance(distance, ArrivalThreshold * 3);
+            // 对于单步移动，不根据距离调整速度，确保能稳定走到终点
+            // 保持恒定速度以确保完整走完一格
+            // 注释掉距离调整，使用固定速度
             
             // 使用ObstacleDetectionComponent检测障碍物并找到可行走方向
             Vector2 finalDirection = direction;
@@ -224,18 +231,31 @@ namespace AI.Behavior
                 }
             }
             
-            // 执行移动
-            _rigidbody.velocity = finalDirection * _speedControl.CurrentSpeed;
+            // 执行移动 - 确保使用足够的速度走到终点
+            _rigidbody.velocity = finalDirection * _defaultSpeed; // 使用默认速度确保稳定移动
 
             return true;
         }
 
         /// <summary>
         /// 更新组件状态
+        /// 作为串行执行流程的最后一步，只在收到决策组件的命令后执行移动
         /// </summary>
         public void Update()
         {
-            if (CanExecute())
+            // 更新内部组件
+            if (_speedControl != null)
+                _speedControl.Update();
+                
+            if (_positionControl != null)
+                _positionControl.Update();
+                
+            if (_obstacleDetection != null)
+                _obstacleDetection.Update();
+                
+            // 只有在收到决策组件的命令(_hasDecisionCommand)且有目标且未到达目标时才执行移动
+            // 这确保移动操作只在决策之后执行，符合串行执行流程
+            if (_hasDecisionCommand && HasTarget && !_positionControl.IsAtTarget())
             {
                 Execute();
             }
@@ -247,6 +267,7 @@ namespace AI.Behavior
         /// </summary>
         public void Reset()
         {
+            // 确保重置时清除所有移动状态
             if (_positionControl != null)
             {
                 _positionControl.Reset();
@@ -268,7 +289,9 @@ namespace AI.Behavior
                 _rigidbody.velocity = Vector2.zero;
             }
             
-            Log.DebugLog(LogModules.AI, "MovementComponent已重置", this);
+            // 重置决策命令标志
+            _hasDecisionCommand = false;
+            Log.DebugLog(LogModules.AI, "MovementComponent已重置，决策命令标志已清除", this);
         }
 
         /// <summary>
@@ -292,7 +315,9 @@ namespace AI.Behavior
                 _rigidbody.velocity = Vector2.zero;
             }
             
-            Log.DebugLog(LogModules.AI, "移动已停止", this);
+            // 停止时清除决策命令标志
+            _hasDecisionCommand = false;
+            Log.DebugLog(LogModules.AI, "移动已停止，决策命令标志已清除", this);
         }
 
         /// <summary>
@@ -302,7 +327,26 @@ namespace AI.Behavior
         public void SetTarget(Vector2 position)
         {
             TargetPosition = position;
-            Log.DebugLog(LogModules.AI, $"设置新目标位置: {position}", this);
+            // 设置决策命令标志，表示已收到决策组件的命令
+            _hasDecisionCommand = true;
+            Log.DebugLog(LogModules.AI, $"设置新目标位置: {position}，决策命令标志已设置", this);
+        }
+        
+        /// <summary>
+        /// 清除决策命令标志
+        /// </summary>
+        public void ClearDecisionCommand()
+        {
+            _hasDecisionCommand = false;
+            Log.DebugLog(LogModules.AI, "决策命令标志已清除", this);
+        }
+        
+        /// <summary>
+        /// 获取决策命令状态
+        /// </summary>
+        public bool HasDecisionCommand
+        {
+            get { return _hasDecisionCommand; }
         }
 
         /// <summary>

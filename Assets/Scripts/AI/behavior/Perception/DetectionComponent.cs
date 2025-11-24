@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Logger;
 
 namespace AI.Behavior.Perception
 {
@@ -67,7 +68,7 @@ namespace AI.Behavior.Perception
             _collider = gameObject.GetComponent<Collider2D>();
             if (_collider == null)
             {
-                Debug.LogWarning("检测组件需要游戏对象上有Collider2D组件");
+                Log.Warning(LogModules.AI, "检测组件需要游戏对象上有Collider2D组件");
             }
             
             DetectedObjects = new List<GameObject>();

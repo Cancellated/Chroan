@@ -71,28 +71,58 @@ namespace AI.Behavior
         /// <summary>
         /// 执行感知行为
         /// 检测周围的物体并更新感知结果
+        /// 注意：现在间隔检查已移至Update方法中
         /// </summary>
         /// <returns>执行是否成功</returns>
         public bool Execute()
         {
-            // 检查是否需要进行感知更新
-            if (Time.time - _lastPerceptionTime < _perceptionInterval)
-                return true;
-
             // 执行感知
             PerformPerception();
             _lastPerceptionTime = Time.time;
-            
             return true;
         }
 
         /// <summary>
         /// 更新组件状态
-        /// 在每帧更新时调用，用于处理持续的感知逻辑
+        /// 在每帧更新时调用，根据设定的间隔时间执行感知逻辑
+        /// 负责更新威胁信息，作为串行执行流程的第一步
         /// </summary>
         public void Update()
         {
-            Execute(); // 持续执行感知
+            // 检查是否需要进行感知更新，使用与Execute方法相同的间隔时间
+            if (Time.time - _lastPerceptionTime >= _perceptionInterval)
+            {
+                Execute(); // 按间隔执行感知
+            }
+            
+            // 确保威胁信息是最新的，作为串行执行流程的第一步
+            // 这样后续的决策组件就能基于最新的感知信息进行判断
+        }
+        
+        /// <summary>
+        /// 获取当前感知间隔时间
+        /// </summary>
+        /// <returns>感知间隔（秒）</returns>
+        public float GetPerceptionInterval()
+        {
+            return _perceptionInterval;
+        }
+        
+        /// <summary>
+        /// 设置感知间隔时间
+        /// </summary>
+        /// <param name="interval">新的感知间隔（秒）</param>
+        public void SetPerceptionInterval(float interval)
+        {
+            if (interval > 0)
+            {
+                _perceptionInterval = interval;
+                Log.Info(LogModules.AI, $"{ComponentName}: 感知间隔已设置为 {interval} 秒", this);
+            }
+            else
+            {
+                Log.Warning(LogModules.AI, $"{ComponentName}: 无效的感知间隔值 {interval}，必须大于0", this);
+            }
         }
 
         /// <summary>
