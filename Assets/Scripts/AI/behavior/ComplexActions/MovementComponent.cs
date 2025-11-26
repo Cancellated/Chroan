@@ -64,7 +64,7 @@ namespace AI.Behavior
             if (_speedControl != null)
             {
                 _speedControl.SetSpeedInstantly(Mathf.Max(0, speed));
-                Log.DebugLog(LogModules.AI, $"速度已设置为: {speed}", this);
+                Log.Debug(LogModules.AI, $"速度已设置为: {speed}", this);
             }
         }
         
@@ -78,7 +78,7 @@ namespace AI.Behavior
             {
                 float newSpeed = _speedControl.CurrentSpeed * multiplier;
                 _speedControl.SetSpeedInstantly(Mathf.Max(0, newSpeed));
-                Log.DebugLog(LogModules.AI, $"速度已调整，倍数: {multiplier}, 新速度: {newSpeed}", this);
+                Log.Debug(LogModules.AI, $"速度已调整，倍数: {multiplier}, 新速度: {newSpeed}", this);
             }
         }
 
@@ -145,7 +145,7 @@ namespace AI.Behavior
                 _rigidbody.gravityScale = 0;
             }
             
-            // 获取或添加基础动作组件
+            // 获取基础动作组件
             _speedControl = _owner.GetComponent<SpeedControlComponent>();
             if (_speedControl == null)
             {
@@ -193,7 +193,6 @@ namespace AI.Behavior
             if (!CanExecute())
                 return false;
 
-            // 使用PositionControlComponent计算方向和距离
             Vector2 direction = _positionControl.CalculateDirectionToTarget();
             float distance = _positionControl.CalculateDistanceToTarget();
 
@@ -205,29 +204,18 @@ namespace AI.Behavior
                 _speedControl.StopImmediately();
                 // 到达目标后清除决策命令标志
                 _hasDecisionCommand = false;
-                Log.DebugLog(LogModules.AI, $"到达目标位置: {TargetPosition}，已清除决策命令标志", this);
+                Log.Debug(LogModules.AI, $"到达目标位置: {TargetPosition}，已清除决策命令标志", this);
                 return true;
             }
-
-            // 对于单步移动，不根据距离调整速度，确保能稳定走到终点
-            // 保持恒定速度以确保完整走完一格
-            // 注释掉距离调整，使用固定速度
-            
             // 使用ObstacleDetectionComponent检测障碍物并找到可行走方向
             Vector2 finalDirection = direction;
             if (_obstacleDetection.HasObstacleInDirection(direction))
             {
-                Log.DebugLog(LogModules.AI, "路径上有障碍物，尝试绕行", this);
                 // 尝试找到可行走的方向
                 Vector2 walkableDirection = _obstacleDetection.FindWalkableDirection(direction);
                 if (walkableDirection != Vector2.zero)
                 {
                     finalDirection = walkableDirection;
-                }
-                else
-                {
-                    // 如果没有找到可行走方向，则尝试向右侧偏移
-                    finalDirection = new Vector2(-direction.y, direction.x);
                 }
             }
             
@@ -239,7 +227,6 @@ namespace AI.Behavior
 
         /// <summary>
         /// 更新组件状态
-        /// 作为串行执行流程的最后一步，只在收到决策组件的命令后执行移动
         /// </summary>
         public void Update()
         {
@@ -252,9 +239,7 @@ namespace AI.Behavior
                 
             if (_obstacleDetection != null)
                 _obstacleDetection.Update();
-                
-            // 只有在收到决策组件的命令(_hasDecisionCommand)且有目标且未到达目标时才执行移动
-            // 这确保移动操作只在决策之后执行，符合串行执行流程
+            // 收到决策后才移动
             if (_hasDecisionCommand && HasTarget && !_positionControl.IsAtTarget())
             {
                 Execute();
@@ -291,14 +276,14 @@ namespace AI.Behavior
             
             // 重置决策命令标志
             _hasDecisionCommand = false;
-            Log.DebugLog(LogModules.AI, "MovementComponent已重置，决策命令标志已清除", this);
+            Log.Debug(LogModules.AI, "MovementComponent已重置，决策命令标志已清除", this);
         }
 
         /// <summary>
         /// 立即停止移动
         /// 停止所有移动相关的行为
         /// </summary>
-        public void StopMovement()
+        public void Stop()
         {
             if (_positionControl != null)
             {
@@ -317,7 +302,7 @@ namespace AI.Behavior
             
             // 停止时清除决策命令标志
             _hasDecisionCommand = false;
-            Log.DebugLog(LogModules.AI, "移动已停止，决策命令标志已清除", this);
+            Log.Debug(LogModules.AI, "移动已停止，决策命令标志已清除", this);
         }
 
         /// <summary>
@@ -329,7 +314,7 @@ namespace AI.Behavior
             TargetPosition = position;
             // 设置决策命令标志，表示已收到决策组件的命令
             _hasDecisionCommand = true;
-            Log.DebugLog(LogModules.AI, $"设置新目标位置: {position}，决策命令标志已设置", this);
+            Log.Debug(LogModules.AI, $"设置新目标位置: {position}，决策命令标志已设置", this);
         }
         
         /// <summary>
@@ -338,7 +323,7 @@ namespace AI.Behavior
         public void ClearDecisionCommand()
         {
             _hasDecisionCommand = false;
-            Log.DebugLog(LogModules.AI, "决策命令标志已清除", this);
+            Log.Debug(LogModules.AI, "决策命令标志已清除", this);
         }
         
         /// <summary>
@@ -349,29 +334,5 @@ namespace AI.Behavior
             get { return _hasDecisionCommand; }
         }
 
-        /// <summary>
-        /// 设置障碍物层
-        /// </summary>
-        /// <param name="layerMask">障碍物层掩码</param>
-        public void SetObstacleLayer(LayerMask layerMask)
-        {
-            if (_obstacleDetection != null)
-            {
-                _obstacleDetection.ObstacleLayerMask = layerMask;
-                Log.DebugLog(LogModules.AI, $"障碍物层已设置: {layerMask}", this);
-            }
-        }
-
-        /// <summary>
-        /// 获取到目标的剩余距离
-        /// </summary>
-        /// <returns>到目标的距离，如果没有目标则返回0</returns>
-        public float GetDistanceToTarget()
-        {
-            if (!HasTarget || _positionControl == null)
-                return 0f;
-            
-            return _positionControl.CalculateDistanceToTarget();
-        }
     }
 }

@@ -45,7 +45,7 @@ namespace MyGame.UI.Settings.Controller
         /// </summary>
         protected virtual void OnEnable()
         {
-            Log.DebugLog(LOG_MODULE, "设置面板控制器启用");
+            Log.Debug(LOG_MODULE, "设置面板控制器启用");
             SetModels();
         }
         
@@ -55,7 +55,7 @@ namespace MyGame.UI.Settings.Controller
         /// </summary>
         protected void SetModels()
         {
-            Log.DebugLog(LOG_MODULE, "设置面板控制器: 模型已设置");
+            Log.Debug(LOG_MODULE, "设置面板控制器: 模型已设置");
             BindModelEvents();
         }
 
@@ -156,7 +156,7 @@ namespace MyGame.UI.Settings.Controller
                     // 如果提供了调试日志格式化函数，则记录调试日志
                     if (debugLogFormat != null)
                     {
-                        Log.DebugLog(LOG_MODULE, debugLogFormat(currentValue, newValue));
+                        Log.Debug(LOG_MODULE, debugLogFormat(currentValue, newValue));
                     }
                     
                     // 执行更新操作
@@ -290,7 +290,7 @@ namespace MyGame.UI.Settings.Controller
             if (m_model != null)
             {
                 m_model.ApplySettings();
-                Log.DebugLog(LOG_MODULE, "设置已成功应用");
+                Log.Debug(LOG_MODULE, "设置已成功应用");
             }
             else
             {
@@ -307,7 +307,7 @@ namespace MyGame.UI.Settings.Controller
             if (m_model != null)
             {
                 m_model.SaveSettings();
-                Log.DebugLog(LOG_MODULE, "设置已成功保存");
+                Log.Debug(LOG_MODULE, "设置已成功保存");
             }
             else
             {
@@ -347,7 +347,7 @@ namespace MyGame.UI.Settings.Controller
             if (m_model != null)
             {
                 float volume = m_model.MusicVolume;
-                Log.DebugLog(LOG_MODULE, "获取音乐音量: " + volume);
+                Log.Debug(LOG_MODULE, "获取音乐音量: " + volume);
                 return volume;
             }
             else
@@ -366,7 +366,7 @@ namespace MyGame.UI.Settings.Controller
             if (m_model != null)
             {
                 float volume = m_model.SfxVolume;
-                Log.DebugLog(LOG_MODULE, "获取音效音量: " + volume);
+                Log.Debug(LOG_MODULE, "获取音效音量: " + volume);
                 return volume;
             }
             else

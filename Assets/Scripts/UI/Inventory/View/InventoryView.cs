@@ -101,7 +101,7 @@ namespace Inventory.view
         public override void Show()
         {
             base.Show();
-            Log.DebugLog(LogModules.UI, "InventoryView: 背包已显示", this);
+            Log.Debug(LogModules.UI, "InventoryView: 背包已显示", this);
         }
         
         /// <summary>
@@ -110,7 +110,7 @@ namespace Inventory.view
         public override void Hide()
         {
             base.Hide();
-            Log.DebugLog(LogModules.UI, "InventoryView: 背包已隐藏", this);
+            Log.Debug(LogModules.UI, "InventoryView: 背包已隐藏", this);
         }
         
         /// <summary>

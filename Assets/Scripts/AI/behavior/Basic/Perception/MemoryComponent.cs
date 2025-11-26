@@ -29,7 +29,7 @@ namespace AI.Behavior.Perception
         /// <summary>
         /// 记忆对象列表
         /// </summary>
-        private List<MemoryEntry> _memoryEntries = new List<MemoryEntry>();
+        private List<MemoryEntry> _memoryEntries = new();
         public List<MemoryEntry> MemoryEntries => _memoryEntries;
 
         /// <summary>

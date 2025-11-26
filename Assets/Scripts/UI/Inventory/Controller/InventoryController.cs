@@ -142,7 +142,7 @@ namespace Inventory.controller
         public void ShowItemDetails(ItemData item)
         {
             // 实际项目中这里会显示一个详情面板
-            Log.DebugLog(LogModules.UI, $"显示物品详情: {item.Name}\n{item.Description}", this);
+            Log.Debug(LogModules.UI, $"显示物品详情: {item.Name}\n{item.Description}", this);
         }
         
         // 更新视图

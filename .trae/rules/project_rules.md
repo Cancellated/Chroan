@@ -1,9 +1,18 @@
-在实现日志输出方法时，使用项目中logger命名空间下的方法输出日志，它包含Info、DebugLog、Warning、Error方法，用于输出不同级别的日志信息，使用时需要的参数：
+在实现日志输出方法时，使用项目中logger命名空间下的方法输出日志，它包含Info、Debug、Warning、Error方法，用于输出不同级别的日志信息，使用时需要的参数：
 Info(string module, string message, Object context = null)
 其中：
 module：日志所属的模块，使用LogModules脚本中定义的枚举值。
 message：日志的具体信息，描述发生的事件或问题。
 context：可选参数，用于提供额外的上下文信息，例如对象引用、变量值等。
+在需要实现带有冷却时间的日志输出时，使用
+LogWithCooldown(LogLevel logType, string module, string message, Object context = null, string cooldownKey = null, float cooldownTime = DEFAULT_LOG_COOLDOWN)
+其中：
+logType：日志级别，使用LogLevel枚举值指定日志的级别，例如Info、Debug、Warning、Error。
+module：日志所属的模块，使用LogModules脚本中定义的枚举值。
+message：日志的具体信息，描述发生的事件或问题。
+context：可选参数，用于提供额外的上下文信息，例如对象引用、变量值等。
+cooldownKey：可选参数，用于指定冷却时间的键值，不同的键值可以设置不同的冷却时间。
+cooldownTime：可选参数，用于指定冷却时间的秒数，默认值为DEFAULT_LOG_COOLDOWN，其值为1s。
 
 LogModules脚本定义了各个模块的枚举值，用于在日志输出时指定日志所属的模块，在需要定义新的大类模块时，需要在LogModules脚本中添加新的枚举值并使用它。
 
@@ -41,3 +50,5 @@ UI实现使用的是MVC架构，且均继承于Assets\Scripts\UI\Core\BaseMVC中
 现在的实现逻辑是编写最小动作组件，由最小动作组件组合成复杂行为，复杂行为组成行为树节点。
 
 实现单例模式时，一般通过继承项目中的Assets\Scripts\Core\Singleton\Singleton.cs脚本，在需要定义新的单例类时，需要继承此基类并指定泛型参数为新的单例类。
+
+实现行为树时，使用Assets\Scripts\AI\behavior中定义的行为组件，不要在行为树节点中直接编写行为逻辑。另外，组合节点时先查看基础组件中的方法，避免重复定义相同的方法。

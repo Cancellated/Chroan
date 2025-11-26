@@ -175,7 +175,7 @@ namespace AI.Behavior.Movement
         /// <param name="angleStep">角度步进值</param>
         /// <param name="maxAttempts">最大尝试次数</param>
         /// <returns>可行走的方向，如果没有找到则返回Vector2.zero</returns>
-        public Vector2 FindWalkableDirection(Vector2 preferredDirection, float angleStep = 30f, int maxAttempts = 6)
+        public Vector2 FindWalkableDirection(Vector2 preferredDirection, float angleStep = 90f, int maxAttempts = 4)
         {
             // 首先尝试首选方向
             if (!HasObstacleInDirection(preferredDirection))
@@ -203,21 +203,6 @@ namespace AI.Behavior.Movement
             }
 
             return Vector2.zero; // 没有找到可行走的方向
-        }
-
-        /// <summary>
-        /// 可视化检测范围（用于调试）
-        /// </summary>
-        private void OnDrawGizmosSelected()
-        {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(transform.position, _detectionRadius);
-            
-            // 绘制检测射线
-            Gizmos.DrawLine(transform.position, transform.position + (Vector3)Vector2.right * _detectionDistance);
-            Gizmos.DrawLine(transform.position, transform.position + (Vector3)Vector2.left * _detectionDistance);
-            Gizmos.DrawLine(transform.position, transform.position + (Vector3)Vector2.up * _detectionDistance);
-            Gizmos.DrawLine(transform.position, transform.position + (Vector3)Vector2.down * _detectionDistance);
         }
     }
 }

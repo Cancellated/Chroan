@@ -145,7 +145,7 @@ public class WallColliderManager : TilemapChangeListener
         // 防止短时间内重复执行查找操作
         if (Time.time - lastFindTime < findCooldown)
         {
-            Log.DebugLog(LogModules.TILEMAP, "查找操作处于冷却中，跳过本次执行", this);
+            Log.Debug(LogModules.TILEMAP, "查找操作处于冷却中，跳过本次执行", this);
             return;
         }
         
@@ -178,12 +178,12 @@ public class WallColliderManager : TilemapChangeListener
                 int tilemapLayerId = tilemap.gameObject.layer;
                 string tilemapLayerName = LayerMask.LayerToName(tilemapLayerId);
                 
-                Log.DebugLog(LogModules.TILEMAP, $"Tilemap '{tilemap.name}' 在图层 '{tilemapLayerName}' (ID: {tilemapLayerId})", this);
+                Log.Debug(LogModules.TILEMAP, $"Tilemap '{tilemap.name}' 在图层 '{tilemapLayerName}' (ID: {tilemapLayerId})", this);
                 
                 if (tilemapLayerId == wallLayerId)
                 {
                     wallTilemaps.Add(tilemap);
-                    Log.DebugLog(LogModules.TILEMAP, $"已添加墙体Tilemap: {tilemap.name}", this);
+                    Log.Debug(LogModules.TILEMAP, $"已添加墙体Tilemap: {tilemap.name}", this);
                 }
             }
         }
@@ -428,7 +428,7 @@ public class WallColliderManager : TilemapChangeListener
         if (autoRefreshColliders)
         {
             StartAutoRefresh();
-            Log.DebugLog(LogModules.GAMEMANAGER, "已启用碰撞体自动刷新", this);
+            Log.Debug(LogModules.GAMEMANAGER, "已启用碰撞体自动刷新", this);
         }
         else
         {
@@ -437,7 +437,7 @@ public class WallColliderManager : TilemapChangeListener
                 StopCoroutine(refreshCoroutine);
                 refreshCoroutine = null;
             }
-            Log.DebugLog(LogModules.GAMEMANAGER, "已禁用碰撞体自动刷新", this);
+            Log.Debug(LogModules.GAMEMANAGER, "已禁用碰撞体自动刷新", this);
         }
     }
 
@@ -449,7 +449,7 @@ public class WallColliderManager : TilemapChangeListener
     {
         FindWallTilemaps();
         ConfigureAllWallColliders();
-        Log.DebugLog(LogModules.GAMEMANAGER, "已刷新所有碰撞体", this);
+        Log.Debug(LogModules.GAMEMANAGER, "已刷新所有碰撞体", this);
     }
     
     /// <summary>
@@ -593,7 +593,7 @@ public class WallColliderManager : TilemapChangeListener
                 }
             }
             
-            Log.DebugLog(LogModules.GAMEMANAGER, string.Format("刷新位置 {0} 周围半径 {1} 的碰撞体", worldPosition, radius), this);
+            Log.Debug(LogModules.GAMEMANAGER, string.Format("刷新位置 {0} 周围半径 {1} 的碰撞体", worldPosition, radius), this);
         }
         else
         {
@@ -633,7 +633,7 @@ public class WallColliderManager : TilemapChangeListener
     public void ToggleSmallMapOptimization()
     {
         smallMapOptimization = !smallMapOptimization;
-        Log.DebugLog(LogModules.GAMEMANAGER, string.Format("小型地图优化模式已{0}", smallMapOptimization ? "启用" : "禁用"), this);
+        Log.Debug(LogModules.GAMEMANAGER, string.Format("小型地图优化模式已{0}", smallMapOptimization ? "启用" : "禁用"), this);
         
         if (smallMapOptimization)
         {
@@ -658,7 +658,7 @@ public class WallColliderManager : TilemapChangeListener
         EnsureSystemsAreInitialized();
         RegisterToEventSystem();
         AddTilemapsToSpatialSystem();
-        Log.DebugLog(LogModules.GAMEMANAGER, "系统组件已重置", this);
+        Log.Debug(LogModules.GAMEMANAGER, "系统组件已重置", this);
     }
 }
 

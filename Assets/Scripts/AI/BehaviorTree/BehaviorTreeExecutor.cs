@@ -197,13 +197,6 @@ namespace AI.BehaviorTree
             // 触发更新事件
             OnTreeUpdated?.Invoke(CurrentState);
 
-            // 检查是否完成
-            if (CurrentState != BTNodeState.Running)
-            {
-                IsRunning = false;
-                OnTreeCompleted?.Invoke(CurrentState);
-                Log.Info($"行为树 '{TreeName}' 执行完成，状态: {CurrentState}，执行次数: {executionCount}", LogModules.AI);
-            }
         }
 
         /// <summary>

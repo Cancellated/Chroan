@@ -1,573 +1,272 @@
 using UnityEngine;
 using AI.BehaviorTree;
-using Logger;
 using AI.Behavior;
+using Logger;
+using static Logger.Log;
+
+namespace Items.Rock
+{
 
 /// <summary>
-/// RockBehaviorTree（岩石行为树）类
-/// 使用行为树框架控制岩石的行为逻辑
+/// Rock行为树管理器
+/// 负责管理Rock对象的行为树逻辑
 /// </summary>
 public class RockBehaviorTree : MonoBehaviour
-{
-    [Header("岩石状态设置")]
-    [Tooltip("岩石苏醒状态下的安全距离")]
-    [SerializeField] private float _safeDistance = 6f;
-    
-    [Header("移动设置")]
-    [Tooltip("移动速度")]
-    [SerializeField] private float _movementSpeed = 2f;
-    [Tooltip("移动冷却时间（秒）")]
-    [SerializeField] private float _movementCooldown = 2f;
-    
-    [Header("引用")]
-    [Tooltip("玩家游戏对象")]
-    [SerializeField] private GameObject _player;
-    [Tooltip("岩石游戏对象的引用")]
-    private Rock _rockComponent;
-    
-    // 行为组件引用
-    private PerceptionComponent _perceptionComponent;
-    private MovementComponent _movementComponent;
-    private EscapeComponent _escapeComponent;
-    
-    // 移动相关变量
-    private Vector3 _moveTarget;
-    private bool _isMoving = false;
-    private float _lastMovementTime = -Mathf.Infinity;
-    private int _escapeAttemptCount = 0;
-    
-    // 行为树相关
-    private BehaviorTreeExecutor _behaviorTreeExecutor;
-    
-    private const string LOG_MODULE = "RockBehaviorTree";
-    
-    private void Awake()
     {
-        // 获取Rock组件引用
-        _rockComponent = GetComponent<Rock>();
+        /// <summary>
+        /// 行为树执行器
+        /// </summary>
+        private BehaviorTreeExecutor _treeExecutor;
         
-        // 初始化行为组件
-        InitializeBehaviorComponents();
-    }
+        /// <summary>
+        /// 关联的Rock组件
+        /// </summary>
+        private Rock _rock;
+        
+        /// <summary>
+        /// 行为树根节点
+        /// </summary>
+        private BTNode _rootNode;
+        
+        /// <summary>
+        /// 逃离行为组件
+        /// 负责处理岩石从玩家处逃离的行为
+        /// </summary>
+        private EscapeComponent _escapeComponent;
+        
+        /// <summary>
+    /// 威胁检测组件
+    /// 负责检测和管理威胁源
+    /// </summary>
+    private ThreatDetectionComponent _threatDetection;
     
-    private void OnEnable()
-    {
-        // 查找玩家
-        FindPlayer();
-        
-        // 初始化行为组件（确保在行为树启动前初始化）
-        if (_perceptionComponent == null)
-        {
-            InitializeBehaviorComponents();
-        }
-        
-        // 创建并启动行为树
-        SetupBehaviorTree();
-    }
-    
-    private void OnDisable()
-    {
-        // 停止行为树
-        if (_behaviorTreeExecutor != null)
-        {
-            _behaviorTreeExecutor.Stop();
-            _behaviorTreeExecutor = null;
-        }
-    }
-    
-    private void Update()
-    {
-        // 确保玩家引用
-        FindPlayer();
-        
-        // 更新所有行为组件
-        UpdateBehaviorComponents();
-        
-        // 同步移动状态
-        if (_movementComponent != null)
-        {
-            // 确保移动状态同步
-            if (!_movementComponent.HasTarget && _isMoving)
-            {
-                _isMoving = false;
-                _moveTarget = Vector3.zero;
-                Log.Info(LOG_MODULE, "岩石到达目标位置", gameObject);
-            }
-        }
-    }
+    // 行为树配置 - 动画和唤醒逻辑由其他系统控制
     
     /// <summary>
-    /// 设置岩石的行为树
-    /// 使用选择器作为根节点，包含逃离序列、观察序列和待机动作
+    /// 初始化
     /// </summary>
-    private void SetupBehaviorTree()
+    private void Awake()
     {
-        // 获取行为树管理器
-        var btManager = FindObjectOfType<BehaviorTreeManager>();
-        if (btManager == null)
+        _rock = GetComponent<Rock>();
+        if (_rock == null)
         {
-            Log.Error(LOG_MODULE, "未找到BehaviorTreeManager组件", gameObject);
+            Log.Error(LogModules.ROCK, "未找到关联的Rock组件", null);
+            enabled = false;
             return;
         }
         
-        // 创建根节点 - 选择器
-        var root = new BTSelector("RockBehaviorRoot");
+        // 初始化行为组件
+        InitializeBehaviorComponents();
         
-        // 创建逃离序列
-        var escapeSequence = CreateEscapeSequence();
-        
-        // 创建观察序列 - 玩家在感知范围内但安全
-        var observeSequence = new BTSequence("ObserveSequence");
-        observeSequence.AddChild(new BTConditionNode(() => CheckIfAwake(), "CheckIfAwake"));
-        observeSequence.AddChild(new BTConditionNode(() => IsPlayerInPerceptionRangeButSafe(), "CheckIfPlayerInPerceptionRangeButSafe"));
-        observeSequence.AddChild(new BTActionNode(() => { ObservePlayer(); return BTNodeState.Success; }, "ObservePlayer"));
-        
-        // 创建待机动作
-        var idleAction = new BTActionNode(
-            () => {
-                Idle();
-                return BTNodeState.Success;
-            },
-            "IdleAction"
-        );
-        
-        // 添加子节点到根选择器（优先级：逃跑 > 观察 > 待机）
-        root.AddChild(escapeSequence);
-        root.AddChild(observeSequence);
-        root.AddChild(idleAction);
-        
-        // 注册行为树
-        _behaviorTreeExecutor = btManager.RegisterTree(
-            $"RockAI_{gameObject.GetInstanceID()}",
-            root,
-            0.1f,  // 更新间隔
-            true   // 自动开始
-        );
-        
-        // 监听行为树状态变化
-        _behaviorTreeExecutor.OnTreeUpdated += OnTreeUpdated;
-        _behaviorTreeExecutor.OnTreeCompleted += OnTreeCompleted;
+        // 初始化行为树
+        InitializeBehaviorTree();
     }
     
     /// <summary>
-    /// 创建逃离序列节点
-    /// 包含状态检查、玩家距离检查、冷却时间检查和逃离动作
-    /// </summary>
-    /// <returns>逃离序列节点</returns>
-    private BTSequence CreateEscapeSequence()
-    {
-        var escapeSequence = new BTSequence("EscapeSequence");
-        
-        // 1. 检查是否苏醒
-        var awakeCondition = new BTConditionNode(
-            () => CheckIfAwake(),
-            "CheckIfAwake"
-        );
-        
-        // 2. 检查玩家是否太靠近
-        var playerDistanceCondition = new BTConditionNode(
-            () => CheckIfPlayerTooClose(),
-            "CheckPlayerDistance"
-        );
-        
-        // 3. 检查移动冷却是否完成
-        var cooldownCondition = new BTConditionNode(
-            () => CheckMovementCooldown(),
-            "CheckMovementCooldown"
-        );
-        
-        // 4. 执行逃离动作
-        var escapeAction = new BTActionNode(
-            () => {
-                if (ExecuteEscapeFromPlayer())
-                    return BTNodeState.Success;
-                return BTNodeState.Failure;
-            },
-            "EscapeFromPlayer"
-        );
-        
-        // 添加子节点到序列
-        escapeSequence.AddChild(awakeCondition);
-        escapeSequence.AddChild(playerDistanceCondition);
-        escapeSequence.AddChild(cooldownCondition);
-        escapeSequence.AddChild(escapeAction);
-        
-        return escapeSequence;
-    }
-    
-    /// <summary>
-    /// 查找玩家
-    /// </summary>
-    private void FindPlayer()
-    {
-        if (_player == null)
-        {
-            _player = GameObject.FindGameObjectWithTag("Player");
-        }
-    }
-    
-    /// <summary>
-    /// 使用感知组件检测玩家
-    /// </summary>
-    /// <summary>
-    /// 检查玩家是否在安全范围内但仍在感知范围内
-    /// 用于实现岩石在安全范围内不移动但持续感知环境的功能
-    /// </summary>
-    private bool IsPlayerInPerceptionRangeButSafe()
-    {
-        if (_perceptionComponent == null)
-        {
-            Log.DebugLog(LogModules.AI, "RockBehaviorTree: 感知组件不可用", this);
-            return false;
-        }
-            
-        GameObject nearestThreat = _perceptionComponent.GetNearestThreat();
-        if (nearestThreat == null)
-        {
-            Log.DebugLog(LogModules.AI, "RockBehaviorTree: 没有检测到任何威胁", this);
-            return false;
-        }
-        
-        // 确保检测到的是带有Player标签的物体
-        bool isPlayer = nearestThreat.CompareTag("Player");
-        float distance = Vector3.Distance(transform.position, nearestThreat.transform.position);
-        float perceptionRadius = _perceptionComponent.GetPerceptionRadius();
-        bool isInRange = distance <= perceptionRadius;
-        bool isSafe = distance >= _safeDistance;
-        bool result = isPlayer && isInRange && isSafe;
-        
-        Log.DebugLog(LogModules.AI, $"RockBehaviorTree: 检测到物体 {nearestThreat.name}，标签: {nearestThreat.tag}，层: {LayerMask.LayerToName(nearestThreat.layer)}，距离: {distance:F2}，感知半径: {perceptionRadius}，安全距离: {_safeDistance}，是否为玩家: {isPlayer}，是否在范围内: {isInRange}，是否安全: {isSafe}，最终结果: {result}", this);
-        
-        if (isPlayer && isInRange)
-        {
-            _player = nearestThreat;
-        }
-        
-        return result;
-    }
-    
-    /// <summary>
-    /// 检查岩石是否处于苏醒状态
-    /// </summary>
-    /// <returns>如果处于苏醒状态返回true，否则返回false</returns>
-    private bool CheckIfAwake()
-    {
-        return _rockComponent != null && _rockComponent.CurrentState == Rock.RockState.Awake;
-    }
-    
-    /// <summary>
-    /// 检查玩家是否太靠近
-    /// </summary>
-    /// <returns>如果玩家太靠近返回true，否则返回false</returns>
-    private bool CheckIfPlayerTooClose()
-    {
-        // 完全使用感知组件检测玩家距离
-        if (_perceptionComponent != null)
-        {
-            GameObject nearestThreat = _perceptionComponent.GetNearestThreat();
-            if (nearestThreat != null)
-            {
-                // 确保检测到的是带有Player标签的物体
-                bool isPlayer = nearestThreat.CompareTag("Player");
-                float distance = Vector3.Distance(transform.position, nearestThreat.transform.position);
-                bool isTooClose = isPlayer && distance < _safeDistance;
-                
-                Log.DebugLog(LogModules.AI, $"RockBehaviorTree: 检测到物体 {nearestThreat.name}，标签: {nearestThreat.tag}，层: {LayerMask.LayerToName(nearestThreat.layer)}，距离: {distance:F2}，是否为玩家: {isPlayer}，是否太近: {isTooClose}", this);
-                
-                if (isPlayer)
-                {
-                    _player = nearestThreat;
-                    return isTooClose;
-                }
-                else
-                {
-                    Log.DebugLog(LogModules.AI, $"RockBehaviorTree: 检测到威胁但不是玩家", this);
-                }
-            }
-            else
-            {
-                Log.DebugLog(LogModules.AI, $"RockBehaviorTree: 没有检测到任何威胁", this);
-            }
-        }
-        
-        // 备用方案
-        if (_player == null)
-        {
-            FindPlayer();
-            if (_player == null) return false;
-        }
-        
-        float backupDistance = Vector3.Distance(transform.position, _player.transform.position);
-        bool backupIsTooClose = backupDistance < _safeDistance;
-        Log.DebugLog(LogModules.AI, $"RockBehaviorTree: 使用备用检测，距离: {backupDistance:F2}，安全距离: {_safeDistance}，是否太近: {backupIsTooClose}", this);
-        return backupIsTooClose;
-    }
-    
-    /// <summary>
-    /// 检查移动冷却时间
-    /// </summary>
-    /// <returns>如果冷却完成返回true，否则返回false</returns>
-    private bool CheckMovementCooldown()
-    {
-        return Time.time >= _lastMovementTime + _movementCooldown;
-    }
-    
-    /// <summary>
-    /// 初始化所有行为组件
+    /// 初始化行为组件
+    /// 设置并配置所有必要的行为组件
     /// </summary>
     private void InitializeBehaviorComponents()
     {
-        // 获取或添加感知组件
-        _perceptionComponent = GetComponent<PerceptionComponent>();
-        if (_perceptionComponent == null)
+        try
         {
-            _perceptionComponent = gameObject.AddComponent<PerceptionComponent>();
-            Log.Info(LogModules.AI, $"RockBehaviorTree: 添加了PerceptionComponent", this);
-        }
-        _perceptionComponent.Initialize(gameObject);
-        
-        // 设置感知层级为Default层，确保能够感知到玩家
-        // 因为player的layer为default且tag为Player
-        LayerMask playerLayer = LayerMask.GetMask("Default");
-        _perceptionComponent.SetPerceptionLayers(playerLayer);
-        Log.Info(LogModules.AI, $"RockBehaviorTree: 设置感知层级为Default层，确保能够感知到玩家", this);
-        
-        // 获取或添加移动组件
-        _movementComponent = GetComponent<MovementComponent>();
-        if (_movementComponent == null)
-        {
-            _movementComponent = gameObject.AddComponent<MovementComponent>();
-            Log.Info(LogModules.AI, $"RockBehaviorTree: 添加了MovementComponent", this);
-        }
-        _movementComponent.Initialize(gameObject);
-        _movementComponent.DefaultSpeed = _movementSpeed;
-        
-        // 获取或添加逃离组件
-        _escapeComponent = GetComponent<EscapeComponent>();
-        if (_escapeComponent == null)
-        {
-            _escapeComponent = gameObject.AddComponent<EscapeComponent>();
-            Log.Info(LogModules.AI, $"RockBehaviorTree: 添加了EscapeComponent", this);
-        }
-        _escapeComponent.Initialize(gameObject);
-    }
-    
-    /// <summary>
-    /// 更新所有行为组件
-    /// </summary>
-    private void UpdateBehaviorComponents()
-    {
-        // 更新感知组件
-        if (_perceptionComponent != null)
-        {
-            _perceptionComponent.Update();
-        }
-        
-        // 更新移动组件
-        if (_movementComponent != null)
-        {
-            _movementComponent.Update();
-        }
-        
-        // 更新逃离组件
-        if (_escapeComponent != null)
-        {
-            _escapeComponent.Update();
-        }
-    }
-    
-    /// <summary>
-    /// 执行远离玩家的行为
-    /// </summary>
-    /// <returns>是否成功开始逃离</returns>
-    private bool ExecuteEscapeFromPlayer()
-    {
-        if (_player == null)
-        {
-            return false;
-        }
-        
-        // 使用EscapeComponent执行逃离行为
-        if (_escapeComponent != null)
-        {
-            // 设置威胁源为玩家
-            _escapeComponent.SetThreatSource(_player.transform);
-            
-            // 执行逃离
-            bool escapeSuccess = _escapeComponent.Execute();
-            
-            if (escapeSuccess)
+            // 获取或添加威胁检测组件
+            _threatDetection = GetComponent<ThreatDetectionComponent>();
+            if (_threatDetection == null)
             {
-                _lastMovementTime = Time.time;
-                _escapeAttemptCount++;
-                Log.Info(LOG_MODULE, "岩石开始远离玩家", gameObject);
+                _threatDetection = gameObject.AddComponent<ThreatDetectionComponent>();
+                Log.Info(LogModules.ROCK, "添加ThreatDetectionComponent组件", this);
             }
+            // ThreatDetectionComponent可能没有Initialize方法或参数不同，需要检查其实现
             
-            return escapeSuccess;
-        }
-        else
-        {
-            // 备用方案：使用传统方式逃离
-            Log.Warning(LOG_MODULE, "EscapeComponent不可用，使用备用逃离方案", gameObject);
-            
-            // 计算远离玩家的方向
-            Vector3 awayDirection = (transform.position - _player.transform.position).normalized;
-            
-            // 计算逃离目标位置
-            Vector3 targetPosition = FindSafeEscapePosition(awayDirection);
-            
-            if (targetPosition != Vector3.zero)
+            // 获取或添加逃离组件
+            _escapeComponent = GetComponent<EscapeComponent>();
+            if (_escapeComponent == null)
             {
-                SetMoveTarget(targetPosition);
-                Log.Info(LOG_MODULE, $"岩石开始远离玩家（备用方案）: {targetPosition}", gameObject);
-                return true;
+                _escapeComponent = gameObject.AddComponent<EscapeComponent>();
+                Log.Info(LogModules.ROCK, "添加EscapeComponent组件", this);
             }
-        }
-        
-        Log.Warning(LOG_MODULE, "无法找到安全的逃离路径", gameObject);
-        return false;
-    }
-    
-    /// <summary>
-    /// 设置移动目标
-    /// </summary>
-    /// <param name="target">目标位置</param>
-    public void SetMoveTarget(Vector3 target)
-    {
-        _moveTarget = target;
-        _isMoving = true;
-        _lastMovementTime = Time.time;
-        _escapeAttemptCount++;
-        
-        // 使用MovementComponent设置目标
-        if (_movementComponent != null)
-        {
-            _movementComponent.SetTarget(target);
-        }
-    }
-    
-    /// <summary>
-    /// 查找安全的逃离位置
-    /// </summary>
-    /// <param name="awayDirection">远离玩家的方向</param>
-    /// <returns>安全的逃离位置，如果没有找到则返回Vector3.zero</returns>
-    private Vector3 FindSafeEscapePosition(Vector3 awayDirection)
-    {
-        // 尝试多个方向，找到一个可行的逃离位置
-        Vector3[] directions = new Vector3[]
-        {
-            awayDirection,
-            Quaternion.Euler(0, 0, 45) * awayDirection,
-            Quaternion.Euler(0, 0, -45) * awayDirection,
-            Quaternion.Euler(0, 0, 90) * awayDirection,
-            Quaternion.Euler(0, 0, -90) * awayDirection
-        };
-        
-        foreach (Vector3 dir in directions)
-        {
-            Vector3 targetPos = transform.position + dir * _safeDistance;
+            _escapeComponent.Initialize(gameObject);
             
-            // 简单的碰撞检测，可以根据实际项目需求扩展
-            if (!Physics2D.OverlapCircle(targetPos, 0.5f))
+            Log.Info(LogModules.ROCK, "岩石行为组件初始化完成", this);
+        }
+        catch (System.Exception e)
+        {
+            Log.Error(LogModules.ROCK, $"初始化行为组件时出错: {e.Message}", this);
+        }
+    }
+    
+    /// <summary>
+    /// 启用时启动行为树
+    /// </summary>
+    private void OnEnable()
+    {
+        if (_treeExecutor != null)
+        {
+            _treeExecutor.Start();
+            Log.Info(LogModules.ROCK, "行为树开始执行", null);
+        }
+    }
+    
+    /// <summary>
+    /// 更新行为树
+    /// </summary>
+    private void Update()
+    {
+        _treeExecutor?.Update();
+    }
+    
+    /// <summary>
+    /// 禁用时停止行为树
+    /// </summary>
+    private void OnDisable()
+    {
+        if (_treeExecutor != null)
+        {
+            _treeExecutor.Stop();
+            Log.Info(LogModules.ROCK, "行为树停止执行", null);
+        }
+    }
+    
+    /// <summary>
+    /// 初始化行为树
+    /// </summary>
+    private void InitializeBehaviorTree()
+    {
+        // 创建根节点（选择器）
+        _rootNode = new BTSelector("RockBehaviorSelector");
+        
+        // 创建行为树执行器
+        _treeExecutor = new BehaviorTreeExecutor(_rootNode, "RockBehaviorTree", 0.1f);
+        
+        // 设置状态转换条件
+        SetupStateTransitions();
+        
+        Log.Info(LogModules.ROCK, "行为树初始化完成", null);
+    }
+    
+    /// <summary>
+    /// 设置状态转换条件和行为
+    /// </summary>
+    private void SetupStateTransitions()
+    {
+        // 沉睡状态序列
+        BTSequence sleepingSequence = new("SleepingSequence");
+        sleepingSequence.AddChild(new BTConditionNode(
+            () => _rock.CurrentState == Rock.RockState.Sleeping,
+            "IsSleeping"
+        ));
+        sleepingSequence.AddChild(new BTActionNode(
+            PerformSleepingBehavior,
+            "SleepingBehavior"
+        ));
+        
+        // 苏醒状态序列
+        BTSequence awakeSequence = new("AwakeSequence");
+        awakeSequence.AddChild(new BTConditionNode(
+            () => _rock.CurrentState == Rock.RockState.Awake,
+            "IsAwake"
+        ));
+        awakeSequence.AddChild(new BTActionNode(
+            PerformAwakeBehavior,
+            "AwakeBehavior"
+        ));
+        
+        // 添加到根选择器
+        _rootNode.AddChild(sleepingSequence);
+        _rootNode.AddChild(awakeSequence);
+        
+        // 注意：唤醒逻辑由其他系统控制，不再通过行为树实现
+    }
+
+    /// <summary>
+    /// 执行沉睡状态的行为
+    /// </summary>
+    /// <returns>执行状态</returns>
+    private BTNodeState PerformSleepingBehavior()
+    {
+        // 执行基础的待机检查
+        CheckStandByConditions();
+        
+        // 沉睡状态是一个持续运行的行为
+        return BTNodeState.Running;
+    }
+    
+    /// <summary>
+    /// 执行苏醒状态的行为
+    /// </summary>
+    /// <returns>执行状态</returns>
+    private BTNodeState PerformAwakeBehavior()
+    {
+        try
+        {
+            // 苏醒状态的行为逻辑
+            CheckAwakeConditions();
+            // 苏醒状态是一个持续运行的行为
+            return BTNodeState.Running;
+        }
+        catch (System.Exception e)
+        {
+            Log.Error(LogModules.ROCK, $"执行苏醒行为时出错: {e.Message}", this);
+            return BTNodeState.Failure;
+        }
+    }
+    
+    /// <summary>
+    /// 检查苏醒条件和执行苏醒状态的行为
+    /// </summary>
+    private void CheckAwakeConditions()
+        {
+            try
             {
-                return targetPos;
+                // 确保岩石处于正确的物理状态
+                if (_rock.CurrentState == Rock.RockState.Awake && _rock.Rigidbody != null)
+                {
+                    // 设置威胁源为玩家（如果存在）
+                    GameObject player = GameObject.FindGameObjectWithTag("Player");
+                    if (player != null && _threatDetection != null)
+                    {
+                        // 确保组件已初始化
+                        _threatDetection.SetThreatSource(player);
+                        
+                        // 更新威胁源信息 - 只传递玩家对象，避免参数不匹配问题
+                        _threatDetection.UpdateThreatSource();
+                        
+                        // 检查是否应该执行逃离行为
+                        if ((_threatDetection.ShouldTriggerEscape()) && _escapeComponent != null)
+                        {
+                            // 确保状态正确
+                            if (_escapeComponent.CanExecute())
+                            {
+                                LogWithCooldown(LogLevel.Info, LogModules.ROCK, "准备执行逃跑行为", this);
+                                // 执行逃跑行为
+                                _escapeComponent.Execute();
+                            }
+                        }
+                    }
+                }
             }
-        }
-        
-        // 如果所有方向都不行，尝试随机方向
-        Vector3 randomDir = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0).normalized;
-        return transform.position + randomDir * _safeDistance;
-    }
-    
-    /// <summary>
-    /// 观察玩家行为
-    /// 当玩家在安全范围内但仍在感知范围内时执行
-    /// </summary>
-    private void ObservePlayer()
-    {
-        // 确保停止移动
-        if (_isMoving)
-        {
-            _isMoving = false;
-            _moveTarget = Vector3.zero;
-            
-            // 使用移动组件停止移动
-            if (_movementComponent != null)
+            catch (System.Exception e)
             {
-                _movementComponent.StopMovement();
-            }
-        }
-        
-        // 持续通过感知组件监控玩家
-        if (_perceptionComponent != null)
-        {
-            _perceptionComponent.Execute(); // 强制更新感知
-            
-            Log.DebugLog(LogModules.AI, "RockBehaviorTree: 正在观察玩家", this);
-        }
-    }
-    
-    /// <summary>
-    /// 待机行为
-    /// </summary>
-    private void Idle()
-    {
-        // 如果正在移动，停止移动
-        if (_isMoving)
-        {
-            _isMoving = false;
-            _moveTarget = Vector3.zero;
-            
-            // 使用移动组件停止移动
-            if (_movementComponent != null)
-            {
-                _movementComponent.StopMovement();
+                Log.Error(LogModules.ROCK, $"检查苏醒条件时出错: {e.Message}", this);
             }
         }
-        // 待机状态
-    }
-    
-    /// <summary>
-    /// 行为树更新回调
-    /// </summary>
-    private void OnTreeUpdated(BTNodeState state)
-    {
-        Log.DebugLog(LOG_MODULE, $"行为树更新，当前状态: {state}", gameObject);
-    }
-    
-    /// <summary>
-    /// 行为树完成回调
-    /// </summary>
-    private void OnTreeCompleted(BTNodeState state)
-    {
-        Log.DebugLog(LOG_MODULE, $"行为树完成，最终状态: {state}", gameObject);
-    }
-    
-#if UNITY_EDITOR
-    /// <summary>
-    /// 在编辑器中绘制调试信息
-    /// </summary>
-    private void OnDrawGizmosSelected()
-    {
-        // 绘制安全距离范围
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(transform.position, _safeDistance);
         
-        // 绘制移动目标
-        if (_isMoving && _moveTarget != Vector3.zero)
+        /// <summary>
+        /// 检查待机条件
+        /// </summary>
+        /// <returns>条件满足返回true</returns>
+        private bool CheckStandByConditions()
         {
-            Gizmos.color = Color.red;
-            Gizmos.DrawSphere(_moveTarget, 0.3f);
-            Gizmos.DrawLine(transform.position, _moveTarget);
+            // 确保岩石处于正确的物理状态
+            // 注意：物理状态的设置已经由Rock类的SetPhysicsProperties方法处理
+            // 这里只做日志记录
+            if (_rock.CurrentState == Rock.RockState.Sleeping && _rock.Rigidbody != null)
+            {
+                Log.Debug(LogModules.ROCK, "确认岩石处于沉睡状态的物理设置", null);
+            }
+            
+            return true;
         }
-        
-        // 绘制当前状态标签
-        GUIStyle style = new();
-        style.normal.textColor = Color.white;
-        style.fontStyle = FontStyle.Bold;
-        
-        UnityEditor.Handles.Label(transform.position + new Vector3(0, 1.5f, 0), 
-            $"Behavior: {(_isMoving ? "Moving" : "Idle")}\nEscape Attempts: {_escapeAttemptCount}", style);
     }
-#endif
 }

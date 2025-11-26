@@ -48,5 +48,8 @@ namespace Logger
         // 智能体模块
         public const string AI = "AI";
         public const string CREATURE = "Creature";
+
+        //游戏物体模块
+        public const string ROCK = "Rock";
     }
 }

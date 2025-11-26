@@ -135,7 +135,7 @@ namespace AI.Behavior
             _nearestThreat = null;
             _lastPerceptionTime = 0f;
             
-            Log.DebugLog(LogModules.AI, $"{ComponentName}: 已重置", this);
+            Log.Debug(LogModules.AI, $"{ComponentName}: 已重置", this);
         }
 
         /// <summary>
@@ -171,7 +171,7 @@ namespace AI.Behavior
             // 记录感知日志
             if (_perceivedObjects.Count > 0)
             {
-                Log.DebugLog(LogModules.AI, $"{ComponentName}: 感知到 {_perceivedObjects.Count} 个物体，最近的物体距离: {minDistance:F2}", this);
+                Log.Debug(LogModules.AI, $"{ComponentName}: 感知到 {_perceivedObjects.Count} 个物体，最近的物体距离: {minDistance:F2}", this);
             }
         }
 
@@ -221,7 +221,7 @@ namespace AI.Behavior
             if (radius > 0)
             {
                 _perceptionRadius = radius;
-                Log.DebugLog(LogModules.AI, $"{ComponentName}: 感知半径已设置为 {radius}", this);
+                Log.Debug(LogModules.AI, $"{ComponentName}: 感知半径已设置为 {radius}", this);
             }
         }
 
