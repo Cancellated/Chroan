@@ -65,8 +65,6 @@ namespace AI.Behavior
             {
                 Vector3Int gridPosition = WorldToGridPosition(position, groundTilemap);
                 bool hasGroundTile = groundTilemap.HasTile(gridPosition);
-                Log.Debug(LogModules.AI, $"位置({position})的网格坐标{gridPosition}{(hasGroundTile ? "有" : "没有")}地面瓦片", context);
-                
                 return hasGroundTile;
             }
             
@@ -96,7 +94,7 @@ namespace AI.Behavior
                 return false;
             }
             
-            // 3. 使用Physics2D进行精确碰撞检测
+            // 3. 使用Physics2D进行碰撞检测
             Vector3 worldPosition = GridToWorldPosition(gridPosition, groundTilemap);
             Collider2D[] colliders = Physics2D.OverlapBoxAll(worldPosition, 
                                                           new Vector2(cellSize.x - 0.1f, cellSize.y - 0.1f), 
@@ -105,7 +103,7 @@ namespace AI.Behavior
             foreach (Collider2D collider in colliders)
             {
                 // 检查是否有不可通行的碰撞体（Obstacle标签）
-                if (collider.CompareTag("Obstacle"))
+                if (collider.CompareTag("Obstacle") || collider.CompareTag("Player"))
                 {
                     return false;
                 }
@@ -153,7 +151,6 @@ namespace AI.Behavior
                     
                     if (isObstacleTag || isWallLayer)
                     {
-                        Log.Debug(LogModules.AI, $"方向 {direction} 检测到障碍物: {hit.collider.gameObject.name}", context);
                         return true;
                     }
                 }
@@ -187,10 +184,7 @@ namespace AI.Behavior
         /// </summary>
         private static Tilemap FindSpecificTilemap(string tilemapType)
         {
-            Log.Debug(LogModules.AI, $"查找{tilemapType}类型的Tilemap", null);
-            
             Tilemap[] allTilemaps = Object.FindObjectsOfType<Tilemap>();
-            Log.Debug(LogModules.AI, $"场景中找到{allTilemaps.Length}个Tilemap", null);
             
             // 记录所有找到的Tilemap名称，用于调试
             string allTilemapNames = "";
@@ -202,14 +196,12 @@ namespace AI.Behavior
             
             // 根据类型确定关键词数组
             string[] keywords = GetTilemapKeywords(tilemapType);
-            Log.Debug(LogModules.AI, $"使用的搜索关键词: {string.Join(", ", keywords)}", null);
             
             // 尝试精确匹配
             foreach (var tm in allTilemaps)
             {
                 foreach (var keyword in keywords)
                 {
-                    Log.Debug(LogModules.AI, $"检查Tilemap: {tm.name} 是否精确匹配关键词: {keyword}", null);
                     if (tm.name.Equals(keyword, System.StringComparison.OrdinalIgnoreCase))
                     {
                         Log.Debug(LogModules.AI, $"找到精确匹配的{tilemapType} Tilemap: {tm.name}", null);
@@ -223,7 +215,6 @@ namespace AI.Behavior
             {
                 foreach (var keyword in keywords)
                 {
-                    Log.Debug(LogModules.AI, $"检查Tilemap: {tm.name} 是否包含关键词: {keyword}", null);
                     if (tm.name.IndexOf(keyword, System.StringComparison.OrdinalIgnoreCase) >= 0)
                     {
                         Log.Debug(LogModules.AI, $"找到包含匹配的{tilemapType} Tilemap: {tm.name}", null);

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Logger;
+using AI.Behavior;
 
 namespace AI.Behavior.Movement
 {
@@ -13,6 +14,11 @@ namespace AI.Behavior.Movement
         /// 组件名称
         /// </summary>
         public string ComponentName => "ObstacleDetectionComponent";
+
+        /// <summary>
+        /// 拥有该组件的游戏对象
+        /// </summary>
+        private GameObject _owner;
 
         /// <summary>
         /// 检测距离
@@ -55,19 +61,12 @@ namespace AI.Behavior.Movement
         /// <param name="gameObject">游戏对象引用</param>
         public void Initialize(GameObject gameObject)
         {
+            _owner = gameObject;
             _collider = gameObject.GetComponent<Collider2D>();
             if (_collider == null)
             {
                 Log.Warning(LogModules.AI, "障碍物检测组件需要游戏对象上有Collider2D组件");
             }
-        }
-
-        /// <summary>
-        /// 便捷初始化方法
-        /// </summary>
-        public void Initialize()
-        {
-            Initialize(gameObject);
         }
 
         /// <summary>
@@ -116,93 +115,50 @@ namespace AI.Behavior.Movement
                 return false;
 
             direction = direction.normalized;
-            RaycastHit2D hit = Physics2D.Raycast(
-                transform.position, 
-                direction, 
-                _detectionDistance, 
-                _obstacleLayerMask);
-
-            // 确保不检测到自己
-            return hit.collider != null && hit.collider != _collider;
+            
+            // 使用TilemapHelper的IsDirectionBlocked方法进行障碍物检测
+            return TilemapHelper.IsDirectionBlocked(
+                _owner.transform.position,     // 起始位置
+                direction,              // 检测方向
+                _detectionDistance,     // 检测距离
+                _owner,                 // 忽略自身
+                this);
         }
 
-        /// <summary>
-        /// 获取指定方向上最近的障碍物
-        /// </summary>
-        /// <param name="direction">检测方向</param>
-        /// <returns>障碍物的碰撞信息，如果没有检测到则返回false</returns>
-        public RaycastHit2D GetObstacleInDirection(Vector2 direction)
-        {
-            if (direction.sqrMagnitude < Mathf.Epsilon)
-                return default;
-
-            direction = direction.normalized;
-            return Physics2D.Raycast(
-                transform.position, 
-                direction, 
-                _detectionDistance, 
-                _obstacleLayerMask);
-        }
-
-        /// <summary>
-        /// 在圆形区域内检测障碍物
-        /// </summary>
-        /// <returns>检测到的所有障碍物碰撞体</returns>
-        public List<Collider2D> DetectObstaclesInRadius()
-        {
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(
-                transform.position, 
-                _detectionRadius, 
-                _obstacleLayerMask);
-
-            List<Collider2D> obstacles = new();
-            foreach (var collider in colliders)
-            {
-                // 排除自己
-                if (collider != _collider)
-                {
-                    obstacles.Add(collider);
-                }
-            }
-
-            return obstacles;
-        }
 
         /// <summary>
         /// 查找可行走方向
+        /// 使用TilemapHelper检查方向是否可行走
         /// </summary>
         /// <param name="preferredDirection">首选方向</param>
-        /// <param name="angleStep">角度步进值</param>
-        /// <param name="maxAttempts">最大尝试次数</param>
         /// <returns>可行走的方向，如果没有找到则返回Vector2.zero</returns>
-        public Vector2 FindWalkableDirection(Vector2 preferredDirection, float angleStep = 90f, int maxAttempts = 4)
+        public Vector2 FindWalkableDirection(Vector2 preferredDirection)
         {
-            // 首先尝试首选方向
-            if (!HasObstacleInDirection(preferredDirection))
+            // 首选方向有效性检查
+            if (preferredDirection.sqrMagnitude < Mathf.Epsilon)
+                return Vector2.zero;
+                
+            // 提前归一化首选方向
+            preferredDirection = preferredDirection.normalized;
+            
+            // 使用TilemapHelper检查首选方向是否可行走
+            if (!TilemapHelper.IsDirectionBlocked(_owner.transform.position, preferredDirection, _detectionDistance, _owner, this))
             {
-                return preferredDirection.normalized;
+                return preferredDirection;
             }
-
-            // 尝试其他方向
-            for (int i = 1; i <= maxAttempts; i++)
+            
+            // 如果首选方向被阻挡，尝试四个基本方向（上、右、下、左）
+            Vector2[] basicDirections = new Vector2[] { Vector2.up, Vector2.right, Vector2.down, Vector2.left };
+            foreach (Vector2 dir in basicDirections)
             {
-                // 正方向旋转
-                float angle = angleStep * i;
-                Vector2 rotatedDirection = Quaternion.Euler(0, 0, angle) * preferredDirection;
-                if (!HasObstacleInDirection(rotatedDirection))
+                if (!TilemapHelper.IsDirectionBlocked(_owner.transform.position, dir, _detectionDistance, _owner, this))
                 {
-                    return rotatedDirection.normalized;
-                }
-
-                // 反方向旋转
-                rotatedDirection = Quaternion.Euler(0, 0, -angle) * preferredDirection;
-                if (!HasObstacleInDirection(rotatedDirection))
-                {
-                    return rotatedDirection.normalized;
+                    return dir;
                 }
             }
-
-            return Vector2.zero; // 没有找到可行走的方向
+            
+            // 没有找到可行走的方向
+            return Vector2.zero;
         }
     }
 }

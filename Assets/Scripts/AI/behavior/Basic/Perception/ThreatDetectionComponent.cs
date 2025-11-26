@@ -24,7 +24,7 @@ namespace AI.Behavior
         /// </summary>
         [Header("感知配置")]
         [Tooltip("威胁检测范围")]
-        [SerializeField] protected float _detectionRange = 2f;
+        [SerializeField] protected float _detectionRange = 1.9f;
         
         /// <summary>
         /// 触发逃离的距离阈值
@@ -61,7 +61,7 @@ namespace AI.Behavior
             }
             
             _threatSource = threatSource;
-            Log.LogWithCooldown(Log.LogLevel.Debug, LogModules.AI, $"{ComponentName}: 设置威胁源为: {threatSource.name}", this, $"{ComponentName}_setThreat");
+            // Log.LogWithCooldown(Log.LogLevel.Debug, LogModules.AI, $"{ComponentName}: 设置威胁源为: {threatSource.name}", this, $"{ComponentName}_setThreat");
         }
         
         /// <summary>
@@ -78,7 +78,7 @@ namespace AI.Behavior
             
             if (inRange)
             {
-                Log.LogWithCooldown(Log.LogLevel.Debug, LogModules.AI, $"{ComponentName}: 威胁源在检测范围内，距离: {distance}", this, $"{ComponentName}_threatInRange");
+                // Log.LogWithCooldown(Log.LogLevel.Debug, LogModules.AI, $"{ComponentName}: 威胁源在检测范围内，距离: {distance}", this, $"{ComponentName}_threatInRange");
             }
             
             return inRange;

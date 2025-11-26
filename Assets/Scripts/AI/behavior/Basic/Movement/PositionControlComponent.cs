@@ -20,7 +20,7 @@ namespace AI.Behavior.Movement
         /// <summary>
         /// 到达目标位置的阈值距离
         /// </summary>
-        [SerializeField] private float _arrivalThreshold = 0.1f;
+        [SerializeField] private float _arrivalThreshold = 0.05f;
         public float ArrivalThreshold => _arrivalThreshold;
 
         /// <summary>

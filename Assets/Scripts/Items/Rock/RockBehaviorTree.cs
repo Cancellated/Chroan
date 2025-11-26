@@ -70,16 +70,16 @@ public class RockBehaviorTree : MonoBehaviour
     {
         try
         {
-            // 获取或添加威胁检测组件
+            // 添加威胁检测组件
             _threatDetection = GetComponent<ThreatDetectionComponent>();
             if (_threatDetection == null)
             {
                 _threatDetection = gameObject.AddComponent<ThreatDetectionComponent>();
                 Log.Info(LogModules.ROCK, "添加ThreatDetectionComponent组件", this);
             }
-            // ThreatDetectionComponent可能没有Initialize方法或参数不同，需要检查其实现
+            _threatDetection.Initialize();
             
-            // 获取或添加逃离组件
+            // 添加逃离组件
             _escapeComponent = GetComponent<EscapeComponent>();
             if (_escapeComponent == null)
             {

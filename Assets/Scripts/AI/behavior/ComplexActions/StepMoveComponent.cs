@@ -9,7 +9,7 @@ namespace AI.Behavior
     /// 单步移动组件 - 实现每次只移动一个网格单位的移动行为
     /// 参考MovementComponent实现，确保每次只移动一个单元格的距离
     /// </summary>
-    public class SingleStepMovementComponent : MonoBehaviour, IActionComponent
+    public class StepMoveComponent : MonoBehaviour, IActionComponent
     {
         /// <summary>
         /// 组件名称
@@ -46,7 +46,7 @@ namespace AI.Behavior
         /// <summary>
         /// 网格大小，默认为1x1
         /// </summary>
-        [SerializeField] private Vector2 _cellSize = new Vector2(1f, 1f);
+        [SerializeField] private Vector2 _cellSize = new(1f, 1f);
         public Vector2 CellSize
         {
             get => _cellSize;
@@ -56,7 +56,7 @@ namespace AI.Behavior
         /// <summary>
         /// 默认移动速度
         /// </summary>
-        private float _defaultSpeed = 4f;
+        private float _defaultSpeed = 5f;
         
         /// <summary>
         /// 到达目标的最小距离阈值
@@ -109,11 +109,6 @@ namespace AI.Behavior
         /// 是否正在执行单步移动
         /// </summary>
         public bool IsMoving { get; private set; }
-        
-        /// <summary>
-        /// 是否到达目标位置
-        /// </summary>
-        public bool HasReachedTarget => _positionControl != null && _positionControl.IsAtTarget();
         
         /// <summary>
         /// 初始化组件
@@ -200,45 +195,12 @@ namespace AI.Behavior
             // 检查是否到达目标
             if (distance <= _arrivalThreshold || _positionControl.IsAtTarget())
             {
-                _rigidbody.velocity = Vector2.zero;
-                _positionControl.ClearTarget();
-                _speedControl.StopImmediately();
-                // 到达目标后清除决策命令标志
-                HasDecisionCommand = false;
-                IsMoving = false;
-                Log.Debug(LogModules.AI, $"到达目标位置: {TargetPosition}，已清除决策命令标志", this);
+                Log.Debug(LogModules.AI, "已到达目标位置，终止移动", this);
+                Stop();
                 return true;
             }
-            
-            // 使用ObstacleDetectionComponent检测障碍物并找到可行走方向
-            Vector2 finalDirection = direction;
-            if (_obstacleDetection.HasObstacleInDirection(direction))
-            {
-                // 尝试找到可行走的方向
-                Vector2 walkableDirection = _obstacleDetection.FindWalkableDirection(direction);
-                if (walkableDirection != Vector2.zero)
-                {
-                    finalDirection = walkableDirection;
-                    
-                    // 当找到替代方向时，重新计算单步目标位置
-                    // 确保只移动一个网格单位的距离
-                    Vector2 currentPosition = transform.position;
-                    Vector2 newTargetPosition = currentPosition + finalDirection * new Vector2(_cellSize.x, _cellSize.y);
-                    
-                    // 对齐到网格中心
-                    if (_groundTilemap != null)
-                    {
-                        newTargetPosition = TilemapHelper.AlignToGridCenter(newTargetPosition, _groundTilemap);
-                    }
-                    
-                    // 更新目标位置
-                    _positionControl.SetTargetPosition(newTargetPosition);
-                    Log.Debug(LogModules.AI, $"首选方向有障碍物，已切换到可行方向: {finalDirection}，新目标位置: {newTargetPosition}", this);
-                }
-            }
-            
-            // 执行移动 - 确保使用足够的速度走到终点
-            _rigidbody.velocity = finalDirection * _defaultSpeed;
+
+            _rigidbody.velocity = direction * _defaultSpeed;
             IsMoving = true;
 
             return true;
@@ -253,65 +215,8 @@ namespace AI.Behavior
             return _isInitialized && HasTarget && _rigidbody != null && 
                    _speedControl != null && _positionControl != null && _obstacleDetection != null;
         }
+
         
-        /// <summary>
-        /// 执行单步移动到指定方向
-        /// 将移动距离固定为1格（一个tilemap单元格大小）
-        /// </summary>
-        /// <param name="direction">移动方向（通常是标准化的向量）</param>
-        /// <param name="speed">移动速度</param>
-        /// <returns>是否成功启动移动</returns>
-        public bool MoveOneStepInDirection(Vector2 direction, float speed)
-        {
-            if (!_isInitialized || _rigidbody == null || 
-                _speedControl == null || _positionControl == null || _obstacleDetection == null)
-            {
-                return false;
-            }
-            
-            // 标准化方向向量，确保是4方向移动（上、下、左、右）
-            direction = new Vector2(Mathf.Round(direction.x), Mathf.Round(direction.y)).normalized;
-            
-            // 使用ObstacleDetectionComponent检查目标方向是否可行走
-            if (_obstacleDetection.HasObstacleInDirection(direction))
-            {
-                // 尝试找到可行走的方向
-                Vector2 walkableDirection = _obstacleDetection.FindWalkableDirection(direction);
-                if (walkableDirection != Vector2.zero)
-                {
-                    direction = walkableDirection;
-                    Log.Debug(LogModules.AI, $"首选方向有障碍物，已切换到可行方向: {direction}", this);
-                }
-                else
-                {
-                    Log.Debug(LogModules.AI, $"方向 {direction} 有障碍物，无法移动且没有可行的替代方向", this);
-                    return false; // 如果没有可行方向，不执行移动
-                }
-            }
-            
-            // 计算单步目标位置（当前位置 + 一个网格单位的方向移动）
-            // 确保每次只移动一个单元格的距离
-            Vector2 currentPosition = transform.position;
-            Vector2 targetPosition = currentPosition + direction * new Vector2(_cellSize.x, _cellSize.y);
-            
-            // 使用TilemapHelper进行网格对齐
-            if (_groundTilemap != null)
-            {
-                targetPosition = TilemapHelper.AlignToGridCenter(targetPosition, _groundTilemap);
-            }
-            
-            Log.Debug(LogModules.AI, $"执行单步移动，从 {currentPosition} 到 {targetPosition}", this);
-            
-            // 设置目标和速度
-            _positionControl.SetTargetPosition(targetPosition);
-            _speedControl.SetSpeedInstantly(Mathf.Max(0, speed));
-            
-            // 设置决策命令标志
-            HasDecisionCommand = true;
-            IsMoving = true;
-            
-            return true;
-        }
         
         /// <summary>
         /// 设置移动目标
@@ -333,6 +238,11 @@ namespace AI.Behavior
             HasDecisionCommand = true;
             Log.Debug(LogModules.AI, $"设置新目标位置: {targetPosition}，决策命令标志已设置", this);
         }
+        
+        /// <summary>
+        /// 移动完成事件委托
+        /// </summary>
+        public event System.Action OnMovementComplete;
         
         /// <summary>
         /// 停止移动
@@ -359,15 +269,9 @@ namespace AI.Behavior
             IsMoving = false;
             HasDecisionCommand = false;
             Log.Debug(LogModules.AI, "移动已停止，决策命令标志已清除", this);
-        }
-        
-        /// <summary>
-        /// 清除决策命令标志
-        /// </summary>
-        public void ClearDecisionCommand()
-        {
-            HasDecisionCommand = false;
-            Log.Debug(LogModules.AI, "决策命令标志已清除", this);
+            
+            // 触发移动完成事件，通知相关组件（如EscapeComponent）
+            OnMovementComplete?.Invoke();
         }
         
         /// <summary>
@@ -425,9 +329,5 @@ namespace AI.Behavior
             HasDecisionCommand = false;
             Log.Debug(LogModules.AI, "SingleStepMovementComponent已重置，决策命令标志已清除", this);
         }
-        
-
-        
-
     }
 }

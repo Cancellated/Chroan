@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using Logger;
 using System.Linq;
+using Random = UnityEngine.Random;
 
 namespace AI.Behavior
 {
@@ -77,6 +78,16 @@ namespace AI.Behavior
                     {
                         bestDirection = dir;
                     }
+                    else if (dir.Value == bestDirection.Value)
+                    {
+                        // 权重相等时，以50%的概率替换当前最佳方向，避免左右横跳
+                        bool shouldReplace = Random.value > 0.5f;
+                        if (shouldReplace)
+                        {
+                            Log.Debug(LogModules.AI, $"权重相等时随机选择方向: {dir.Key} 替换 {bestDirection.Key}");
+                            bestDirection = dir;
+                        }
+                    }
                 }
                 else
                 {
@@ -84,6 +95,16 @@ namespace AI.Behavior
                     if (dir.Value < bestDirection.Value)
                     {
                         bestDirection = dir;
+                    }
+                    else if (dir.Value == bestDirection.Value)
+                    {
+                        // 权重相等时，以50%的概率替换当前最佳方向
+                        bool shouldReplace = Random.value > 0.5f;
+                        if (shouldReplace)
+                        {
+                            Log.Debug(LogModules.AI, $"权重相等时随机选择方向: {dir.Key} 替换 {bestDirection.Key}");
+                            bestDirection = dir;
+                        }
                     }
                 }
             }

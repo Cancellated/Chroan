@@ -20,30 +20,25 @@ namespace AI.Behavior
         /// </summary>
         public string ComponentName { get { return "EscapeComponent"; } }
 
-        /// <summary>
-        /// 基础组件引用
-        /// </summary>
+        // 基础组件引用
         private ThreatDetectionComponent _threatDetectionComponent;
-        private SingleStepMovementComponent _movementComponent;
-
-        /// <summary>
-        /// 逃跑触发距离（小于安全距离时触发）
-        /// 即AI在威胁源周围的距离，低于此距离时才会触发逃离行为
-        /// </summary>
+        private StepMoveComponent _movementComponent;
 
         [SerializeField] private float _decisionInterval = 0.5f; // 移动决策间隔时间（秒）
         private bool _canMakeDecision = true; // 是否可以进行决策
         private bool _decisionCooldownRunning = false; // 决策冷却是否正在运行
 
-        
-        /// <summary>
         /// 死胡同响应类型枚举
-        /// </summary>
         public enum DeadEndResponseType
         {
             GiveUpEscape,  // 放弃逃离
             ReverseBreakthrough  // 反向突围（朝向威胁源方向移动）
         }
+
+        /// <summary>
+        /// 死胡同响应策略开关
+        /// </summary>
+        [SerializeField] private DeadEndResponseType _deadEndResponseType = DeadEndResponseType.GiveUpEscape;
         
         /// <summary>
         /// 移动完成回调方法
@@ -68,13 +63,16 @@ namespace AI.Behavior
             {                
                 // 如果仍然需要逃离，准备执行下一步决策
                 Log.LogWithCooldown(Log.LogLevel.Debug, LogModules.AI, $"{ComponentName}: 准备执行下一次逃离决策", this, $"{ComponentName}_prepareDecision");
+                
+                // 确保_canMakeDecision为true，然后尝试执行下一次逃离行为
+                // 这样可以确保在移动完成后立即尝试下一次逃离，避免行为中断
+                _canMakeDecision = true;
+                _decisionCooldownRunning = false;
+                
+                // 触发下一次逃离行为执行
+                Execute();
             }
         }
-        
-        /// <summary>
-        /// 死胡同响应策略开关
-        /// </summary>
-        [SerializeField] private DeadEndResponseType _deadEndResponseType = DeadEndResponseType.GiveUpEscape;
 
         /// <summary>
         /// 标记是否正在执行单步移动
@@ -91,15 +89,15 @@ namespace AI.Behavior
             if (_threatDetectionComponent == null)
             {
                 _threatDetectionComponent = gameObject.AddComponent<ThreatDetectionComponent>();
-                Log.Warning(LogModules.AI, $"{ComponentName}: 威胁检测组件未找到，已自动添加", this);
+                Log.Info(LogModules.AI, "添加ThreatDetectionComponent组件");
             }
             _threatDetectionComponent.Initialize(this);
             
-            _movementComponent = gameObject.GetComponent<SingleStepMovementComponent>();
+            _movementComponent = gameObject.GetComponent<StepMoveComponent>();
             if (_movementComponent == null)
             {
-                _movementComponent = gameObject.AddComponent<SingleStepMovementComponent>();
-                Log.Warning(LogModules.AI, $"{ComponentName}: 单步移动组件未找到，已自动添加", this);
+                _movementComponent = gameObject.AddComponent<StepMoveComponent>();
+                Log.Info(LogModules.AI, "添加StepMoveComponent组件");
             }
             _movementComponent.Initialize(gameObject);
             
@@ -217,18 +215,12 @@ namespace AI.Behavior
             _decisionCooldownRunning = false;
         }
     #endregion
-        /// <summary>
-        /// 更新方法
-        /// 持续更新组件状态，确保逃离行为的连贯性
-        /// 检测移动完成状态并处理
-        /// </summary>
+
         public void Update()
         {
             // 如果没有在移动且可以做决策，尝试执行逃离行为
             if (!_isMovingToTarget && _canMakeDecision)
             {
-                // 在Update中定期检查是否需要执行逃离
-                // 实际的Execute调用由行为树管理器控制，但这里可以做一些准备工作
                 _threatDetectionComponent.UpdateThreatSource();
             }
             
@@ -238,7 +230,6 @@ namespace AI.Behavior
                 _threatDetectionComponent.UpdateThreatSource();
                 
                 // 检查是否已经到达目标位置
-                // 由于MovementComponent已经处理了到达目标的逻辑，这里只需要检查移动组件是否还有目标
                 if (!_movementComponent.HasTarget || !_movementComponent.HasDecisionCommand)
                 {
                     // 移动已完成，调用回调方法
@@ -255,25 +246,8 @@ namespace AI.Behavior
             StopEscaping();
             _threatDetectionComponent.SetThreatSource(null);
         }
-
-        /// <summary>
-        /// 设置威胁源
-        /// </summary>
-        /// <param name="threat">威胁源对象</param>
-        public void SetThreatSource(Transform threat)
-        {
-            if (threat != null)
-            {
-                _threatDetectionComponent.SetThreatSource(threat.gameObject);
-            }
-            else
-            {
-                _threatDetectionComponent.SetThreatSource(null);
-            }
-        }
         
         /// <summary>
-        /// 选择最佳逃离方向
         /// 检查上下左右四个方向的通行性，计算各方向的逃跑权重，选择最佳方向
         /// 使用DirectionSelector工具类实现方向选择逻辑
         /// </summary>
