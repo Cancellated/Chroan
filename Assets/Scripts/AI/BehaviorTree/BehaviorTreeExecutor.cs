@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Logger;
-using AI.BehaviorTree;
 
 namespace AI.BehaviorTree
 {

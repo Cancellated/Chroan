@@ -236,7 +236,6 @@ namespace AI.BehaviorTree
         private void OnDestroy()
         {
             ClearAllTrees();
-            // 不再需要手动设置Instance = null，基类会处理单例逻辑
         }
     }
 }

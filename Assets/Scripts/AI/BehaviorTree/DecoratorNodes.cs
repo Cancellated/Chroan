@@ -122,7 +122,7 @@ namespace AI.BehaviorTree
         /// 执行反转器逻辑
         /// </summary>
         /// <returns>执行状态</returns>
-        public sealed override BTNodeState Execute()
+        protected override BTNodeState ExecuteNode()
         {
             if (Child == null)
             {
@@ -167,7 +167,7 @@ namespace AI.BehaviorTree
         /// 执行成功器逻辑
         /// </summary>
         /// <returns>执行状态</returns>
-        public sealed override BTNodeState Execute()
+        protected override BTNodeState ExecuteNode()
         {
             if (Child == null)
             {
@@ -199,7 +199,7 @@ namespace AI.BehaviorTree
         /// 执行失败器逻辑
         /// </summary>
         /// <returns>执行状态</returns>
-        public sealed override BTNodeState Execute()
+        protected override BTNodeState ExecuteNode()
         {
             if (Child == null)
             {
@@ -285,7 +285,7 @@ namespace AI.BehaviorTree
         /// 执行重复器逻辑
         /// </summary>
         /// <returns>执行状态</returns>
-        public sealed override BTNodeState Execute()
+        protected override BTNodeState ExecuteNode()
         {
             if (Child == null)
             {
@@ -386,7 +386,7 @@ namespace AI.BehaviorTree
         /// 执行延迟器逻辑
         /// </summary>
         /// <returns>执行状态</returns>
-        public sealed override BTNodeState Execute()
+        protected override BTNodeState ExecuteNode()
         {
             if (Child == null)
             {

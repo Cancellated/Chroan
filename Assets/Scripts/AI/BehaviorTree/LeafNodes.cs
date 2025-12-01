@@ -55,7 +55,7 @@ namespace AI.BehaviorTree
         /// 执行动作
         /// </summary>
         /// <returns>执行状态</returns>
-        public sealed override BTNodeState Execute()
+        protected override BTNodeState ExecuteNode()
         {
             if (Action == null)
             {
@@ -104,7 +104,7 @@ namespace AI.BehaviorTree
         /// 执行条件检查
         /// </summary>
         /// <returns>执行状态</returns>
-        public sealed override BTNodeState Execute()
+        protected override BTNodeState ExecuteNode()
         {
             if (Condition == null)
             {
@@ -163,7 +163,7 @@ namespace AI.BehaviorTree
         /// 执行组件操作
         /// </summary>
         /// <returns>执行状态</returns>
-        public sealed override BTNodeState Execute()
+        protected override BTNodeState ExecuteNode()
         {
             if (TargetObject == null)
             {
@@ -215,7 +215,7 @@ namespace AI.BehaviorTree
         /// 执行等待逻辑
         /// </summary>
         /// <returns>执行状态</returns>
-        public sealed override BTNodeState Execute()
+        protected override BTNodeState ExecuteNode()
         {
             // 如果是新开始等待，重置计时器
             if (State != BTNodeState.Running)
@@ -290,7 +290,7 @@ namespace AI.BehaviorTree
         /// 执行日志记录
         /// </summary>
         /// <returns>执行状态</returns>
-        public sealed override BTNodeState Execute()
+        protected override BTNodeState ExecuteNode()
         {
             // 根据日志类型记录日志
             switch (LogType)
@@ -371,7 +371,7 @@ namespace AI.BehaviorTree
         /// 执行随机选择
         /// </summary>
         /// <returns>执行状态</returns>
-        public sealed override BTNodeState Execute()
+        protected override BTNodeState ExecuteNode()
         {
             if (options.Count == 0)
             {

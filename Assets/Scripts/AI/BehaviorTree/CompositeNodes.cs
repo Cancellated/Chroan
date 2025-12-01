@@ -27,7 +27,7 @@ namespace AI.BehaviorTree
         /// 执行选择器逻辑
         /// </summary>
         /// <returns>执行状态</returns>
-        public sealed override BTNodeState Execute()
+        protected override BTNodeState ExecuteNode()
         {
             // 如果没有子节点，直接失败
             if (Children.Count == 0)
@@ -128,7 +128,7 @@ namespace AI.BehaviorTree
         /// 执行序列逻辑
         /// </summary>
         /// <returns>执行状态</returns>
-        public sealed override BTNodeState Execute()
+        protected override BTNodeState ExecuteNode()
         {
             // 如果没有子节点，直接成功
             if (Children.Count == 0)
@@ -266,7 +266,7 @@ namespace AI.BehaviorTree
         /// 执行并行逻辑
         /// </summary>
         /// <returns>执行状态</returns>
-        public sealed override BTNodeState Execute()
+        protected override BTNodeState ExecuteNode()
         {
             // 如果没有子节点，根据策略决定状态
             if (Children.Count == 0)

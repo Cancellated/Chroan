@@ -1,8 +1,9 @@
-using MyGame.Managers; // 引入游戏状态枚举
+using MyGame.Managers;
 using System;
 using UnityEngine;
 using Logger;
 using MyGame.UI;
+using AI.BehaviorTree;
 
 namespace MyGame.Events
 {
@@ -220,6 +221,120 @@ namespace MyGame.Events
         {
             Log.Info(module, $"UI切换：{menu} 显示：{show}");
             OnMenuShow?.Invoke(menu, show);
+        }
+
+        #endregion
+
+        #region AI相关事件
+        /// <summary>
+        /// 感知到威胁事件
+        /// </summary>
+        public static event Action<GameObject, GameObject> OnThreatDetected;
+        
+        public static void TriggerThreatDetected(GameObject self, GameObject threatSource)
+        {
+            Log.Info(module, $"触发威胁检测事件: {self.name} 检测到威胁 {(threatSource != null ? threatSource.name : null)}");
+            OnThreatDetected?.Invoke(self, threatSource);
+        }
+
+        /// <summary>
+        /// 行为开始事件
+        /// </summary>
+        public static event Action<GameObject, string> OnBehaviorStarted;
+        
+        public static void TriggerBehaviorStarted(GameObject self, string behaviorName)
+        {
+            // Log.Info(module, $"触发行为开始事件: {self.name} 开始行为 {behaviorName}");
+            OnBehaviorStarted?.Invoke(self, behaviorName);
+        }
+
+        /// <summary>
+        /// 行为完成事件
+        /// </summary>
+        public static event Action<GameObject, string, bool> OnBehaviorCompleted;
+        
+        public static void TriggerBehaviorCompleted(GameObject self, string behaviorName, bool success)
+        {
+            // Log.Info(module, $"触发行为完成事件: {self.name} 完成行为 {behaviorName}, 结果: {success}");
+            OnBehaviorCompleted?.Invoke(self, behaviorName, success);
+        }
+
+        /// <summary>
+        /// 行为中断事件
+        /// </summary>
+        public static event Action<GameObject, string, string> OnBehaviorInterrupted;
+        
+        public static void TriggerBehaviorInterrupted(GameObject self, string behaviorName, string reason)
+        {
+            // Log.Info(module, $"触发行为中断事件: {self.name} 中断行为 {behaviorName}, 原因: {reason}");
+            OnBehaviorInterrupted?.Invoke(self, behaviorName, reason);
+        }
+
+
+        /// <summary>
+        /// 节点执行开始事件
+        /// </summary>
+        public static event Action<BTNode, string> OnNodeExecutionStarted;
+        
+        public static void TriggerNodeExecutionStarted(BTNode node, string nodeName)
+        {
+            // Log.Info(module, $"触发节点执行开始事件: 节点 {nodeName}");
+            OnNodeExecutionStarted?.Invoke(node, nodeName);
+        }
+
+        /// <summary>
+        /// 节点执行完成事件
+        /// </summary>
+        public static event Action<BTNode, string, BTNodeState> OnNodeExecutionCompleted;
+        
+        public static void TriggerNodeExecutionCompleted(BTNode node, string nodeName, BTNodeState result)
+        {
+            // Log.Info(module, $"触发节点执行完成事件: 节点 {nodeName}, 结果: {result}");
+            OnNodeExecutionCompleted?.Invoke(node, nodeName, result);
+        }
+
+        /// <summary>
+        /// 节点状态改变事件
+        /// </summary>
+        public static event Action<BTNode, string, BTNodeState, BTNodeState> OnNodeStateChanged;
+        
+        public static void TriggerNodeStateChanged(BTNode node, string nodeName, BTNodeState oldState, BTNodeState newState)
+        {
+            // Log.Info(module, $"触发节点状态改变事件: 节点 {nodeName}, 从 {oldState} 变为 {newState}");
+            OnNodeStateChanged?.Invoke(node, nodeName, oldState, newState);
+        }
+
+        /// <summary>
+        /// 开始移动事件
+        /// </summary>
+        public static event Action<GameObject, Vector3> OnMovementStarted;
+        
+        public static void TriggerMovementStarted(GameObject self, Vector3 targetPosition)
+        {
+            // Log.Info(module, $"触发移动开始事件: {self.name} 开始向位置 {targetPosition} 移动");
+            OnMovementStarted?.Invoke(self, targetPosition);
+        }
+
+        /// <summary>
+        /// 移动完成事件
+        /// </summary>
+        public static event Action<GameObject, Vector3, bool> OnMovementCompleted;
+        
+        public static void TriggerMovementCompleted(GameObject self, Vector3 targetPosition, bool reached)
+        {
+            // Log.Info(module, $"触发移动完成事件: {self.name} 移动到位置 {targetPosition}, 到达: {reached}");
+            OnMovementCompleted?.Invoke(self, targetPosition, reached);
+        }
+
+        /// <summary>
+        /// 移动被阻挡事件
+        /// </summary>
+        public static event Action<GameObject, GameObject> OnMovementBlocked;
+        
+        public static void TriggerMovementBlocked(GameObject self, GameObject obstacle)
+        {
+            // Log.Info(module, $"触发移动被阻挡事件: {self.name} 被 {(obstacle != null ? obstacle.name : null)} 阻挡");
+            OnMovementBlocked?.Invoke(self, obstacle);
         }
 
         #endregion

@@ -147,13 +147,5 @@ namespace Logger
                 _logCooldowns.Remove(cooldownKey);
             }
         }
-        
-        /// <summary>
-        /// 清除所有日志冷却状态
-        /// </summary>
-        public static void ClearAllCooldowns()
-        {
-            _logCooldowns.Clear();
-        }
     }
 }

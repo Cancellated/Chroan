@@ -52,3 +52,5 @@ UI实现使用的是MVC架构，且均继承于Assets\Scripts\UI\Core\BaseMVC中
 实现单例模式时，一般通过继承项目中的Assets\Scripts\Core\Singleton\Singleton.cs脚本，在需要定义新的单例类时，需要继承此基类并指定泛型参数为新的单例类。
 
 实现行为树时，使用Assets\Scripts\AI\behavior中定义的行为组件，不要在行为树节点中直接编写行为逻辑。另外，组合节点时先查看基础组件中的方法，避免重复定义相同的方法。
+
+在编写脚本时，如果可以，使用 #region 来组织代码，将相关的代码放在同一个区域内，方便阅读和维护。
