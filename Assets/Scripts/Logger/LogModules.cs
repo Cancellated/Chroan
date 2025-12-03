@@ -16,6 +16,7 @@ namespace Logger
         public const string DEBUGCONSOLE = "DebugConsole";
         public const string MANAGERBOOTSTRAP = "ManagerBootstrap";
         public const string LOADING = "Loading";
+        public const string UTILS = "Utils";
 
         // UI模块
         public const string UI = "UI";
@@ -25,6 +26,7 @@ namespace Logger
         public const string PAUSEMENU = "PauseMenu";
         public const string HUD = "HUD";
         public const string UI_COMPONENTS = "UIComponents";
+        public const string DIALOGUE = "Dialogue";
         
 
         // 游戏数据模块

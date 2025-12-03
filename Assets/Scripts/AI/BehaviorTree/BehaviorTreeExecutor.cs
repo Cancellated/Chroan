@@ -32,6 +32,11 @@ namespace AI.BehaviorTree
         public BTNodeState CurrentState { get; private set; }
 
         /// <summary>
+        /// 上一帧的行为树状态
+        /// </summary>
+        private BTNodeState previousState;
+
+        /// <summary>
         /// 执行间隔（秒）
         /// </summary>
         public float ExecutionInterval { get; set; }
@@ -81,6 +86,7 @@ namespace AI.BehaviorTree
             IsRunning = false;
             IsPaused = false;
             CurrentState = BTNodeState.Failure;
+            previousState = BTNodeState.Failure;
             executionCount = 0;
             timeUntilNextExecution = 0f;
         }
@@ -164,6 +170,7 @@ namespace AI.BehaviorTree
         {
             RootNode?.Reset();
             CurrentState = BTNodeState.Failure;
+            previousState = BTNodeState.Failure;
             executionCount = 0;
             timeUntilNextExecution = 0f;
         }
@@ -188,13 +195,26 @@ namespace AI.BehaviorTree
                 }
                 timeUntilNextExecution = ExecutionInterval;
             }
-
+            
+            // 保存上一帧状态
+            previousState = CurrentState;
+            
             // 执行行为树
             executionCount++;
             CurrentState = RootNode.Execute();
 
             // 触发更新事件
             OnTreeUpdated?.Invoke(CurrentState);
+            
+            // 检查行为树是否完成（状态为Success或Failure）
+            if (CurrentState == BTNodeState.Success || CurrentState == BTNodeState.Failure)
+            {
+                // 只有当状态发生变化时才触发完成事件
+                if (CurrentState != previousState)
+                {
+                    OnTreeCompleted?.Invoke(CurrentState);
+                }
+            }
 
         }
 

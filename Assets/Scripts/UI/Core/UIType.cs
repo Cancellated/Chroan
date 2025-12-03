@@ -20,6 +20,6 @@ namespace MyGame.UI
         Inventory,
         SettingsPanel,
         AboutPanel,
-        Dialog,
+        Dialogue,
     }
 }
