@@ -132,17 +132,6 @@ namespace MyGame.UI.MainMenu.View.Components
                     }
                 }
             }
-            else
-            {
-                // 降级处理：使用旧的输入系统
-                if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
-                {
-                    if (MenuButtons.Count > 0 && MenuButtons[m_selectedButtonIndex] != null)
-                    {
-                        MenuButtons[m_selectedButtonIndex].onClick.Invoke();
-                    }
-                }
-            }
         }
 
         /// <summary>

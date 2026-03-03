@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Logger;
 
 namespace MyGame.Core.Utils
 {
@@ -38,6 +39,11 @@ namespace MyGame.Core.Utils
         /// 对象池字典，键为预制体，值为对应的对象池
         /// </summary>
         private Dictionary<GameObject, ObjectPool> pools = new Dictionary<GameObject, ObjectPool>();
+
+        /// <summary>
+        /// 日志模块标识
+        /// </summary>
+        private const string LOG_MODULE = LogModules.UTILS;
 
         #endregion
 

@@ -4,6 +4,7 @@ using UnityEngine;
 using Logger;
 using MyGame.UI;
 using AI.BehaviorTree;
+using MyGame.Input;
 
 namespace MyGame.Events
 {
@@ -221,6 +222,43 @@ namespace MyGame.Events
         {
             Log.Info(module, $"UI切换：{menu} 显示：{show}");
             OnMenuShow?.Invoke(menu, show);
+        }
+
+        #endregion
+
+        #region 输入模式事件
+
+        /// <summary>
+        /// 输入模式切换事件
+        /// 参数：目标输入模式
+        /// </summary>
+        public static event Action<InputMode> OnInputModeChange;
+        
+        /// <summary>
+        /// 触发输入模式切换事件
+        /// </summary>
+        /// <param name="targetMode">目标输入模式</param>
+        public static void TriggerInputModeChange(InputMode targetMode)
+        {
+            Log.Info(module, $"触发输入模式切换事件: {targetMode}");
+            OnInputModeChange?.Invoke(targetMode);
+        }
+
+        /// <summary>
+        /// 输入模式切换请求事件
+        /// 参数：请求的输入模式，是否强制切换
+        /// </summary>
+        public static event Action<InputMode, bool> OnInputModeChangeRequest;
+        
+        /// <summary>
+        /// 触发输入模式切换请求事件
+        /// </summary>
+        /// <param name="targetMode">目标输入模式</param>
+        /// <param name="force">是否强制切换</param>
+        public static void TriggerInputModeChangeRequest(InputMode targetMode, bool force = false)
+        {
+            Log.Info(module, $"触发输入模式切换请求: {targetMode} (强制: {force})");
+            OnInputModeChangeRequest?.Invoke(targetMode, force);
         }
 
         #endregion

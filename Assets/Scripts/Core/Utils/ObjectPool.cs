@@ -31,26 +31,6 @@ namespace MyGame.Core.Utils
         private const string LOG_MODULE = LogModules.UTILS;
 
         /// <summary>
-        /// 要池化的预制体
-        /// </summary>
-        private GameObject prefab;
-        
-        /// <summary>
-        /// 初始池容量
-        /// </summary>
-        private int initialPoolSize = 10;
-        
-        /// <summary>
-        /// 是否允许池自动扩展
-        /// </summary>
-        private bool allowPoolExpansion = true;
-        
-        /// <summary>
-        /// 最大池容量（-1表示无限制）
-        /// </summary>
-        private int maxPoolSize = -1;
-
-        /// <summary>
         /// 可用对象队列
         /// </summary>
         private Queue<GameObject> availableObjects = new Queue<GameObject>();
@@ -260,7 +240,7 @@ namespace MyGame.Core.Utils
             obj.SetActive(false);
             
             // 触发对象回收事件
-            pooledObj.OnReturnToPool();
+            pooledObject.OnReturnToPool();
             
             // 添加到可用队列
             availableObjects.Enqueue(obj);
@@ -294,7 +274,6 @@ namespace MyGame.Core.Utils
                 }
             }
 
-            totalObjectsCount = 0;
             isInitialized = false;
             Log.Info(LOG_MODULE, $"对象池 '{prefab?.name}' 已清空", this);
         }

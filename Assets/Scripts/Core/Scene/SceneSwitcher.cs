@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using MyGame.Events;
+using MyGame.Input;
 using Logger;
 
 namespace MyGame.Managers
@@ -115,6 +116,9 @@ namespace MyGame.Managers
             // 触发场景加载完成事件
             GameEvents.TriggerSceneLoadComplete(sceneName);
             Log.Info(module, $"场景加载完成: {sceneName}");
+            
+            // 根据场景类型自动设置输入模式
+            SetInputModeForScene(sceneName);
         }
 
         /// <summary>
@@ -138,6 +142,56 @@ namespace MyGame.Managers
             Log.Info(module, $"发起场景卸载请求: {sceneName}");
             GameEvents.TriggerSceneUnload(sceneName);
         }
+        #endregion
+
+        #region 输入模式管理
+
+        /// <summary>
+        /// 根据场景名称设置合适的输入模式
+        /// </summary>
+        /// <param name="sceneName">场景名称</param>
+        private void SetInputModeForScene(string sceneName)
+        {
+            InputMode targetMode = DetermineInputModeForScene(sceneName);
+            
+            // 触发输入模式切换事件
+            GameEvents.TriggerInputModeChangeRequest(targetMode);
+            
+            Log.Info(module, $"为场景 '{sceneName}' 设置输入模式: {targetMode}");
+        }
+
+        /// <summary>
+        /// 根据场景名称确定合适的输入模式
+        /// </summary>
+        /// <param name="sceneName">场景名称</param>
+        /// <returns>目标输入模式</returns>
+        private InputMode DetermineInputModeForScene(string sceneName)
+        {
+            // 根据场景名称判断输入模式
+            // 这里可以根据项目实际情况进行扩展
+            
+            if (sceneName.Contains("Menu") || sceneName.Contains("menu"))
+            {
+                // 菜单场景使用UI模式
+                return InputMode.UI;
+            }
+            else if (sceneName.Contains("LevelSelect") || sceneName.Contains("levelselect"))
+            {
+                // 选关场景使用游戏玩法模式（人物可以移动）
+                return InputMode.GamePlay;
+            }
+            else if (sceneName.Contains("Game") || sceneName.Contains("game"))
+            {
+                // 游戏场景使用游戏玩法模式
+                return InputMode.GamePlay;
+            }
+            else
+            {
+                // 默认使用游戏玩法模式
+                return InputMode.GamePlay;
+            }
+        }
+
         #endregion
     }
 }
