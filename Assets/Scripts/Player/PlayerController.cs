@@ -534,7 +534,7 @@ namespace MyGame.Control
         private void OnInteractPerformed(InputAction.CallbackContext context)
         {
             // 播放交互动画
-            PlayInteractAnimation();
+            // PlayInteractAnimation();
         }
         
         /// <summary>

@@ -20,8 +20,10 @@ public class TilemapEventSystem : MonoBehaviour
                 instance = FindObjectOfType<TilemapEventSystem>();
                 if (instance == null)
                 {
-                    GameObject obj = new GameObject("TilemapEventSystem");
+                    GameObject obj = new("TilemapEventSystem");
                     instance = obj.AddComponent<TilemapEventSystem>();
+                    // 标记为不跨场景销毁，确保在场景切换时正确管理
+                    DontDestroyOnLoad(obj);
                 }
             }
             return instance;

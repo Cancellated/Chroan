@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c92c1223c2fe405428724a940b45a737
+guid: b30d22e5120bcd14fb6a4c732d0eed90
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -34,7 +34,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -45,10 +45,10 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 64
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -72,7 +72,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -93,606 +93,593 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 0
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_0
+      name: CHROAN_0
       rect:
         serializedVersion: 2
         x: 0
         y: 256
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 95112f961c6c4d64db8c3170146b3eee
-      internalID: 886260596
+      spriteID: bc8231103d04770469e3b82a1b4a770c
+      internalID: 1999169027
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_1
+      name: CHROAN_1
       rect:
         serializedVersion: 2
         x: 64
         y: 256
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a333e2b18d58a1448abe98d4ed894459
-      internalID: 1199293404
+      spriteID: 8c2c820b395ecc8459822c3bf3e22cd5
+      internalID: 455194717
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_2
+      name: CHROAN_2
       rect:
         serializedVersion: 2
         x: 128
         y: 256
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 88c2a12bb80f0be489c341e8e6bec9d3
-      internalID: 1935277181
+      spriteID: 48e87dc9c57c0bb4586571a50e70ff86
+      internalID: -2095113591
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_3
+      name: CHROAN_3
       rect:
         serializedVersion: 2
         x: 192
         y: 256
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 59061924ca12ae445a20efd59c7d9165
-      internalID: 743806789
+      spriteID: 83ed23b845df35c478ea574d17a391bf
+      internalID: -1865645522
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_4
+      name: CHROAN_4
       rect:
         serializedVersion: 2
         x: 256
         y: 256
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1f0a225f55f59ff4aba4669a209bb30a
-      internalID: 2097745608
+      spriteID: 2c2cf35837b456c4c82fa436d3c92d6a
+      internalID: -1326384520
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_5
+      name: CHROAN_5
       rect:
         serializedVersion: 2
         x: 320
         y: 256
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1049f97738112954e82514d42b0eba16
-      internalID: 1101186410
+      spriteID: d9f7b5157ebf09d48bf8f5095d49ec7b
+      internalID: 1531119475
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_6
+      name: CHROAN_6
       rect:
         serializedVersion: 2
         x: 0
         y: 192
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8f6cf77041aa6f04cacb99d217deb842
-      internalID: -1929609087
+      spriteID: 91ca5b7db6df7d140afd41d0245cc4c3
+      internalID: -1120015172
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_7
+      name: CHROAN_7
       rect:
         serializedVersion: 2
         x: 64
         y: 192
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bf8609969796c3a4aafc64f8cfd7c78d
-      internalID: -1159919832
+      spriteID: 07f6c179b8aef034c9e07c6138ebf6dc
+      internalID: -1641219708
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_8
+      name: CHROAN_8
       rect:
         serializedVersion: 2
         x: 128
         y: 192
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 792c02659fc4f07418333e8dcefa9ebd
-      internalID: 1820223299
+      spriteID: fa06a7576fbbcaa41b4be40c3ff73a01
+      internalID: -2136935213
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_9
+      name: CHROAN_9
       rect:
         serializedVersion: 2
         x: 192
         y: 192
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 75ad9e7b0b3323440afff58b47cb0de5
-      internalID: -1162169529
+      spriteID: 603c6263439f19c4eae9d67a823d8b8a
+      internalID: 1815772868
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_10
+      name: CHROAN_10
       rect:
         serializedVersion: 2
         x: 256
         y: 192
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f90682afc9740774087016714bedc13d
-      internalID: -1694573613
+      spriteID: 7e9167d9a325b454fa6742e5be275b5e
+      internalID: 890746449
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_11
+      name: CHROAN_11
       rect:
         serializedVersion: 2
         x: 320
         y: 192
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 865b90626da7c3d43bb73a556adb3d9c
-      internalID: 661412631
+      spriteID: f553ec07ce74c8a43aa79bac60a6773c
+      internalID: 1276082774
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_12
+      name: CHROAN_12
       rect:
         serializedVersion: 2
         x: 0
         y: 128
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: be962efb03f4bf14dbd0a57b9d8ba94d
-      internalID: -1494655537
+      spriteID: 3eb278f0d0e07884194b2e9c0aa53991
+      internalID: -1840349225
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_13
+      name: CHROAN_13
       rect:
         serializedVersion: 2
         x: 64
         y: 128
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fcacd0005606f1f4a8be3e0b2449547b
-      internalID: 918118422
+      spriteID: 06c051c4be821554d870f1f79c5366b7
+      internalID: -284652973
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_14
+      name: CHROAN_14
       rect:
         serializedVersion: 2
         x: 128
         y: 128
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: dcd6c2790f0b3eb419a779030b064eee
-      internalID: 2122950900
+      spriteID: 900608153487ffd449d5c2c23d0eacd4
+      internalID: 1488840049
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_15
+      name: CHROAN_15
       rect:
         serializedVersion: 2
         x: 192
         y: 128
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ed9eab42bd497e14fb84a055d9ae05d4
-      internalID: 714402195
+      spriteID: 3dc61dc836202d148872579e624a94fc
+      internalID: -1720082310
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_16
+      name: CHROAN_16
       rect:
         serializedVersion: 2
         x: 256
         y: 128
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bc9c328eded834049a1c1321f5d1cd05
-      internalID: -765469400
+      spriteID: b5545d7567abe974ebb63240ce048460
+      internalID: 2064002563
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_17
+      name: CHROAN_17
       rect:
         serializedVersion: 2
         x: 320
         y: 128
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5231a03ed1abe9247bf3451412d2b04e
-      internalID: -2005699810
+      spriteID: 413ca2a489ad5b043aefad3239945410
+      internalID: 163137552
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_18
+      name: CHROAN_18
       rect:
         serializedVersion: 2
         x: 0
         y: 64
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 283a7d61eb837b7428d24530741ce2b1
-      internalID: 1428631065
+      spriteID: 1afb75da531f36e46a4d6f0199e9eeb1
+      internalID: -799064033
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_19
+      name: CHROAN_19
       rect:
         serializedVersion: 2
         x: 64
         y: 64
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8e2a6c4c41be2ab4c90cbcdd1010accc
-      internalID: 2018736881
+      spriteID: ec33bd0a8bb50444b87cca3bb63a85fd
+      internalID: 1099712562
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_20
+      name: CHROAN_20
       rect:
         serializedVersion: 2
         x: 128
         y: 64
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 581a41504bea88f438d78aca77d46acf
-      internalID: -710516547
+      spriteID: 1cc733b203e79744a9c8de58f9bfff70
+      internalID: -1673026952
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_21
+      name: CHROAN_21
       rect:
         serializedVersion: 2
         x: 192
         y: 64
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0327952ceb0d6744b9fd5688c1d59410
-      internalID: 1102722709
+      spriteID: bbd929eecaec7f24ca6836ab5dc979af
+      internalID: 1465720586
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_22
+      name: CHROAN_22
       rect:
         serializedVersion: 2
         x: 256
         y: 64
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8ba220fe2403671489f115680c7ec5b1
-      internalID: 1218574978
+      spriteID: 00592638f8bd1164aa12e2e19e2b42a2
+      internalID: 938506812
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_23
+      name: CHROAN_23
       rect:
         serializedVersion: 2
         x: 320
         y: 64
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f75759b75b4d622498093ccd443a9cd0
-      internalID: 644160671
+      spriteID: 2c06402e970591948ba37b87751a0580
+      internalID: 1819316132
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_24
+      name: CHROAN_24
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9dff9484c9347c741a324592f5605ac8
-      internalID: 1252776523
+      spriteID: 40a45bee5c907f34fa46cbe9e9da9a41
+      internalID: -2123094924
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_25
+      name: CHROAN_25
       rect:
         serializedVersion: 2
         x: 64
         y: 0
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c7eed05074a4d9143a5bed33796adf6c
-      internalID: 463934507
+      spriteID: d7dfafa7574436b49a27ff1694b3d308
+      internalID: -1596890664
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_26
+      name: CHROAN_26
       rect:
         serializedVersion: 2
         x: 128
         y: 0
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e433b3d8a12409547962abd83fed46ed
-      internalID: 1871022876
+      spriteID: edcb46ea6a21b6e4aab958db0d846117
+      internalID: 1497488274
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 82fffe1f53f02d10f7b8937cc6cdd6bf_27
+      name: CHROAN_27
       rect:
         serializedVersion: 2
         x: 192
         y: 0
         width: 64
         height: 64
-      alignment: 6
+      alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 68966e532d9c9cb4f898f12c058d6aa5
-      internalID: 623550807
+      spriteID: 52b8e86c11259934ea3b16734aa93fd2
+      internalID: 265621538
       vertices: []
       indices: 
       edges: []
@@ -700,7 +687,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 03df0d30cf5c0fc4797fd4e67ec2c480
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -708,34 +695,34 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      82fffe1f53f02d10f7b8937cc6cdd6bf_0: 886260596
-      82fffe1f53f02d10f7b8937cc6cdd6bf_1: 1199293404
-      82fffe1f53f02d10f7b8937cc6cdd6bf_10: -1694573613
-      82fffe1f53f02d10f7b8937cc6cdd6bf_11: 661412631
-      82fffe1f53f02d10f7b8937cc6cdd6bf_12: -1494655537
-      82fffe1f53f02d10f7b8937cc6cdd6bf_13: 918118422
-      82fffe1f53f02d10f7b8937cc6cdd6bf_14: 2122950900
-      82fffe1f53f02d10f7b8937cc6cdd6bf_15: 714402195
-      82fffe1f53f02d10f7b8937cc6cdd6bf_16: -765469400
-      82fffe1f53f02d10f7b8937cc6cdd6bf_17: -2005699810
-      82fffe1f53f02d10f7b8937cc6cdd6bf_18: 1428631065
-      82fffe1f53f02d10f7b8937cc6cdd6bf_19: 2018736881
-      82fffe1f53f02d10f7b8937cc6cdd6bf_2: 1935277181
-      82fffe1f53f02d10f7b8937cc6cdd6bf_20: -710516547
-      82fffe1f53f02d10f7b8937cc6cdd6bf_21: 1102722709
-      82fffe1f53f02d10f7b8937cc6cdd6bf_22: 1218574978
-      82fffe1f53f02d10f7b8937cc6cdd6bf_23: 644160671
-      82fffe1f53f02d10f7b8937cc6cdd6bf_24: 1252776523
-      82fffe1f53f02d10f7b8937cc6cdd6bf_25: 463934507
-      82fffe1f53f02d10f7b8937cc6cdd6bf_26: 1871022876
-      82fffe1f53f02d10f7b8937cc6cdd6bf_27: 623550807
-      82fffe1f53f02d10f7b8937cc6cdd6bf_3: 743806789
-      82fffe1f53f02d10f7b8937cc6cdd6bf_4: 2097745608
-      82fffe1f53f02d10f7b8937cc6cdd6bf_5: 1101186410
-      82fffe1f53f02d10f7b8937cc6cdd6bf_6: -1929609087
-      82fffe1f53f02d10f7b8937cc6cdd6bf_7: -1159919832
-      82fffe1f53f02d10f7b8937cc6cdd6bf_8: 1820223299
-      82fffe1f53f02d10f7b8937cc6cdd6bf_9: -1162169529
+      CHROAN_0: 1999169027
+      CHROAN_1: 455194717
+      CHROAN_10: 890746449
+      CHROAN_11: 1276082774
+      CHROAN_12: -1840349225
+      CHROAN_13: -284652973
+      CHROAN_14: 1488840049
+      CHROAN_15: -1720082310
+      CHROAN_16: 2064002563
+      CHROAN_17: 163137552
+      CHROAN_18: -799064033
+      CHROAN_19: 1099712562
+      CHROAN_2: -2095113591
+      CHROAN_20: -1673026952
+      CHROAN_21: 1465720586
+      CHROAN_22: 938506812
+      CHROAN_23: 1819316132
+      CHROAN_24: -2123094924
+      CHROAN_25: -1596890664
+      CHROAN_26: 1497488274
+      CHROAN_27: 265621538
+      CHROAN_3: -1865645522
+      CHROAN_4: -1326384520
+      CHROAN_5: 1531119475
+      CHROAN_6: -1120015172
+      CHROAN_7: -1641219708
+      CHROAN_8: -2136935213
+      CHROAN_9: 1815772868
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -414,9 +414,30 @@ namespace MyGame.Managers
         /// <param name="sceneName">要加载的场景名称</param>
         private void ShowLoading(string sceneName)
         {
-            Log.Info(module, "场景加载开始，显示加载界面");
+            Log.Info(module, $"场景加载开始，显示加载界面: {sceneName}");
+            
+            // 检查UIManager是否已初始化
+            if (PanelMap == null)
+            {
+                Log.Error(module, "UIManager未正确初始化，PanelMap为空");
+                return;
+            }
+            
             // 立即显示加载界面，但延迟实际的场景加载
             SetUIState(UIType.Loading, true);
+            
+            // 强制等待一帧确保UI渲染完成
+            StartCoroutine(WaitOneFrameThenLoad(sceneName));
+        }
+        
+        /// <summary>
+        /// 等待一帧确保UI渲染完成后再开始实际加载
+        /// </summary>
+        private IEnumerator WaitOneFrameThenLoad(string sceneName)
+        {
+            Log.Info(module, $"等待一帧确保加载界面渲染完成: {sceneName}");
+            yield return null; // 等待一帧
+            
             // 启动协程等待加载界面完全显示后再继续场景加载
             StartCoroutine(WaitForLoadingScreenReady(sceneName));
         }

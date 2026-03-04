@@ -130,24 +130,26 @@ namespace MyGame.UI.Loading.View
         /// </summary>
         public override void Show()
         {
-            if (!IsVisible)
-            {  
-                // 确保CanvasGroup的alpha值为1，使面板可见
-                if (m_canvasGroup != null)
-                {
-                    m_canvasGroup.alpha = 1f;
-                }  
-                // 通过设置bool参数触发进入动画
-                if (m_animator != null)
-                {
-                    m_animator.SetBool(ANIM_PARAM_SHOW_LOADING, true);
-                    m_animator.SetBool(ANIM_PARAM_HIDE_LOADING, false);
-                }
+            // 确保CanvasGroup的alpha值为1，使面板可见
+            if (m_canvasGroup != null)
+            {
+                m_canvasGroup.alpha = 1f;
+            }  
+            // 通过设置bool参数触发进入动画
+            if (m_animator != null)
+            {
+                // 先重置所有参数，确保状态机能够正确响应
+                m_animator.SetBool(ANIM_PARAM_SHOW_LOADING, false);
+                m_animator.SetBool(ANIM_PARAM_HIDE_LOADING, false);
                 
-                IsVisible = true;
-                
-                Log.Info(LOG_MODULE, "加载界面显示，触发ShowLoading动画");
+                // 然后设置显示参数
+                m_animator.SetBool(ANIM_PARAM_SHOW_LOADING, true);
+                Log.Debug(LOG_MODULE, "Show方法中设置参数: ShowLoading=true, HideLoading=false", this);
             }
+            
+            IsVisible = true;
+            
+            Log.Info(LOG_MODULE, "加载界面显示，触发ShowLoading动画");
         }
         
         /// <summary>
@@ -160,15 +162,23 @@ namespace MyGame.UI.Loading.View
             {
                 Log.Info(LOG_MODULE, "隐藏加载界面，触发HideLoading动画");
                 
+                // 立即设置IsVisible为false，防止Show方法被调用时因为状态问题而跳过
+                IsVisible = false;
+                
                 // 通过设置bool参数触发退出动画
                 if (m_animator != null)
                 {
-                    m_animator.SetBool(ANIM_PARAM_HIDE_LOADING, true);
+                    // 先重置所有参数，确保状态机能够正确响应
                     m_animator.SetBool(ANIM_PARAM_SHOW_LOADING, false);
+                    m_animator.SetBool(ANIM_PARAM_HIDE_LOADING, false);
+                    
+                    // 然后设置隐藏参数
+                    m_animator.SetBool(ANIM_PARAM_HIDE_LOADING, true);
+                    Log.Debug(LOG_MODULE, "Hide方法中设置参数: ShowLoading=false, HideLoading=true", this);
                 }
                 else
                 {
-                    // 如果没有动画组件，直接隐藏
+                    // 如果没有动画组件，直接完成隐藏
                     OnHideAnimationComplete();
                 }
             }
@@ -181,10 +191,12 @@ namespace MyGame.UI.Loading.View
         public void OnHideAnimationComplete()
         {
             IsVisible = false; 
-            // 重置动画状态
+            // 重置所有动画状态参数，确保下一次显示时状态机能够正确响应
             if (m_animator != null)
             {
                 m_animator.SetBool(ANIM_PARAM_HIDE_LOADING, false);
+                m_animator.SetBool(ANIM_PARAM_SHOW_LOADING, false);
+                Log.Info(LOG_MODULE, "隐藏动画完成，重置所有动画参数", this);
             }
             
             // 通知控制器加载界面已隐藏

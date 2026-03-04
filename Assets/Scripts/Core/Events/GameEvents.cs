@@ -263,6 +263,73 @@ namespace MyGame.Events
 
         #endregion
 
+        #region 关卡相关事件
+        
+        /// <summary>
+        /// 关卡解锁事件
+        /// 参数：关卡ID
+        /// </summary>
+        public static event Action<string> OnLevelUnlocked;
+        
+        /// <summary>
+        /// 触发关卡解锁事件
+        /// </summary>
+        /// <param name="levelId">关卡ID</param>
+        public static void TriggerLevelUnlocked(string levelId)
+        {
+            Log.Info(module, $"触发关卡解锁事件: {levelId}");
+            OnLevelUnlocked?.Invoke(levelId);
+        }
+        
+        /// <summary>
+        /// 关卡完成事件
+        /// 参数：关卡ID
+        /// </summary>
+        public static event Action<string> OnLevelCompleted;
+        
+        /// <summary>
+        /// 触发关卡完成事件
+        /// </summary>
+        /// <param name="levelId">关卡ID</param>
+        public static void TriggerLevelCompleted(string levelId)
+        {
+            Log.Info(module, $"触发关卡完成事件: {levelId}");
+            OnLevelCompleted?.Invoke(levelId);
+        }
+        
+        /// <summary>
+        /// 关卡进入事件
+        /// 参数：关卡ID
+        /// </summary>
+        public static event Action<string> OnLevelEntered;
+        
+        /// <summary>
+        /// 触发关卡进入事件
+        /// </summary>
+        /// <param name="levelId">关卡ID</param>
+        public static void TriggerLevelEntered(string levelId)
+        {
+            Log.Info(module, $"触发关卡进入事件: {levelId}");
+            OnLevelEntered?.Invoke(levelId);
+        }
+        
+        /// <summary>
+        /// 关卡状态更新事件
+        /// 当需要强制更新所有关卡状态时触发
+        /// </summary>
+        public static event Action OnLevelStatusUpdate;
+        
+        /// <summary>
+        /// 触发关卡状态更新事件
+        /// </summary>
+        public static void TriggerLevelStatusUpdate()
+        {
+            Log.Info(module, "触发关卡状态更新事件");
+            OnLevelStatusUpdate?.Invoke();
+        }
+        
+        #endregion
+
         #region AI相关事件
         /// <summary>
         /// 感知到威胁事件

@@ -116,7 +116,7 @@ namespace AI.BehaviorTree
         /// </summary>
         public virtual void Reset()
         {   
-            Log.Debug(LogModules.AI, $"重置节点 {NodeName}");
+            // Log.Debug(LogModules.AI, $"重置节点 {NodeName}");
             
             // 设置状态为Failure (通过属性设置会触发状态变更事件)
             State = BTNodeState.Failure;

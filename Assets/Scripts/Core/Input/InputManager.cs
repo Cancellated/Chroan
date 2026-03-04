@@ -172,10 +172,6 @@ namespace MyGame.Managers
             UnityEngine.Debug.Log($"输入模式已切换到: {targetMode}");
         }
 
-        /// <summary>
-        /// 清理事件监听（已在OnDestroy中处理）
-        /// </summary>
-
         #endregion
     }
 }

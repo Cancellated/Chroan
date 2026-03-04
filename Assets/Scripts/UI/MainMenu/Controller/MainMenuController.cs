@@ -16,7 +16,7 @@ namespace MyGame.UI.MainMenu.Controller
 
         [Header("菜单配置")]
         [Tooltip("默认启动的游戏场景名称")]
-        [SerializeField] private string m_defaultGameScene = "GameLevel1";
+        [SerializeField] private string m_defaultGameScene = "Level Select";
         
         [Header("MVC组件")]
         [Tooltip("主菜单模型")]
@@ -101,7 +101,7 @@ namespace MyGame.UI.MainMenu.Controller
                 m_view = gameObject.GetComponentInChildren<MainMenuView>(true);
                 if (m_view == null)
                 {
-                    Log.Warning(LogModules.MAINMENU, "MainMenuController: MainMenuView not found, attempting to create.", this);
+                    Log.Warning(LogModules.MAINMENU, "主菜单视图未找到，尝试自动创建。", this);
                     
                     // 创建视图对象
                     GameObject viewObject = new("MainMenuView");
