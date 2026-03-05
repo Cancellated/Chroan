@@ -65,3 +65,8 @@ Desktop.ini
 /[Pp]ackages/manifest.json
 /[Pp]ackages/packages-lock.json
 /[Pp]ackages/ProjectSettings.asset
+
+# ===================================== #
+# 技术方案文件夹 #
+# ===================================== #
+/Assets/Scripts/[Tt]ech Doc/

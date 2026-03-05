@@ -52,6 +52,12 @@ namespace Logger
         public const string CREATURE = "Creature";
 
         //游戏物体模块
+        public const string WORD_BLOCK = "WordBlock";
         public const string ROCK = "Rock";
+        public const string GLASS = "Glass";
+        public const string LETTER = "Letter";
+        public const string ALIVE = "Alive";
+        public const string IS = "Is";
+
     }
 }

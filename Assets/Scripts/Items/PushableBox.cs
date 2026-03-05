@@ -38,7 +38,7 @@ public class PushableBox : MonoBehaviour, IPushable
     /// <summary>
     /// 初始化组件和设置
     /// </summary>
-    private void Awake()
+    protected virtual void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
         _collider = GetComponent<BoxCollider2D>();

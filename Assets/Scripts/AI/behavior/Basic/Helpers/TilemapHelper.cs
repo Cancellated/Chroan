@@ -73,6 +73,21 @@ namespace AI.Behavior
         }
         
         /// <summary>
+        /// 不可通行的图层遮罩
+        /// </summary>
+        private static LayerMask _obstacleLayerMask;
+        
+        /// <summary>
+        /// 静态构造函数，初始化图层遮罩
+        /// </summary>
+        static TilemapHelper()
+        {
+            // 初始化不可通行的图层：Wall、Obstacle
+            // Word对象默认会被放置在Obstacle图层
+            _obstacleLayerMask = LayerMask.GetMask("Wall", "Obstacle");
+        }
+        
+        /// <summary>
         /// 检查网格位置是否可通行
         /// </summary>
         /// <param name="gridPosition">要检查的网格位置</param>
@@ -94,16 +109,28 @@ namespace AI.Behavior
                 return false;
             }
             
-            // 3. 使用Physics2D进行碰撞检测
+            // 3. 基于图层遮罩使用Physics2D进行碰撞检测
             Vector3 worldPosition = GridToWorldPosition(gridPosition, groundTilemap);
             Collider2D[] colliders = Physics2D.OverlapBoxAll(worldPosition, 
                                                           new Vector2(cellSize.x - 0.1f, cellSize.y - 0.1f), 
-                                                          0f);
+                                                          0f, 
+                                                          _obstacleLayerMask);
             
-            foreach (Collider2D collider in colliders)
+            // 如果找到任何不可通行的碰撞体，则返回false
+            if (colliders.Length > 0)
             {
-                // 检查是否有不可通行的碰撞体（Obstacle标签）
-                if (collider.CompareTag("Obstacle") || collider.CompareTag("Player"))
+                return false;
+            }
+            
+            // 4. 检查特殊标签（如Player）
+            // 使用无遮罩的碰撞检测检查Player标签
+            Collider2D[] allColliders = Physics2D.OverlapBoxAll(worldPosition, 
+                                                             new Vector2(cellSize.x - 0.1f, cellSize.y - 0.1f), 
+                                                             0f);
+            
+            foreach (Collider2D collider in allColliders)
+            {
+                if (collider.CompareTag("Player"))
                 {
                     return false;
                 }
