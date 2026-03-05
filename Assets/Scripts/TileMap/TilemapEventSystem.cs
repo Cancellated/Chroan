@@ -9,25 +9,27 @@ using System.Collections.Generic;
 public class TilemapEventSystem : MonoBehaviour
 {
     private readonly List<TilemapChangeListener> changeListeners = new();
-    private static TilemapEventSystem instance;
     
-    public static TilemapEventSystem Instance
+    /// <summary>
+    /// 获取当前场景的TilemapEventSystem实例
+    /// </summary>
+    public static TilemapEventSystem GetCurrentInstance()
     {
-        get
+        return FindObjectOfType<TilemapEventSystem>();
+    }
+    
+    /// <summary>
+    /// 获取或创建当前场景的TilemapEventSystem实例
+    /// </summary>
+    public static TilemapEventSystem GetOrCreateInstance()
+    {
+        TilemapEventSystem instance = FindObjectOfType<TilemapEventSystem>();
+        if (instance == null)
         {
-            if (instance == null)
-            {
-                instance = FindObjectOfType<TilemapEventSystem>();
-                if (instance == null)
-                {
-                    GameObject obj = new("TilemapEventSystem");
-                    instance = obj.AddComponent<TilemapEventSystem>();
-                    // 标记为不跨场景销毁，确保在场景切换时正确管理
-                    DontDestroyOnLoad(obj);
-                }
-            }
-            return instance;
+            GameObject obj = new("TilemapEventSystem");
+            instance = obj.AddComponent<TilemapEventSystem>();
         }
+        return instance;
     }
 
     /// <summary>
@@ -95,26 +97,30 @@ public abstract class TilemapChangeListener : MonoBehaviour
     /// </summary>
     /// <param name="tilemap">要监听的瓦片地图</param>
     public void StartListeningTo(Tilemap tilemap)
-    {
-        if (!listeningTilemaps.Contains(tilemap))
         {
-            listeningTilemaps.Add(tilemap);
-            TilemapEventSystem.Instance.RegisterListener(this);
+            if (!listeningTilemaps.Contains(tilemap))
+            {
+                listeningTilemaps.Add(tilemap);
+                TilemapEventSystem.GetOrCreateInstance().RegisterListener(this);
+            }
         }
-    }
 
-    /// <summary>
-    /// 停止监听指定的瓦片地图
-    /// </summary>
-    /// <param name="tilemap">要停止监听的瓦片地图</param>
-    public void StopListeningTo(Tilemap tilemap)
-    {
-        listeningTilemaps.Remove(tilemap);
-        if (listeningTilemaps.Count == 0)
+        /// <summary>
+        /// 停止监听指定的瓦片地图
+        /// </summary>
+        /// <param name="tilemap">要停止监听的瓦片地图</param>
+        public void StopListeningTo(Tilemap tilemap)
         {
-            TilemapEventSystem.Instance.UnregisterListener(this);
+            listeningTilemaps.Remove(tilemap);
+            if (listeningTilemaps.Count == 0)
+            {
+                TilemapEventSystem currentInstance = TilemapEventSystem.GetCurrentInstance();
+                if (currentInstance != null)
+                {
+                    currentInstance.UnregisterListener(this);
+                }
+            }
         }
-    }
 
     /// <summary>
     /// 检查是否正在监听指定的瓦片地图
@@ -144,6 +150,10 @@ public abstract class TilemapChangeListener : MonoBehaviour
     /// </summary>
     protected virtual void OnDestroy()
     {
-        TilemapEventSystem.Instance.UnregisterListener(this);
+        TilemapEventSystem currentInstance = TilemapEventSystem.GetCurrentInstance();
+        if (currentInstance != null)
+        {
+            currentInstance.UnregisterListener(this);
+        }
     }
 }
